@@ -58,6 +58,8 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate,Long> im
             return giftId;
         }catch (DataAccessException e) {
             throw new DaoException(DAO_SAVE_ERROR.toString(),e);
+        }catch (NullPointerException e) {
+            throw new DaoException(DAO_NULL_POINTER.toString(),e);
         }
     }
 

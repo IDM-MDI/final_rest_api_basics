@@ -46,6 +46,7 @@ public class QueryCreator {
 
     public String findAll(String tableName) {
         return "SELECT * FROM " + tableName + " WHERE deleted = 0;";
+        //return "SELECT * FROM " + tableName + ";";
     }
 
     public String findById(String tableName) {

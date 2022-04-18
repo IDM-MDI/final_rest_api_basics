@@ -23,17 +23,21 @@ public class TagDto extends Dto {
 
     public static List<TagDto> toDtoList(List<Tag> list) {
         List<TagDto> result = new ArrayList<>();
-        list.forEach(i -> {
-            result.add(toDto(i));
-        });
+        if(list != null) {
+            list.forEach(i -> {
+                result.add(toDto(i));
+            });
+        }
         return result;
     }
 
     public static List<Tag> toEntityList(List<TagDto> list) {
         List<Tag> result = new ArrayList<>();
-        list.forEach(i -> {
-            result.add(toEntity(i));
-        });
+        if(list != null) {
+            list.forEach(i -> {
+                result.add(toEntity(i));
+            });
+        }
         return result;
     }
 

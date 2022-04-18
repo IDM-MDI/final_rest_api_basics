@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.epam.esm.task.exception.DaoExceptionCode.DAO_NULL_POINTER;
+
 @Repository
 @Profile("prod")
 public class TagDaoImpl extends AbstractDao<Tag,Long> implements TagDao {
@@ -47,6 +49,8 @@ public class TagDaoImpl extends AbstractDao<Tag,Long> implements TagDao {
             return executeEntity(entity,query);
         } catch (DataAccessException e) {
             throw new DaoException(DaoExceptionCode.DAO_SAVE_ERROR.toString(), e);
+        }catch (NullPointerException e) {
+            throw new DaoException(DAO_NULL_POINTER.toString(),e);
         }
     }
 

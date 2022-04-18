@@ -86,4 +86,9 @@ public class ExceptionController {
     public final ResponseEntity<String> handleBadMediaTypeException() {
         return new ResponseEntity<>(BAD_MEDIA_TYPE.toString(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
+
+    @ExceptionHandler(NullPointerException.class)
+    public final ResponseEntity<String> handleNullPointerExceptions(ServiceException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }
