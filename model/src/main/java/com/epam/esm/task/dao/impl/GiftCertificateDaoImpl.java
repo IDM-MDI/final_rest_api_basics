@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@Profile("prod")
+@Profile("test")
 public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate,Long> implements GiftCertificateDao {
 
     private final String tableName = "gift_certificate";

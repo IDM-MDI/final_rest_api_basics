@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@Profile("prod")
+@Profile("test")
 public class ManyToManyDaoImpl extends AbstractDao<ManyToMany,Long> implements ManyToManyDao {
 
     private final String tableName = "gift_tag";

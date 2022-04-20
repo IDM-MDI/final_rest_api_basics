@@ -35,7 +35,7 @@ public class MyWebApplicationInitializer extends AbstractAnnotationConfigDispatc
         WebApplicationContext context = super.createRootApplicationContext();
         if (context != null) {
             ((ConfigurableEnvironment)context.getEnvironment()).
-                    setActiveProfiles("test","prod");
+                    setActiveProfiles("prod");
         }
         return context;
     }
