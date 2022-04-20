@@ -4,8 +4,6 @@ import com.epam.esm.task.entity.impl.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class TagBuilderTest {
 
     private final Tag expected = new Tag(1,"name");

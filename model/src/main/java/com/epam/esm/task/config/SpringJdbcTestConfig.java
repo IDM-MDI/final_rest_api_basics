@@ -19,12 +19,11 @@ import javax.sql.DataSource;
 public class SpringJdbcTestConfig {
     @Bean("dataSourceTest")
     public DataSource getTestDataSource() {
-        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-        return builder
-                .setType(EmbeddedDatabaseType.HSQL)
-                .addScript("schema.sql")
-                .addScript("fillData.sql")
-                .build();
+        return new EmbeddedDatabaseBuilder().
+                setType(EmbeddedDatabaseType.HSQL).
+                addScript("schema.sql").
+                addScript("fillData.sql").
+                build();
     }
 
     @Bean("jdbcTemplateTest")

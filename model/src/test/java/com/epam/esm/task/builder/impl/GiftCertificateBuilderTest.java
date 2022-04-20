@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class GiftCertificateBuilderTest {
 
     private static final GiftCertificate expected = new GiftCertificate();
