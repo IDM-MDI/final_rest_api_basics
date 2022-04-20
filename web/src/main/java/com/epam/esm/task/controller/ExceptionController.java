@@ -65,7 +65,7 @@ public class ExceptionController {
      * @return custom one
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    public final ResponseEntity<String> handleBadRequestException() {
+    public final ResponseEntity<String> handleNotFoundException() {
         return new ResponseEntity<>(ExceptionCode.NOT_FOUND_EXCEPTION.toString(), NOT_FOUND);
     }
 

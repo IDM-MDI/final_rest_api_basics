@@ -28,7 +28,7 @@ import java.util.Objects;
 import static com.epam.esm.task.exception.DaoExceptionCode.DAO_NULL_POINTER;
 
 @Repository
-@Profile("test")
+@Profile("prod")
 public class TagDaoImpl extends AbstractDao<Tag,Long> implements TagDao {
 
     private final String tableName = "tag";
