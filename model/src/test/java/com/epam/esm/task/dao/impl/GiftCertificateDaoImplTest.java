@@ -33,7 +33,7 @@ class GiftCertificateDaoImplTest {
     @Autowired
     TagDaoImpl tagDao;
     @Autowired
-    ManyToManyDaoImpl manyToManyDao;
+    GiftTagDaoImpl manyToManyDao;
 
     @Test
     @Transactional(rollbackFor = Exception.class)

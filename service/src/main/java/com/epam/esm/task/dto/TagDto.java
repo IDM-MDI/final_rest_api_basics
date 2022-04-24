@@ -1,17 +1,23 @@
-package com.epam.esm.task.dto.impl;
+package com.epam.esm.task.dto;
 
-import com.epam.esm.task.dto.Dto;
 import com.epam.esm.task.entity.impl.Tag;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class TagDto extends Dto {
+public class TagDto {
+
+    private long id;
+    @Length(min = 2,max = 42)
+    private String name;
 
     public TagDto(){}
 
     public TagDto(long id, String name) {
-        super(id, name);
+        this.id = id;
+        this.name = name;
     }
 
     public static TagDto toDto(Tag tag) {
@@ -41,6 +47,23 @@ public class TagDto extends Dto {
         return result;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
     @Override
     public String toString() {
         return "{\n" +
@@ -49,4 +72,14 @@ public class TagDto extends Dto {
                 "}\n";
     }
 
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TagDto tagDto = (TagDto) o;
+        return id == tagDto.id && Objects.equals(name, tagDto.name);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }

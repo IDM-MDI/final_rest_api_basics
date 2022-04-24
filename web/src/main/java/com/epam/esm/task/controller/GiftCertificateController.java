@@ -1,6 +1,6 @@
 package com.epam.esm.task.controller;
 
-import com.epam.esm.task.dto.impl.GiftCertificateDto;
+import com.epam.esm.task.dto.GiftCertificateDto;
 import com.epam.esm.task.exception.ServiceException;
 import com.epam.esm.task.service.impl.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;

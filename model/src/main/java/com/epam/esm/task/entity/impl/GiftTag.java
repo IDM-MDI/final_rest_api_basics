@@ -2,16 +2,16 @@ package com.epam.esm.task.entity.impl;
 
 import com.epam.esm.task.entity.Entity;
 
-public class ManyToMany extends Entity {
+public class GiftTag extends Entity {
     private long giftId;
     private long tagId;
 
-    public ManyToMany(long id, long giftId, long tagId) {
+    public GiftTag(long id, long giftId, long tagId) {
         this.id = id;
         this.giftId = giftId;
         this.tagId = tagId;
     }
-    public ManyToMany(){}
+    public GiftTag(){}
 
     public long getGiftId() {
         return giftId;

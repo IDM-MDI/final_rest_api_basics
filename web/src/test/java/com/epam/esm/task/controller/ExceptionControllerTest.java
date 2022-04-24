@@ -3,7 +3,6 @@ package com.epam.esm.task.controller;
 import com.epam.esm.task.config.MyWebApplicationInitializer;
 import com.epam.esm.task.config.SpringConfig;
 import com.epam.esm.task.exception.DaoException;
-import com.epam.esm.task.exception.ServiceException;
 import com.epam.esm.task.service.impl.GiftCertificateService;
 import com.epam.esm.task.service.impl.TagService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,17 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -29,27 +28,30 @@ import javax.validation.ConstraintViolationException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @ExtendWith(MockitoExtension.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = {MyWebApplicationInitializer.class,SpringConfig.class})
+@WebAppConfiguration
 class ExceptionControllerTest {
+
 
     private MockMvc mockMvc;
 
-    @InjectMocks
-    private ExceptionController exceptionController;
+    @Autowired
+    private WebApplicationContext wac;
 
-    @Mock
-    private GiftCertificateService giftCertificateService;
-    @Mock
-    private TagService tagService;
+    @InjectMocks
+    private GiftCertificateController giftCertificateController;
 
 
     @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(exceptionController)
-                .build();
+        MockitoAnnotations.initMocks(this);
+//        mockMvc = MockMvcBuilders.standaloneSetup(giftCertificateController).
+//                setControllerAdvice(new ExceptionController())
+//                .build();
+        mockMvc = webAppContextSetup(wac).build();
     }
 
 

@@ -1,6 +1,6 @@
 package com.epam.esm.task.controller;
 
-import com.epam.esm.task.dto.impl.TagDto;
+import com.epam.esm.task.dto.TagDto;
 import com.epam.esm.task.exception.ServiceException;
 import com.epam.esm.task.service.impl.TagService;
 import org.springframework.beans.factory.annotation.Autowired;

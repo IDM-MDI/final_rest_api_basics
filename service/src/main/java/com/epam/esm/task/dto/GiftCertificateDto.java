@@ -1,8 +1,8 @@
-package com.epam.esm.task.dto.impl;
+package com.epam.esm.task.dto;
 
 import com.epam.esm.task.builder.impl.GiftCertificateBuilder;
-import com.epam.esm.task.dto.Dto;
 import com.epam.esm.task.entity.impl.GiftCertificate;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
@@ -12,7 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class GiftCertificateDto extends Dto {
+public class GiftCertificateDto {
+    private long id;
+
+    @Length(min = 2,max = 42)
+    private String name;
+
     private String description;
     @Min(1)
     private BigDecimal price;
@@ -31,7 +36,8 @@ public class GiftCertificateDto extends Dto {
                               String name, String description,
                               BigDecimal price, int duration,
                               LocalDateTime create_date, LocalDateTime update_date, List<TagDto> tagDtos) {
-        super(id, name);
+        this.id = id;
+        this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
@@ -45,7 +51,8 @@ public class GiftCertificateDto extends Dto {
                               String name, String description,
                               BigDecimal price, int duration,
                               LocalDateTime create_date, LocalDateTime update_date) {
-        super(id, name);
+        this.id = id;
+        this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
@@ -81,6 +88,22 @@ public class GiftCertificateDto extends Dto {
             result.add(toEntity(i));
         });
         return result;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -131,18 +154,15 @@ public class GiftCertificateDto extends Dto {
         this.tags = tagDtos;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         GiftCertificateDto that = (GiftCertificateDto) o;
-        return duration == that.duration && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(create_date, that.create_date) && Objects.equals(update_date, that.update_date) && Objects.equals(tags, that.tags);
+        return id == that.id && duration == that.duration && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(create_date, that.create_date) && Objects.equals(update_date, that.update_date) && Objects.equals(tags, that.tags);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), description, price, duration, create_date, update_date, tags);
+    @Override public int hashCode() {
+        return Objects.hash(id, name, description, price, duration, create_date, update_date, tags);
     }
 
     @Override

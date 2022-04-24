@@ -2,10 +2,10 @@ package com.epam.esm.task.dao.impl;
 
 import com.epam.esm.task.dao.AbstractDao;
 import com.epam.esm.task.dao.query.EntityQuery;
-import com.epam.esm.task.dao.ManyToManyDao;
-import com.epam.esm.task.dao.mapper.ManyToManyMapper;
+import com.epam.esm.task.dao.GiftTagDao;
+import com.epam.esm.task.dao.mapper.GiftTagMapper;
 import com.epam.esm.task.dao.query.QueryCreator;
-import com.epam.esm.task.entity.impl.ManyToMany;
+import com.epam.esm.task.entity.impl.GiftTag;
 import com.epam.esm.task.entity.impl.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Repository
 @Profile("prod")
-public class ManyToManyDaoImpl extends AbstractDao<ManyToMany,Long> implements ManyToManyDao {
+public class GiftTagDaoImpl extends AbstractDao<GiftTag,Long> implements GiftTagDao {
 
     private final String tableName = "gift_tag";
     private final String giftId = "gift_id";
@@ -27,31 +27,31 @@ public class ManyToManyDaoImpl extends AbstractDao<ManyToMany,Long> implements M
     private final List<String> tableColumns;
 
     @Autowired
-    public ManyToManyDaoImpl(JdbcTemplate jdbcTemplate, QueryCreator creator, Map<String,List<String>> tableColumns) {
+    public GiftTagDaoImpl(JdbcTemplate jdbcTemplate, QueryCreator creator, Map<String,List<String>> tableColumns) {
         super(jdbcTemplate,creator);
         this.tableColumns = tableColumns.get(tableName);
     }
 
     @Override
-    public ManyToMany findById(Long id) {
-        return jdbcTemplate.queryForObject(creator.findById(tableName), new ManyToManyMapper(),id);
+    public GiftTag findById(Long id) {
+        return jdbcTemplate.queryForObject(creator.findById(tableName), new GiftTagMapper(),id);
     }
 
     @Override
-    public List<ManyToMany> findByColumn(String columnName, String data) {
-        return jdbcTemplate.query(creator.findByColumn(tableName,columnName), new ManyToManyMapper(),data);
+    public List<GiftTag> findByColumn(String columnName, String data) {
+        return jdbcTemplate.query(creator.findByColumn(tableName,columnName), new GiftTagMapper(),data);
     }
 
     @Override
-    public List<ManyToMany> findByGiftId(long id) {
+    public List<GiftTag> findByGiftId(long id) {
         return jdbcTemplate.query(creator.findByColumn(tableName,giftId),
-                new ManyToManyMapper(),id);
+                new GiftTagMapper(),id);
     }
 
     @Override
-    public List<ManyToMany> findByTagId(long id) {
+    public List<GiftTag> findByTagId(long id) {
         return jdbcTemplate.query(creator.findByColumn(tableName,tagId),
-                new ManyToManyMapper(),id);
+                new GiftTagMapper(),id);
     }
 
     @Override
@@ -81,13 +81,13 @@ public class ManyToManyDaoImpl extends AbstractDao<ManyToMany,Long> implements M
     }
 
     @Override
-    protected void fillPreparedStatement(ManyToMany entity, PreparedStatement statement) throws SQLException {
+    protected void fillPreparedStatement(GiftTag entity, PreparedStatement statement) throws SQLException {
         statement.setLong(1,entity.getGiftId());
         statement.setLong(2,entity.getTagId());
     }
 
     @Override
-    protected long executeEntity(ManyToMany entity, String query) {
+    protected long executeEntity(GiftTag entity, String query) {
         return 0;
     }
 }

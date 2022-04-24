@@ -34,13 +34,13 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate,Long> im
     private final List<String> tableColumns;
     private final GiftCertificateBuilder builder;
     private final TagDaoImpl tagDao;
-    private final ManyToManyDaoImpl mtmDao;
+    private final GiftTagDaoImpl mtmDao;
 
     @Autowired
     public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate,
                                   Map<String,List<String>> allColumns, QueryCreator creator, GiftCertificateBuilder builder,
                                   TagDaoImpl tagDao,
-                                  ManyToManyDaoImpl mtmDao) {
+                                  GiftTagDaoImpl mtmDao) {
         super(jdbcTemplate,creator);
         this.builder = builder;
         this.tagDao = tagDao;
