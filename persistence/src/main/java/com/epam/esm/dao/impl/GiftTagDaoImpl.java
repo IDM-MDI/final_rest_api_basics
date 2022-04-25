@@ -1,12 +1,13 @@
-package com.epam.esm.task.dao.impl;
+package com.epam.esm.dao.impl;
 
-import com.epam.esm.task.dao.AbstractDao;
-import com.epam.esm.task.dao.query.EntityQuery;
-import com.epam.esm.task.dao.GiftTagDao;
-import com.epam.esm.task.dao.mapper.GiftTagMapper;
-import com.epam.esm.task.dao.query.QueryCreator;
-import com.epam.esm.task.entity.impl.GiftTag;
-import com.epam.esm.task.entity.impl.Tag;
+import com.epam.esm.builder.impl.GiftTagBuilder;
+import com.epam.esm.dao.AbstractDao;
+import com.epam.esm.dao.GiftTagDao;
+import com.epam.esm.dao.query.EntityQuery;
+import com.epam.esm.dao.mapper.GiftTagMapper;
+import com.epam.esm.dao.query.QueryCreator;
+import com.epam.esm.entity.GiftTag;
+import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+
 @Repository
 @Profile("prod")
 public class GiftTagDaoImpl extends AbstractDao<GiftTag,Long> implements GiftTagDao {
@@ -25,33 +27,36 @@ public class GiftTagDaoImpl extends AbstractDao<GiftTag,Long> implements GiftTag
     private final String giftId = "gift_id";
     private final String tagId = "tag_id";
     private final List<String> tableColumns;
+    private final GiftTagBuilder builder;
 
     @Autowired
-    public GiftTagDaoImpl(JdbcTemplate jdbcTemplate, QueryCreator creator, Map<String,List<String>> tableColumns) {
+    public GiftTagDaoImpl(JdbcTemplate jdbcTemplate, QueryCreator creator,
+                          Map<String, List<String>> tableColumns, GiftTagBuilder builder) {
         super(jdbcTemplate,creator);
         this.tableColumns = tableColumns.get(tableName);
+        this.builder = builder;
     }
 
     @Override
     public GiftTag findById(Long id) {
-        return jdbcTemplate.queryForObject(creator.findById(tableName), new GiftTagMapper(),id);
+        return jdbcTemplate.queryForObject(creator.findById(tableName), new GiftTagMapper(builder),id);
     }
 
     @Override
     public List<GiftTag> findByColumn(String columnName, String data) {
-        return jdbcTemplate.query(creator.findByColumn(tableName,columnName), new GiftTagMapper(),data);
+        return jdbcTemplate.query(creator.findByColumn(tableName,columnName), new GiftTagMapper(builder),data);
     }
 
     @Override
     public List<GiftTag> findByGiftId(long id) {
         return jdbcTemplate.query(creator.findByColumn(tableName,giftId),
-                new GiftTagMapper(),id);
+                new GiftTagMapper(builder),id);
     }
 
     @Override
     public List<GiftTag> findByTagId(long id) {
         return jdbcTemplate.query(creator.findByColumn(tableName,tagId),
-                new GiftTagMapper(),id);
+                new GiftTagMapper(builder),id);
     }
 
     @Override

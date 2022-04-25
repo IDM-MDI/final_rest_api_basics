@@ -1,6 +1,6 @@
-package com.epam.esm.task.dao;
+package com.epam.esm.dao;
 
-import com.epam.esm.task.exception.DaoException;
+import com.epam.esm.exception.DaoException;
 
 import java.util.List;
 

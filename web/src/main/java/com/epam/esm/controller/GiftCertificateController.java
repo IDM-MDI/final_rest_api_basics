@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 
+import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.impl.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.util.List;
 import java.util.Map;
 
 /**

@@ -20,10 +20,6 @@ public class TagBuilder implements ModelBuilder {
         return this;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }

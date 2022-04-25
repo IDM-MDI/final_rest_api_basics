@@ -1,8 +1,7 @@
-package com.epam.esm.task.dao.mapper;
+package com.epam.esm.dao.mapper;
 
-import com.epam.esm.task.builder.impl.TagBuilder;
-import com.epam.esm.task.dao.ColumnName;
-import com.epam.esm.task.entity.impl.Tag;
+import com.epam.esm.builder.impl.TagBuilder;
+import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -10,17 +9,22 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.epam.esm.dao.ColumnName.*;
+
 @Component
 public class TagMapper implements RowMapper<Tag> {
 
     private final TagBuilder builder;
 
+    @Autowired
     public TagMapper(TagBuilder builder) {
         this.builder = builder;
     }
 
     @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return builder.setId(rs.getLong(ColumnName.ID)).setName(rs.getString(ColumnName.NAME)).getResult();
+        return builder.setId(rs.getLong(ID)).
+                setName(rs.getString(NAME)).
+                build();
     }
 }

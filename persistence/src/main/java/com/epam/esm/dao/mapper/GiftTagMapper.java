@@ -1,15 +1,30 @@
-package com.epam.esm.task.dao.mapper;
+package com.epam.esm.dao.mapper;
 
-import com.epam.esm.task.dao.ColumnName;
-import com.epam.esm.task.entity.impl.GiftTag;
+import com.epam.esm.builder.impl.GiftTagBuilder;
+import com.epam.esm.entity.GiftTag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.epam.esm.dao.ColumnName.*;
+@Component
 public class GiftTagMapper implements RowMapper<GiftTag> {
+
+    private final GiftTagBuilder builder;
+
+    @Autowired
+    public GiftTagMapper(GiftTagBuilder builder) {
+        this.builder = builder;
+    }
+
     @Override
     public GiftTag mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new GiftTag(rs.getLong(ColumnName.ID),rs.getLong(ColumnName.GIFT_ID),rs.getLong(ColumnName.TAG_ID));
+        return builder.setId(rs.getLong(ID)).
+                setGiftId(rs.getLong(GIFT_ID)).
+                setTagId(rs.getLong(TAG_ID)).
+                build();
     }
 }

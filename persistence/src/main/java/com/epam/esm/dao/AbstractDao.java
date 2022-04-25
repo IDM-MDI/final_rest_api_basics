@@ -1,10 +1,9 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.task.dao.query.QueryCreator;
-import com.epam.esm.task.entity.Entity;
-import com.epam.esm.task.exception.DaoException;
+import com.epam.esm.exception.DaoException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import com.epam.esm.dao.query.QueryCreator;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

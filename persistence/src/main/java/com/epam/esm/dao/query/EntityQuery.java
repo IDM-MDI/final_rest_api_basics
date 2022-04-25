@@ -1,4 +1,4 @@
-package com.epam.esm.task.dao.query;
+package com.epam.esm.dao.query;
 
 public class EntityQuery {
     public static final String FIND_BY_NAME_TAG = "SELECT * FROM tag WHERE name = ?";

@@ -1,5 +1,7 @@
 package com.epam.esm.dto;
 
+import org.hibernate.validator.constraints.Length;
+
 public class TagDto {
     private long id;
     @Length(min = 2,max = 42)

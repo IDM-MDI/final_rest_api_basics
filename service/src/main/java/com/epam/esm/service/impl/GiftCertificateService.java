@@ -1,7 +1,9 @@
 package com.epam.esm.service.impl;
 
 
+import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.CustomService;
 import com.epam.esm.util.impl.GiftCertificateMapper;
@@ -9,6 +11,7 @@ import com.epam.esm.validator.ParameterValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
 import java.util.Map;

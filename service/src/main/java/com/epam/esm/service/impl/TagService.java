@@ -1,7 +1,9 @@
 package com.epam.esm.service.impl;
 
 
+import com.epam.esm.dao.impl.TagDaoImpl;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.CustomService;
 import com.epam.esm.util.ModelMapper;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
 

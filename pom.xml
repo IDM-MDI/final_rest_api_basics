@@ -13,6 +13,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.6.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
+
 	</parent>
 	<groupId>com.epam.esm</groupId>
 	<artifactId>final_rest_api_basics</artifactId>
@@ -22,6 +23,7 @@
 	<description>MJC module 3 project</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<spring.version>5.3.18</spring.version>
 	</properties>
 	<dependencies>
 		<dependency>

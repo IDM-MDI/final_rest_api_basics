@@ -1,14 +1,14 @@
-package com.epam.esm.task.dao.impl;
+package com.epam.esm.dao.impl;
 
-import com.epam.esm.task.builder.impl.GiftCertificateBuilder;
-import com.epam.esm.task.dao.AbstractDao;
-import com.epam.esm.task.dao.GiftCertificateDao;
-import com.epam.esm.task.dao.mapper.GiftCertificateMapper;
-import com.epam.esm.task.dao.query.QueryCreator;
-import com.epam.esm.task.entity.impl.GiftCertificate;
-import com.epam.esm.task.entity.impl.Tag;
-import com.epam.esm.task.exception.DaoException;
-import static com.epam.esm.task.exception.DaoExceptionCode.*;
+
+import com.epam.esm.builder.impl.GiftCertificateBuilder;
+import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DaoException;
+import com.epam.esm.dao.AbstractDao;
+import com.epam.esm.dao.mapper.GiftCertificateMapper;
+import com.epam.esm.dao.query.QueryCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
@@ -25,6 +25,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.epam.esm.exception.DaoExceptionCode.*;
 
 @Repository
 @Profile("prod")

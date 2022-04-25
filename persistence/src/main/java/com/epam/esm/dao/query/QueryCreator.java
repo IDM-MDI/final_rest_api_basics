@@ -1,4 +1,4 @@
-package com.epam.esm.task.dao.query;
+package com.epam.esm.dao.query;
 
 import org.springframework.stereotype.Component;
 

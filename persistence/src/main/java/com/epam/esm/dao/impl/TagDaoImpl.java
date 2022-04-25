@@ -1,14 +1,14 @@
-package com.epam.esm.task.dao.impl;
+package com.epam.esm.dao.impl;
 
-import com.epam.esm.task.builder.impl.TagBuilder;
-import com.epam.esm.task.dao.AbstractDao;
-import com.epam.esm.task.dao.query.EntityQuery;
-import com.epam.esm.task.dao.TagDao;
-import com.epam.esm.task.dao.mapper.TagMapper;
-import com.epam.esm.task.dao.query.QueryCreator;
-import com.epam.esm.task.entity.impl.Tag;
-import com.epam.esm.task.exception.DaoException;
-import com.epam.esm.task.exception.DaoExceptionCode;
+import com.epam.esm.builder.impl.TagBuilder;
+import com.epam.esm.dao.AbstractDao;
+import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.mapper.TagMapper;
+import com.epam.esm.dao.query.EntityQuery;
+import com.epam.esm.dao.query.QueryCreator;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DaoException;
+import com.epam.esm.exception.DaoExceptionCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.epam.esm.task.exception.DaoExceptionCode.DAO_NULL_POINTER;
+import static com.epam.esm.exception.DaoExceptionCode.*;
 
 @Repository
 @Profile("prod")

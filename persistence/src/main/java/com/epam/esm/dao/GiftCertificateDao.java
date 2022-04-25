@@ -1,6 +1,7 @@
-package com.epam.esm.task.dao;
+package com.epam.esm.dao;
 
-import com.epam.esm.task.entity.impl.GiftCertificate;
+
+import com.epam.esm.entity.GiftCertificate;
 
 import java.util.List;
 import java.util.Map;
