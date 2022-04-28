@@ -38,7 +38,7 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
         result.setDuration(entity.getDuration());
         result.setCreate_date(entity.getCreate_date());
         result.setUpdate_date(entity.getUpdate_date());
-        result.setTags(tagModelMapper.toDtoList(entity.getTags()));
+        result.setTags(tagModelMapper.toDtoList(entity.getTagList()));
         return result;
     }
 

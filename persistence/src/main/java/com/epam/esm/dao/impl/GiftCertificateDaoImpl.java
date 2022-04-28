@@ -56,7 +56,7 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate,Long> im
         try{
             String query = creator.insert(tableName,tableColumns);
             long giftId = executeEntity(entity,query);
-            giftTagDao.create(giftId,tagDao.createWithList(entity.getTags()));
+            giftTagDao.create(giftId,tagDao.createWithList(entity.getTagList()));
             return giftId;
         }catch (DataAccessException e) {
             throw new DaoException(DAO_SAVE_ERROR.toString(),e);
@@ -89,7 +89,7 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate,Long> im
                     entity.getPrice(),entity.getDuration(),
                     entity.getCreate_date(),entity.getUpdate_date(),id);
             giftTagDao.deleteByGiftId(id);
-            giftTagDao.create(id,tagDao.createWithList(entity.getTags()));
+            giftTagDao.create(id,tagDao.createWithList(entity.getTagList()));
         } catch(DataAccessException e) {
             throw new DaoException(DAO_UPDATE_ERROR.toString(),e);
         }
@@ -122,7 +122,7 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate,Long> im
 
             });
             if (result != null) {
-                result.setTags(tagList);
+                result.setTagList(tagList);
             }
             return result;
         } catch (DataAccessException e) {
@@ -176,7 +176,7 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate,Long> im
                 } catch (DaoException ignored) {}
 
             });
-            i.setTags(tagList);
+            i.setTagList(tagList);
         });
     }
 }
