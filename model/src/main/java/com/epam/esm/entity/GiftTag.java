@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -9,8 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor
 public class GiftTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,4 @@ public class GiftTag {
     private long giftId;
     private long tagId;
     private boolean isDeleted;
-
-    public GiftTag(){}
 }

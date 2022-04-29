@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -10,9 +11,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "gift_certificate")
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +29,4 @@ public class GiftCertificate {
     @Transient
     private List<Tag> tagList;
     private boolean isDeleted;
-
-    public GiftCertificate() {}
 }
