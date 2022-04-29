@@ -4,12 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "gift_tag")
 @Getter @Setter
 @NoArgsConstructor
 public class GiftTag {
@@ -18,5 +16,5 @@ public class GiftTag {
     private long id;
     private long giftId;
     private long tagId;
-    private boolean isDeleted;
+    private boolean deleted;
 }

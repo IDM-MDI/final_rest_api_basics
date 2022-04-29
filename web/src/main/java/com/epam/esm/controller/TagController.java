@@ -31,10 +31,9 @@ public class TagController {
 
     /**
      * @return all tags from database
-     * @throws ServiceException
      */
     @GetMapping
-    public List<TagDto> getTags() throws ServiceException {
+    public List<TagDto> getTags() {
         return service.findAll();
     }
 

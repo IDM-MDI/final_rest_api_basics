@@ -28,5 +28,5 @@ public class GiftCertificate {
     private LocalDateTime update_date;
     @Transient
     private List<Tag> tagList;
-    private boolean isDeleted;
+    private boolean deleted;
 }

@@ -1,11 +1,8 @@
 package com.epam.esm.service.impl;
 
 
-import com.epam.esm.dao.impl.TagDaoImpl;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.DaoException;
-import com.epam.esm.exception.ServiceException;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CustomService;
 import com.epam.esm.util.impl.TagModelMapper;
@@ -51,11 +48,7 @@ public class TagService implements CustomService<TagDto,Long> {
     }
 
     @Override
-    public TagDto findById(Long id) throws ServiceException {
-        try {
-            return mapper.toDto(dao.findById(id));
-        } catch (DaoException e) {
-            throw new ServiceException(e.getMessage(),e);
-        }
+    public TagDto findById(Long id) {
+        return mapper.toDto(repository.findById(id).get());
     }
 }
