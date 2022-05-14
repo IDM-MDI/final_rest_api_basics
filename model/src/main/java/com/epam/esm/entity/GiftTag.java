@@ -8,13 +8,14 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "gift_tag")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 public class GiftTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private long giftId;
-    private long tagId;
+
+    @Column(name = "deleted")
     private boolean deleted;
 }

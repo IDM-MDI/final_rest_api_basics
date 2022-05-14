@@ -76,8 +76,8 @@ public class GiftCertificateBuilder implements ModelBuilder {
         result.setDescription(description);
         result.setDuration(duration);
         result.setPrice(price);
-        result.setCreate_date(create_date);
-        result.setUpdate_date(update_date);
+        result.setCreateDate(create_date);
+        result.setUpdateDate(update_date);
         result.setTagList(tagList == null ? new ArrayList<>() : tagList);
         result.setDeleted(deleted);
         return result;

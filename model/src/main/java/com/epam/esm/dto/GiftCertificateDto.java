@@ -16,13 +16,9 @@ import java.util.List;
 @Getter @Setter
 @NoArgsConstructor
 public class GiftCertificateDto {
-    private long id;
-
     @Length(min = 2,max = 42)
     private String name;
-
     private String description;
-
     @Min(1)
     private BigDecimal price;
     @Min(1)

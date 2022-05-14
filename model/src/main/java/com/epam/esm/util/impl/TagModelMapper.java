@@ -14,7 +14,6 @@ import java.util.List;
 public class TagModelMapper implements ModelMapper<Tag, TagDto> {
 
     private final TagBuilder builder;
-
     @Autowired
     public TagModelMapper(TagBuilder builder) {
         this.builder = builder;
@@ -22,15 +21,13 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
 
     @Override
     public Tag toEntity(TagDto dto) {
-        return builder.setId(dto.getId()).
-                setName(dto.getName()).
+        return builder.setName(dto.getName()).
                 build();
     }
 
     @Override
     public TagDto toDto(Tag entity) {
         TagDto result = new TagDto();
-        result.setId(entity.getId());
         result.setName(entity.getName());
         return result;
     }
@@ -39,9 +36,7 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
     public List<Tag> toEntityList(List<TagDto> dtoList) {
         List<Tag> result = new ArrayList<>();
         if(dtoList != null) {
-            dtoList.forEach(i -> {
-                result.add(toEntity(i));
-            });
+            dtoList.forEach(i -> result.add(toEntity(i)));
         }
         return result;
     }
@@ -50,9 +45,7 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
     public List<TagDto> toDtoList(List<Tag> entityList) {
         List<TagDto> result = new ArrayList<>();
         if(entityList != null) {
-            entityList.forEach(i -> {
-                result.add(toDto(i));
-            });
+            entityList.forEach(i -> result.add(toDto(i)));
         }
         return result;
     }

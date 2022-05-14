@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.Length;
 @Getter @Setter
 @NoArgsConstructor
 public class TagDto {
-    private long id;
     @Length(min = 2,max = 42)
     private String name;
 }
