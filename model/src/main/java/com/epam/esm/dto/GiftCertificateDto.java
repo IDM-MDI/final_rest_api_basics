@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
@@ -15,7 +16,10 @@ import java.util.List;
 @Data
 @Getter @Setter
 @NoArgsConstructor
-public class GiftCertificateDto {
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
+    @Min(1)
+    private long id;
+
     @Length(min = 2,max = 42)
     private String name;
     private String description;

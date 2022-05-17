@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,13 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable @Min(1) long id) {
         service.delete(id);
         return ResponseEntity.status(HttpStatus.CREATED).body("deleted");
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable("id") @Min(1) long id,
+                                             @Valid @RequestBody UserDto dto) throws ServiceException {
+        service.update(dto,id);
+        return ResponseEntity.status(HttpStatus.CREATED).body("updated");
     }
 
     /**

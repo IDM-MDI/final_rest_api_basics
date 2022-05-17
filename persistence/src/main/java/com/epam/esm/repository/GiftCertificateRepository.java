@@ -1,6 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.GiftCertificate;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface GiftCertificateRepository extends CrudRepository<GiftCertificate, Long> {
+public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Long> {
 //    List<GiftCertificate> findGiftCertificatesByIdAndNameAndDescriptionAndPriceAndDurationAndCreate_dateAndUpdate_date(
 //            long id, String name, String description,
 //            BigDecimal price, int duration,

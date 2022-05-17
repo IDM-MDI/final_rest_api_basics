@@ -9,6 +9,11 @@ import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.util.impl.GiftCertificateModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -50,8 +55,10 @@ public class GiftCertificateService {
         return repository.save(entity);
     }
 
-    public List<GiftCertificateDto> findAll() {
-        return mapper.toDtoList((List<GiftCertificate>) repository.findAll());
+    public Page<GiftCertificateDto> findAll(Pageable pageable) {
+        Page<GiftCertificate> page = repository.findAll(pageable);
+        Page<GiftCertificateDto> dtos = new PageImpl<GiftCertificate>()
+        return page;
     }
 
     public GiftCertificateDto findById(Long id) {

@@ -3,9 +3,11 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,10 +29,12 @@ import java.util.Map;
 public class GiftCertificateController {
 
     private final GiftCertificateService service;
+    private final GiftCertificateHateoas hateoas;
 
     @Autowired
-    public GiftCertificateController(GiftCertificateService service) {
+    public GiftCertificateController(GiftCertificateService service, GiftCertificateHateoas hateoas) {
         this.service = service;
+        this.hateoas = hateoas;
     }
 
     /**
@@ -38,8 +42,10 @@ public class GiftCertificateController {
      * @throws ServiceException
      */
     @GetMapping
-    public List<GiftCertificateDto> getAllGiftCertificate() throws ServiceException {
-        return service.findAll();
+    public ResponseEntity<List<GiftCertificateDto>> getAllGiftCertificate(Pageable pageable) throws ServiceException {
+        List<GiftCertificateDto> list = service.findAll(pageable);
+        list.forEach(hateoas::addLinks);
+        return new ResponseEntity<>(list,HttpStatus.OK);
     }
 
     /**
@@ -84,7 +90,9 @@ public class GiftCertificateController {
      */
     @GetMapping("/{id}")
     public GiftCertificateDto getGiftCertificate(@PathVariable("id") @Min(1) long id) throws ServiceException {
-        return service.findById(id);
+        GiftCertificateDto dto = service.findById(id);
+        hateoas.addLinks(dto);
+        return dto;
     }
 
     /**

@@ -25,13 +25,14 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     @Override
     public User toEntity(UserDto dto) {
-        return builder.setName(dto.getName()).
+        return builder.setId(dto.getId()).setName(dto.getName()).
                 setOrders(giftMapper.toEntityList(dto.getOrders())).build();
     }
 
     @Override
     public UserDto toDto(User entity) {
         UserDto result = new UserDto();
+        result.setId(entity.getId());
         result.setName(entity.getName());
         result.setOrders(giftMapper.toDtoList(entity.getOrders()));
         return result;

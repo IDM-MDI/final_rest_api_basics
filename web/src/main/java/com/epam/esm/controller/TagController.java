@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.hateoas.impl.TagHateoas;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -23,10 +24,12 @@ import java.util.List;
 public class TagController {
 
     private final TagService service;
+    private final TagHateoas hateoas;
 
     @Autowired
-    public TagController(TagService service) {
+    public TagController(TagService service, TagHateoas hateoas) {
         this.service = service;
+        this.hateoas = hateoas;
     }
 
     /**
@@ -34,7 +37,9 @@ public class TagController {
      */
     @GetMapping
     public List<TagDto> getTags() {
-        return service.findAll();
+        List<TagDto> list = service.findAll();
+        list.forEach(hateoas::addLinks);
+        return list;
     }
 
     /**
@@ -68,6 +73,8 @@ public class TagController {
      */
     @GetMapping("/{id}")
     public TagDto getByIdTag(@PathVariable @Min(1) long id) throws ServiceException {
-        return service.findById(id);
+        TagDto dto = service.findById(id);
+        hateoas.addLinks(dto);
+        return dto;
     }
 }

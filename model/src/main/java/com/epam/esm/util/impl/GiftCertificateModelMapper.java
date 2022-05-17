@@ -23,7 +23,7 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
 
     @Override
     public GiftCertificate toEntity(GiftCertificateDto dto) {
-        return builder.setName(dto.getName()).setDescription(dto.getDescription()).
+        return builder.setId(dto.getId()).setName(dto.getName()).setDescription(dto.getDescription()).
                 setDuration(dto.getDuration()).setPrice(dto.getPrice()).
                 setCreate_date(dto.getCreate_date()).setUpdate_date(dto.getUpdate_date())
                 .setTagList(tagModelMapper.toEntityList(dto.getTags())).build();
@@ -32,6 +32,7 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
     @Override
     public GiftCertificateDto toDto(GiftCertificate entity) {
         GiftCertificateDto result = new GiftCertificateDto();
+        result.setId(entity.getId());
         result.setName(entity.getName());
         result.setDescription(entity.getDescription());
         result.setPrice(entity.getPrice());

@@ -21,13 +21,14 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
 
     @Override
     public Tag toEntity(TagDto dto) {
-        return builder.setName(dto.getName()).
+        return builder.setId(dto.getId()).setName(dto.getName()).
                 build();
     }
 
     @Override
     public TagDto toDto(Tag entity) {
         TagDto result = new TagDto();
+        result.setId(entity.getId());
         result.setName(entity.getName());
         return result;
     }
