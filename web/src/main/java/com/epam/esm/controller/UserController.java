@@ -1,7 +1,11 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.hateoas.impl.PageHateoas;
+import com.epam.esm.hateoas.impl.UserHateoas;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,18 +21,27 @@ import java.util.List;
 public class UserController {
 
     private final UserService service;
+    private final UserHateoas hateoas;
+    private final PageHateoas<UserDto> pageHateoas;
 
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserService service, UserHateoas hateoas, PageHateoas<UserDto> pageHateoas) {
         this.service = service;
+        this.hateoas = hateoas;
+        this.pageHateoas = pageHateoas;
     }
 
     /**
      * @return all tags from database
      */
     @GetMapping
-    public List<UserDto> getUsers() {
-        return service.findAll();
+    public DtoPage<UserDto> getUsers(@RequestParam(defaultValue = "0") Integer page,
+                                     @RequestParam(defaultValue = "10") Integer size,
+                                     @RequestParam(defaultValue = "id") String sort) {
+        DtoPage<UserDto> dtoPage = service.findAll(page,size,sort);
+        dtoPage.getContent().forEach(hateoas::addLinks);
+        pageHateoas.addUsersPage(dtoPage);
+        return dtoPage;
     }
 
     /**
@@ -65,7 +78,12 @@ public class UserController {
      * @return from database by id
      */
     @GetMapping("/{id}")
-    public UserDto getByIdUser(@PathVariable @Min(1) long id) {
-        return service.findById(id);
+    public DtoPage<UserDto> getByIdUser(@PathVariable @Min(1) long id) {
+        UserDto dto = service.findById(id);
+        DtoPage<UserDto> page = new DtoPage<>();
+        hateoas.addLinks(dto);
+        page.setContent(List.of(dto));
+        pageHateoas.addUserByIdPage(page);
+        return page;
     }
 }

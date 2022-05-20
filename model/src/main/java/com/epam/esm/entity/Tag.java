@@ -18,9 +18,6 @@ public class Tag {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-//    @ManyToMany(mappedBy = "tagList")
-//    private List<GiftCertificate> giftCertificates;
-
     @Column(name = "deleted")
     private boolean deleted;
 

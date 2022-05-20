@@ -1,13 +1,14 @@
 package com.epam.esm.controller;
 
 
+import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
+import com.epam.esm.hateoas.impl.PageHateoas;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,11 +31,14 @@ public class GiftCertificateController {
 
     private final GiftCertificateService service;
     private final GiftCertificateHateoas hateoas;
+    private final PageHateoas<GiftCertificateDto> pageHateoas;
+
 
     @Autowired
-    public GiftCertificateController(GiftCertificateService service, GiftCertificateHateoas hateoas) {
+    public GiftCertificateController(GiftCertificateService service, GiftCertificateHateoas hateoas, PageHateoas<GiftCertificateDto> pageHateoas) {
         this.service = service;
         this.hateoas = hateoas;
+        this.pageHateoas = pageHateoas;
     }
 
     /**
@@ -42,10 +46,13 @@ public class GiftCertificateController {
      * @throws ServiceException
      */
     @GetMapping
-    public ResponseEntity<List<GiftCertificateDto>> getAllGiftCertificate(Pageable pageable) throws ServiceException {
-        List<GiftCertificateDto> list = service.findAll(pageable);
-        list.forEach(hateoas::addLinks);
-        return new ResponseEntity<>(list,HttpStatus.OK);
+    public DtoPage<GiftCertificateDto> getAllGiftCertificate(@RequestParam(defaultValue = "0") Integer page,
+                                                          @RequestParam(defaultValue = "10") Integer size,
+                                                          @RequestParam(defaultValue = "id") String sort) throws ServiceException {
+        DtoPage<GiftCertificateDto> dtoPage = service.findAll(page,size,sort);
+        dtoPage.getContent().forEach(hateoas::addLinks);
+        pageHateoas.addGiftsPage(dtoPage);
+        return dtoPage;
     }
 
     /**
@@ -89,10 +96,13 @@ public class GiftCertificateController {
      * @throws ServiceException
      */
     @GetMapping("/{id}")
-    public GiftCertificateDto getGiftCertificate(@PathVariable("id") @Min(1) long id) throws ServiceException {
+    public DtoPage<GiftCertificateDto> getGiftCertificate(@PathVariable("id") @Min(1) long id) throws ServiceException {
         GiftCertificateDto dto = service.findById(id);
+        DtoPage<GiftCertificateDto> page = new DtoPage<>();
         hateoas.addLinks(dto);
-        return dto;
+        page.setContent(List.of(dto));
+        pageHateoas.addGiftByIdPage(page);
+        return page;
     }
 
     /**
