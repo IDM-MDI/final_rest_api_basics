@@ -16,17 +16,19 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     private final UserBuilder builder;
     private final GiftCertificateModelMapper giftMapper;
+    private final OrderModelMapper orderMapper;
 
     @Autowired
-    public UserModelMapper(UserBuilder builder, GiftCertificateModelMapper giftCertificateModelMapper) {
+    public UserModelMapper(UserBuilder builder, GiftCertificateModelMapper giftCertificateModelMapper, OrderModelMapper orderMapper) {
         this.builder = builder;
         this.giftMapper = giftCertificateModelMapper;
+        this.orderMapper = orderMapper;
     }
 
     @Override
     public User toEntity(UserDto dto) {
         return builder.setId(dto.getId()).setName(dto.getName()).
-                setOrders(giftMapper.toEntityList(dto.getOrders())).build();
+                setOrders(orderMapper.toEntityList(dto.getOrders())).build();
     }
 
     @Override
@@ -34,7 +36,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         UserDto result = new UserDto();
         result.setId(entity.getId());
         result.setName(entity.getName());
-        result.setOrders(giftMapper.toDtoList(entity.getOrders()));
+        result.setOrders(orderMapper.toDtoList(entity.getOrders()));
         return result;
     }
 

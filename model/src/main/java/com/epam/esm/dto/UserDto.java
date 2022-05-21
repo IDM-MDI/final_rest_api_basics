@@ -19,5 +19,5 @@ public class UserDto extends RepresentationModel<UserDto> {
     private long id;
     @Length(min = 2,max = 42)
     private String name;
-    private List<GiftCertificateDto> orders;
+    private List<OrderDto> orders;
 }

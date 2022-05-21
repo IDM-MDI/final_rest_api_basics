@@ -19,4 +19,6 @@ public class OrderDto implements Serializable {
 
     private BigDecimal price;
     private Date purchaseTime;
+    private GiftCertificateDto gift;
+    private UserDto user;
 }

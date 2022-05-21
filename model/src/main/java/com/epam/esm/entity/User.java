@@ -29,5 +29,5 @@ public class User extends RepresentationModel<User> {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "gift_id")
     )
-    private List<GiftCertificate> orders;
+    private List<Order> orders;
 }

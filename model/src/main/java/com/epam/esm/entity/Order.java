@@ -22,6 +22,16 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @MapsId("id")
+    @JoinColumn(name = "gift_id")
+    private GiftCertificate gift;
+
+    @ManyToOne
+    @MapsId("id")
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name = "price")
     private BigDecimal price;
 

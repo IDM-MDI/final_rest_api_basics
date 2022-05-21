@@ -1,9 +1,12 @@
 package com.epam.esm.generator;
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.UserRepository;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
@@ -23,11 +26,13 @@ public class DataGenerator {
     private static final String uriUser = "https://randomuser.me/api";
     private final TagRepository tagRepository;
     private final GiftCertificateRepository giftRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public DataGenerator(TagRepository tagRepository, GiftCertificateRepository giftRepository) {
+    public DataGenerator(TagRepository tagRepository, GiftCertificateRepository giftRepository, UserRepository userRepository) {
         this.tagRepository = tagRepository;
         this.giftRepository = giftRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -38,12 +43,29 @@ public class DataGenerator {
             if(giftRepository.count() == 0)
                 initGifts(words);
         }
-        if(giftRepository.count() == 0) {
+        if(userRepository.count() == 0) {
             initUsers(getUsernames());
         }
     }
 
     private void initUsers(List<String> usernames) {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            User user = new User();
+            List<Order> orders = new ArrayList<>();
+            List<GiftCertificate> gifts = getRandomGifts();
+            gifts.forEach(j-> {
+                Order order = new Order();
+                order.setGift(j);
+                order.setPrice(j.getPrice());
+                order.setUser(user);
+                orders.add(order);
+            });
+            user.setName(usernames.get(i));
+            user.setOrders(orders);
+            users.add(user);
+        }
+        userRepository.saveAll(users);
     }
 
     private void initGifts(String[] words) {
@@ -63,6 +85,16 @@ public class DataGenerator {
         giftRepository.saveAll(gifts);
     }
 
+    private void initTags(String[] words) {
+        List<Tag> tags = new ArrayList<>();
+        List<String> tagsWord = getCountWords(words,1000).stream().toList();
+        for (int i = 0; i < 1000; i++) {
+            Tag tag = new Tag();
+            tag.setName(tagsWord.get(i));
+            tags.add(tag);
+        }
+        tagRepository.saveAll(tags);
+    }
     @SneakyThrows
     private String[] getWords() {
         HttpClient client = HttpClient.newHttpClient();
@@ -97,16 +129,8 @@ public class DataGenerator {
                     .getAsJsonObject();
             String firstName = userObject.get(first).getAsJsonPrimitive().getAsString();
             String lastName = userObject.get(last).getAsJsonPrimitive().getAsString();
-            usernames.add(firstName + lastName);
+            usernames.add(firstName + " " + lastName);
         }
-//        JsonObject jo = userObject.getAsJsonObject();
-//        JsonElement results = jo.get("results");
-//        JsonElement resultJO = results.getAsJsonArray().get(0);
-//        JsonObject name = resultJO.getAsJsonObject();
-//        JsonElement nameElement = name.get("name");
-//        String fands = nameElement.getAsJsonObject().get("first").getAsJsonPrimitive().getAsString();
-//// Достаём firstName and lastName
-//        System.out.println(fands);
         return usernames;
     }
 
@@ -120,17 +144,6 @@ public class DataGenerator {
                 i = setWords.size()-1;
         }
         return setWords;
-    }
-
-    private void initTags(String[] words) {
-        List<Tag> tags = new ArrayList<>();
-        List<String> tagsWord = getCountWords(words,1000).stream().toList();
-        for (int i = 0; i < 1000; i++) {
-            Tag tag = new Tag();
-            tag.setName(tagsWord.get(i));
-            tags.add(tag);
-        }
-        tagRepository.saveAll(tags);
     }
 
     private long getRandomNumber(long min,long max) {
@@ -165,5 +178,17 @@ public class DataGenerator {
             tagOptional.ifPresent(tags::add);
         }
         return tags;
+    }
+    private List<GiftCertificate> getRandomGifts() {
+        long min = 0, max = 5;
+        long maxGifts = giftRepository.count();
+        List<GiftCertificate> gifts = new ArrayList<>();
+        long randomCount = getRandomNumber(min,max);
+        for (int j = 0; j < randomCount; j++) {
+            long randomNumber = getRandomNumber(min, maxGifts);
+            Optional<GiftCertificate> optionalGift = giftRepository.findById(randomNumber);
+            optionalGift.ifPresent(gifts::add);
+        }
+        return gifts;
     }
 }

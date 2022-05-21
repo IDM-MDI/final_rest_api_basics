@@ -2,6 +2,7 @@ package com.epam.esm.builder.impl;
 
 import com.epam.esm.builder.ModelBuilder;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ public class UserBuilder implements ModelBuilder {
 
     private Long id;
     private String name;
-    private List<GiftCertificate> orders;
+    private List<Order> orders;
 
 
     public UserBuilder setId(Long id) {
@@ -26,7 +27,7 @@ public class UserBuilder implements ModelBuilder {
         return this;
     }
 
-    public UserBuilder setOrders(List<GiftCertificate> orders) {
+    public UserBuilder setOrders(List<Order> orders) {
         this.orders = orders;
         return this;
     }
