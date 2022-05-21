@@ -14,7 +14,7 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 public class TagDto extends RepresentationModel<TagDto> {
     @Min(1)
-    private long id;
+    private Long id;
     @Length(min = 2,max = 42)
     private String name;
 }

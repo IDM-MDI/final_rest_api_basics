@@ -2,7 +2,6 @@ package com.epam.esm.controller;
 
 
 import com.epam.esm.dto.DtoPage;
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.impl.PageHateoas;
@@ -10,7 +9,6 @@ import com.epam.esm.hateoas.impl.TagHateoas;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.List;
 
 
 @RestController
@@ -81,11 +78,18 @@ public class TagController {
      */
     @GetMapping("/{id}")
     public DtoPage<TagDto> getByIdTag(@PathVariable @Min(1) long id) {
-        TagDto dto = service.findById(id);
-        DtoPage<TagDto> page = new DtoPage<>();
-        hateoas.addLinks(dto);
-        page.setContent(List.of(dto));
-        pageHateoas.addTagByIdPage(page);
+        DtoPage<TagDto> page = service.findById(id);
+        page.getContent().forEach(hateoas::addLinks);
+        pageHateoas.addTagGetBackPage(page);
         return page;
     }
+
+    @GetMapping("/search")
+    public DtoPage<TagDto> search(TagDto dto) {
+        DtoPage<TagDto> page = service.findAllByParam(dto);
+        page.getContent().forEach(hateoas::addLinks);
+        pageHateoas.addTagGetBackPage(page);
+        return page;
+    }
+
 }

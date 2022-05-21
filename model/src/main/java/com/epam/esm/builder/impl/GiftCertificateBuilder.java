@@ -12,11 +12,11 @@ import java.util.List;
 
 @Component
 public class GiftCertificateBuilder implements ModelBuilder {
-    private long id;
+    private Long id;
     private String name;
     private String description;
     private BigDecimal price;
-    private int duration;
+    private Integer duration;
     private LocalDateTime create_date;
     private LocalDateTime update_date;
     private boolean deleted;
@@ -43,7 +43,7 @@ public class GiftCertificateBuilder implements ModelBuilder {
         return this;
     }
 
-    public GiftCertificateBuilder setDuration(int duration) {
+    public GiftCertificateBuilder setDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
@@ -58,7 +58,7 @@ public class GiftCertificateBuilder implements ModelBuilder {
         return this;
     }
 
-    public GiftCertificateBuilder setId(long id) {
+    public GiftCertificateBuilder setId(Long id) {
         this.id = id;
         return this;
     }

@@ -8,6 +8,7 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.util.impl.TagModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -56,14 +58,29 @@ public class TagService {
         dtoPage.setSortBy(sort);
         return dtoPage;
     }
-
-    public TagDto findById(Long id) {
-        return mapper.toDto(repository.findById(id).get());
+    public DtoPage<TagDto> findAllByParam(TagDto dto) {
+        Tag tag = mapper.toEntity(dto);
+        List<Tag> tagList = repository.findAll(Example.of(tag));
+        DtoPage<TagDto> dtoPage = new DtoPage<>();
+        dtoPage.setContent(mapper.toDtoList(tagList));
+        return dtoPage;
     }
 
-    public List<Tag> findAllByName(List<TagDto> dtos) {
+    public DtoPage<TagDto> findById(Long id) {
+        DtoPage<TagDto> dtoPage = new DtoPage<>();
+        dtoPage.setContent(List.of(mapper.toDto(repository.findById(id).get())));
+        return dtoPage;
+    }
+
+    public List<Tag> saveAllByName(List<TagDto> dtos) {
         List<Tag> validTags = new ArrayList<>();
         dtos.forEach(i -> validTags.add(save(i)));
         return validTags;
+    }
+
+    public List<Tag> findAllByName(List<TagDto> dtos) {
+        List<Tag> result = new ArrayList<>();
+        dtos.forEach(i-> result.add(repository.findByName(i.getName())));
+        return result;
     }
 }

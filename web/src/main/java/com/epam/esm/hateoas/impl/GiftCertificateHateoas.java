@@ -1,6 +1,7 @@
 package com.epam.esm.hateoas.impl;
 
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.HateoasDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,11 @@ public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
             updateLink(dto);
             deleteLink(dto);
             dto.getTags().forEach(tagHateoas::addLinks);
-        } catch (ServiceException e) {
+        } catch (ServiceException | RepositoryException e) {
             throw new RuntimeException(e);
         }
     }
-    private void updateLink(GiftCertificateDto dto) throws ServiceException {
+    private void updateLink(GiftCertificateDto dto) throws RepositoryException {
         dto.add(linkTo(
                 methodOn(GIFT_CERTIFICATE_CONTROLLER)
                         .updateGiftCertificate(dto.getId(), dto))

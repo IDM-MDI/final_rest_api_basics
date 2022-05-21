@@ -5,18 +5,27 @@ import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.GiftTagRepository;
 import com.epam.esm.util.impl.GiftCertificateModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+
+import static com.epam.esm.validator.GiftValidator.*;
+
+
 
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -24,40 +33,47 @@ import java.util.Map;
 public class GiftCertificateService {
 
     private final GiftCertificateRepository repository;
+    private final GiftTagRepository giftTagRepository;
     private final GiftCertificateModelMapper mapper;
     private final TagService tagService;
 
     @Autowired
-    public GiftCertificateService(GiftCertificateRepository repository, Map<String, List<String>> allColumns, GiftCertificateModelMapper mapper, TagService tagService) {
+    public GiftCertificateService(GiftCertificateRepository repository, GiftTagRepository giftTagRepository, GiftCertificateModelMapper mapper, TagService tagService) {
         this.repository = repository;
+        this.giftTagRepository = giftTagRepository;
         this.mapper = mapper;
         this.tagService = tagService;
     }
 
-    public GiftCertificate save(GiftCertificateDto dto) {
+    public void save(GiftCertificateDto dto) {
         GiftCertificate entity = mapper.toEntity(dto);
         GiftCertificate giftFromDB = repository.findByName(entity.getName());
 
         if(giftFromDB == null) {
             List<TagDto> tagDtos = dto.getTags();
-            entity.setTagList(tagService.findAllByName(tagDtos));
-            return repository.save(entity);
-        }
-        else {
-            return giftFromDB;
+            entity.setTagList(tagService.saveAllByName(tagDtos));
+            repository.save(entity);
         }
     }
 
-    public long delete(Long id) {
-        return repository.setDelete(id);
+    public void delete(Long id) {
+        repository.setDelete(id);
     }
 
-    public GiftCertificate update(GiftCertificateDto dto, Long id) {
-        List<TagDto> tagDtos = dto.getTags();
+    @Transactional(rollbackFor = SQLException.class)
+    public void update(GiftCertificateDto dto, Long id) throws RepositoryException {
+        Optional<GiftCertificate> optionalGift = repository.findById(id);
+        if(optionalGift.isEmpty()) {
+            throw new RepositoryException();
+        }
+        GiftCertificate giftFromDB = optionalGift.get();
         GiftCertificate entity = mapper.toEntity(dto);
-        entity.setId(id);
-        entity.setTagList(tagService.findAllByName(tagDtos));
-        return repository.save(entity);
+        uniteEntities(entity,giftFromDB);
+        if(dto.getTags() != null) {
+            giftFromDB.getTagList().forEach(i-> giftTagRepository.setDeleteByGift(i.getId()));
+            entity.setTagList(tagService.saveAllByName(dto.getTags()));
+        }
+        repository.save(entity);
     }
 
     public DtoPage<GiftCertificateDto> findAll(int page, int size, String sort) {
@@ -74,14 +90,41 @@ public class GiftCertificateService {
         return mapper.toDto(repository.findById(id).get());
     }
 
-    public List<GiftCertificateDto> findByParam(Map<String,String> param) {
-//        return mapper.toDtoList(repository.findGiftCertificatesByIdAndNameAndDescriptionAndPriceAndDurationAndCreate_dateAndUpdate_date(
-//                Long.parseLong(param.get("id")),
-//                param.get("name"),param.get("description"),
-//                new BigDecimal(param.get("price")), Integer.parseInt(param.get("duration")),
-//                LocalDateTime.parse(param.get("createDate")),LocalDateTime.parse(param.get("updateDate"))
-//        ));
-        return null;
+
+    public DtoPage<GiftCertificateDto> findAllByParam(GiftCertificateDto dto,String tags) {
+        DtoPage<GiftCertificateDto> dtoPage = new DtoPage<>();
+        GiftCertificate gift = mapper.toEntity(dto);
+        gift.setTagList(null);
+        List<GiftCertificate> result = null;
+        if(isGiftEmpty(gift))
+            result = new ArrayList<>();
+        else
+            result = repository.findAll(Example.of(gift));
+
+        if(!isTagsEmpty(tags))
+            result = findByTagAndEntity(result,tags);
+
+        dtoPage.setContent(mapper.toDtoList(result));
+        return dtoPage;
     }
 
+
+    private List<TagDto> createTagsByString(String tags) {
+        List<TagDto> result = new ArrayList<>();
+        Arrays.stream(tags.split(",")).toList().forEach(i-> {
+            TagDto tag = new TagDto();
+            tag.setName(i.trim());
+            result.add(tag);
+        });
+        return result;
+    }
+
+    private List<GiftCertificate> findByTagAndEntity(List<GiftCertificate> find, String tags) {
+        List<Tag> tagList = tagService.findAllByName(createTagsByString(tags));
+        List<GiftCertificate> giftWithTag = repository.findByTagListIn(tagList);
+        if(find == null || find.size() == 0)
+            return giftWithTag;
+        else
+            return findEquals(find,giftWithTag);
+    }
 }

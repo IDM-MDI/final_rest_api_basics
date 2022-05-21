@@ -1,12 +1,10 @@
 package com.epam.esm.hateoas.impl;
 
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.HateoasDTO;
 import org.springframework.stereotype.Component;
 
-import static com.epam.esm.controller.ControllerClass.GIFT_CERTIFICATE_CONTROLLER;
 import static com.epam.esm.controller.ControllerClass.TAG_CONTROLLER;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;

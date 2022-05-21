@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TagBuilder implements ModelBuilder {
-    private long id;
+    private Long id;
     private String name;
     private boolean isDeleted;
 
-    public TagBuilder setId(long id) {
+    public TagBuilder setId(Long id) {
         this.id = id;
         return this;
     }

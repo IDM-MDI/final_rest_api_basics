@@ -4,6 +4,8 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +19,8 @@ import java.util.*;
 
 @Component
 public class DataGenerator {
-    private static final String uri = "http://www-personal.umich.edu/~jlawler/wordlist";
+    private static final String uriWord = "http://www-personal.umich.edu/~jlawler/wordlist";
+    private static final String uriUser = "https://randomuser.me/api";
     private final TagRepository tagRepository;
     private final GiftCertificateRepository giftRepository;
 
@@ -29,15 +32,18 @@ public class DataGenerator {
 
 
     public void fillRandomData() {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .build();
-        String[] words = getWords(client, request);
-        if(tagRepository.count() == 0)
+        if(tagRepository.count() == 0) {
+            String[] words = getWords();
             initTags(words);
-        if(giftRepository.count() == 0)
-            initGifts(words);
+            if(giftRepository.count() == 0)
+                initGifts(words);
+        }
+        if(giftRepository.count() == 0) {
+            initUsers(getUsernames());
+        }
+    }
+
+    private void initUsers(List<String> usernames) {
     }
 
     private void initGifts(String[] words) {
@@ -58,11 +64,50 @@ public class DataGenerator {
     }
 
     @SneakyThrows
-    private String[] getWords(HttpClient client, HttpRequest request) {
+    private String[] getWords() {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(uriWord))
+                .build();
         HttpResponse<String> response = client.send(request,
                 HttpResponse.BodyHandlers.ofString());
         String word = response.body();
         return word.split("\r\n");
+    }
+    @SneakyThrows
+    private List<String> getUsernames() {
+        String results = "results", name = "name", first = "first", last = "last";
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(uriUser))
+                .build();
+        List<String> usernames = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            HttpResponse<String> response = client.send(request,
+                    HttpResponse.BodyHandlers.ofString());
+
+            String user = response.body();
+
+            JsonObject userObject = JsonParser.parseString(user)
+                    .getAsJsonObject()
+                    .get(results)
+                    .getAsJsonArray().get(0)
+                    .getAsJsonObject()
+                    .get(name)
+                    .getAsJsonObject();
+            String firstName = userObject.get(first).getAsJsonPrimitive().getAsString();
+            String lastName = userObject.get(last).getAsJsonPrimitive().getAsString();
+            usernames.add(firstName + lastName);
+        }
+//        JsonObject jo = userObject.getAsJsonObject();
+//        JsonElement results = jo.get("results");
+//        JsonElement resultJO = results.getAsJsonArray().get(0);
+//        JsonObject name = resultJO.getAsJsonObject();
+//        JsonElement nameElement = name.get("name");
+//        String fands = nameElement.getAsJsonObject().get("first").getAsJsonPrimitive().getAsString();
+//// Достаём firstName and lastName
+//        System.out.println(fands);
+        return usernames;
     }
 
     private Set<String> getCountWords(String[] words,int count) {

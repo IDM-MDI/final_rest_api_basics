@@ -3,6 +3,8 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
 import com.epam.esm.hateoas.impl.PageHateoas;
@@ -81,11 +83,10 @@ public class GiftCertificateController {
      * @param id from path
      * @param entity from body
      * @return update status
-     * @throws ServiceException
      */
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateGiftCertificate(@PathVariable("id") @Min(1) long id,
-                                                        @Valid @RequestBody GiftCertificateDto entity) throws ServiceException {
+                                                        @Valid @RequestBody GiftCertificateDto entity) throws RepositoryException {
         service.update(entity,id);
         return ResponseEntity.status(HttpStatus.CREATED).body("updated");
     }
@@ -101,17 +102,21 @@ public class GiftCertificateController {
         DtoPage<GiftCertificateDto> page = new DtoPage<>();
         hateoas.addLinks(dto);
         page.setContent(List.of(dto));
-        pageHateoas.addGiftByIdPage(page);
+        pageHateoas.addGiftGetBackPage(page);
         return page;
     }
 
     /**
-     * @param param - parameter of requst param
+     * @param dto - parameter of requst param
      *              find by param
      * @return find dto
      */
-    @GetMapping("/filter")
-    public List<GiftCertificateDto> getByFilter(@RequestParam Map<String,String> param) {
-        return service.findByParam(param);
+    @GetMapping("/search")
+    public DtoPage<GiftCertificateDto> search(GiftCertificateDto dto,
+                                              @RequestParam(defaultValue = "") String tagList) {
+        DtoPage<GiftCertificateDto> page = service.findAllByParam(dto,tagList);
+        page.getContent().forEach(hateoas::addLinks);
+        pageHateoas.addGiftGetBackPage(page);
+        return page;
     }
 }

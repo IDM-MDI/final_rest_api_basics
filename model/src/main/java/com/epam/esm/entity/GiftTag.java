@@ -14,7 +14,17 @@ import javax.persistence.*;
 public class GiftTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
+
+    @ManyToOne
+    @MapsId("id")
+    @JoinColumn(name = "gift_id")
+    private GiftCertificate gift;
+
+    @ManyToOne
+    @MapsId("id")
+    @JoinColumn(name = "tag_id")
+    private Tag tag;
 
     @Column(name = "deleted")
     private boolean deleted;

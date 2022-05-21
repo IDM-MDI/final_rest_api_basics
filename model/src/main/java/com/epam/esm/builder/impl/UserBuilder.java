@@ -11,12 +11,12 @@ import java.util.List;
 @Component
 public class UserBuilder implements ModelBuilder {
 
-    private long id;
+    private Long id;
     private String name;
     private List<GiftCertificate> orders;
 
 
-    public UserBuilder setId(long id) {
+    public UserBuilder setId(Long id) {
         this.id = id;
         return this;
     }

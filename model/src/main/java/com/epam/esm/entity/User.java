@@ -15,7 +15,7 @@ import java.util.List;
 public class User extends RepresentationModel<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "name")
     private String name;

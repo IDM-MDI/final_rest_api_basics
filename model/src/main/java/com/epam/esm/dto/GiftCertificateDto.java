@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
     @Min(1)
-    private long id;
+    private Long id;
 
     @Length(min = 2,max = 42)
     private String name;
@@ -26,7 +26,7 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     @Min(1)
     private BigDecimal price;
     @Min(1)
-    private int duration;
+    private Integer duration;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime create_date;

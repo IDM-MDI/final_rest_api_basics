@@ -76,14 +76,13 @@ public class PageHateoas<T> {
         addLinkUser(dtoPage,thisPage,thisSize,id,SORT_BY_ID);
         addLinkUser(dtoPage,thisPage,thisSize,name,SORT_BY_NAME);
     }
-
-    public void addGiftByIdPage(DtoPage<T> page) {
+    public void addGiftGetBackPage(DtoPage<T> page) {
         addLinkGift(page,0,10,id,GET_BACK);
     }
-    public void addTagByIdPage(DtoPage<T> page) {
+    public void addTagGetBackPage(DtoPage<T> page) {
         addLinkTag(page,0,10,id,GET_BACK);
     }
-    public void addUserByIdPage(DtoPage<T> page) {
+    public void addUserGetBackPage(DtoPage<T> page) {
         addLinkUser(page,0,10,id,GET_BACK);
     }
     private void init(DtoPage<T> dtoPage) {
@@ -99,6 +98,7 @@ public class PageHateoas<T> {
                 getAllGiftCertificate(number, size, sort)).
                 withRel(rel));
     }
+
     @SneakyThrows
     private void addLinkTag(DtoPage<T> dtoPage, int number, int size, String sort, String rel) {
         dtoPage.add(linkTo(methodOn(TAG_CONTROLLER).

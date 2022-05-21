@@ -1,7 +1,6 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.DtoPage;
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.impl.PageHateoas;
@@ -83,7 +82,7 @@ public class UserController {
         DtoPage<UserDto> page = new DtoPage<>();
         hateoas.addLinks(dto);
         page.setContent(List.of(dto));
-        pageHateoas.addUserByIdPage(page);
+        pageHateoas.addUserGetBackPage(page);
         return page;
     }
 }

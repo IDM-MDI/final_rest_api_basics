@@ -20,7 +20,7 @@ import java.util.List;
 public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "name", unique = true, nullable = false)
     private String name;
@@ -32,7 +32,7 @@ public class GiftCertificate {
     private BigDecimal price;
 
     @Column(name = "duration")
-    private int duration;
+    private Integer duration;
 
     @Column(name = "create_date",nullable = false, updatable = false)
     @CreatedDate
