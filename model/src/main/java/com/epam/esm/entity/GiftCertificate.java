@@ -41,7 +41,7 @@ public class GiftCertificate {
     @Column(name = "update_date")
     @LastModifiedDate
     private LocalDateTime updateDate;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "gift_tag",
             joinColumns = @JoinColumn(name = "gift_id"),

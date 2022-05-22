@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -35,34 +36,32 @@ public class DataGenerator {
         this.userRepository = userRepository;
     }
 
-
+    @Transactional
     public void fillRandomData() {
-        if(tagRepository.count() == 0) {
-            String[] words = getWords();
+        long tagCount = tagRepository.count();
+        long giftCount = giftRepository.count();
+        long userCount = userRepository.count();
+        String[] words = null;
+        if(tagCount == 0 || giftCount == 0 || userCount == 0)
+            words = getWords();
+
+        if(tagCount == 0)
             initTags(words);
-            if(giftRepository.count() == 0)
-                initGifts(words);
-        }
-        if(userRepository.count() == 0) {
-            initUsers(getUsernames());
-        }
+
+        if(giftCount == 0)
+            initGifts(words);
+
+        if(userCount == 0)
+            initUsers(getUsernames(words));
     }
 
     private void initUsers(List<String> usernames) {
         List<User> users = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
+        for (String username : usernames) {
             User user = new User();
-            List<Order> orders = new ArrayList<>();
             List<GiftCertificate> gifts = getRandomGifts();
-            gifts.forEach(j-> {
-                Order order = new Order();
-                order.setGift(j);
-                order.setPrice(j.getPrice());
-                order.setUser(user);
-                orders.add(order);
-            });
-            user.setName(usernames.get(i));
-            user.setOrders(orders);
+            user.setName(username);
+            user.setOrders(gifts);
             users.add(user);
         }
         userRepository.saveAll(users);
@@ -73,12 +72,12 @@ public class DataGenerator {
         long minPrice = 1000, maxPrice = 100000000;
         List<GiftCertificate> gifts = new ArrayList<>();
         List<String> giftWords = getCountWords(words,10000).stream().toList();
-        for (int i = 0; i < 10000; i++) {
+        for (String giftWord : giftWords) {
             GiftCertificate gift = new GiftCertificate();
-            gift.setName(giftWords.get(i));
+            gift.setName(giftWord);
             gift.setTagList(getRandomTags());
-            gift.setDuration((int) getRandomNumber(minDuration,maxDuration));
-            gift.setPrice(new BigDecimal(getRandomNumber(minPrice,maxPrice)));
+            gift.setDuration((int) getRandomNumber(minDuration, maxDuration));
+            gift.setPrice(new BigDecimal(getRandomNumber(minPrice, maxPrice)));
             gift.setDescription(getRandomDescription(words));
             gifts.add(gift);
         }
@@ -88,9 +87,9 @@ public class DataGenerator {
     private void initTags(String[] words) {
         List<Tag> tags = new ArrayList<>();
         List<String> tagsWord = getCountWords(words,1000).stream().toList();
-        for (int i = 0; i < 1000; i++) {
+        for (String s : tagsWord) {
             Tag tag = new Tag();
-            tag.setName(tagsWord.get(i));
+            tag.setName(s);
             tags.add(tag);
         }
         tagRepository.saveAll(tags);
@@ -107,29 +106,17 @@ public class DataGenerator {
         return word.split("\r\n");
     }
     @SneakyThrows
-    private List<String> getUsernames() {
-        String results = "results", name = "name", first = "first", last = "last";
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uriUser))
-                .build();
+    private List<String> getUsernames(String[] words) {
+        String mr = "Mr ", mrs = "Mrs ";
         List<String> usernames = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            HttpResponse<String> response = client.send(request,
-                    HttpResponse.BodyHandlers.ofString());
-
-            String user = response.body();
-
-            JsonObject userObject = JsonParser.parseString(user)
-                    .getAsJsonObject()
-                    .get(results)
-                    .getAsJsonArray().get(0)
-                    .getAsJsonObject()
-                    .get(name)
-                    .getAsJsonObject();
-            String firstName = userObject.get(first).getAsJsonPrimitive().getAsString();
-            String lastName = userObject.get(last).getAsJsonPrimitive().getAsString();
-            usernames.add(firstName + " " + lastName);
+        List<String> exampleUsernames = getCountWords(words,1000).stream().toList();
+        for (String exampleUsername : exampleUsernames) {
+            String user;
+            if (getRandomNumber(0, 1) == 0)
+                user = mr + exampleUsername;
+            else
+                user = mrs + exampleUsername;
+            usernames.add(user);
         }
         return usernames;
     }
@@ -190,5 +177,15 @@ public class DataGenerator {
             optionalGift.ifPresent(gifts::add);
         }
         return gifts;
+    }
+
+    private boolean isProbablyArabic(String s) {
+        for (int i = 0; i < s.length();) {
+            int c = s.codePointAt(i);
+            if (c >= 0x0600 && c <= 0x06E0)
+                return true;
+            i += Character.charCount(c);
+        }
+        return false;
     }
 }

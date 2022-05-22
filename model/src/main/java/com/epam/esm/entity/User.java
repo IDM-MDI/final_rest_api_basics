@@ -3,7 +3,6 @@ package com.epam.esm.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
 @Table(name = "user")
 @Getter @Setter
 @NoArgsConstructor
-public class User extends RepresentationModel<User> {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,11 +22,11 @@ public class User extends RepresentationModel<User> {
     @Column(name = "deleted")
     private boolean deleted;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "order",
+            name = "user_order",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "gift_id")
     )
-    private List<Order> orders;
+    private List<GiftCertificate> orders;
 }

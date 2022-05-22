@@ -16,19 +16,17 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     private final UserBuilder builder;
     private final GiftCertificateModelMapper giftMapper;
-    private final OrderModelMapper orderMapper;
 
     @Autowired
-    public UserModelMapper(UserBuilder builder, GiftCertificateModelMapper giftCertificateModelMapper, OrderModelMapper orderMapper) {
+    public UserModelMapper(UserBuilder builder, GiftCertificateModelMapper giftMapper) {
         this.builder = builder;
-        this.giftMapper = giftCertificateModelMapper;
-        this.orderMapper = orderMapper;
+        this.giftMapper = giftMapper;
     }
 
     @Override
     public User toEntity(UserDto dto) {
         return builder.setId(dto.getId()).setName(dto.getName()).
-                setOrders(orderMapper.toEntityList(dto.getOrders())).build();
+                setOrders(giftMapper.toEntityList(dto.getOrders())).build();
     }
 
     @Override
@@ -36,22 +34,18 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         UserDto result = new UserDto();
         result.setId(entity.getId());
         result.setName(entity.getName());
-        result.setOrders(orderMapper.toDtoList(entity.getOrders()));
+        result.setOrders(giftMapper.toDtoList(entity.getOrders()));
         return result;
     }
 
     @Override
     public List<User> toEntityList(List<UserDto> dtoList) {
-        List<User> result = new ArrayList<>();
-        dtoList.forEach(i -> result.add(toEntity(i)));
-        return result;
+        return dtoList.stream().map(this::toEntity).toList();
     }
 
     @Override
     public List<UserDto> toDtoList(List<User> entityList) {
-        List<UserDto> result = new ArrayList<>();
-        entityList.forEach(i -> result.add(toDto(i)));
-        return result;
+        return entityList.stream().map(this::toDto).toList();
     }
 }
 
