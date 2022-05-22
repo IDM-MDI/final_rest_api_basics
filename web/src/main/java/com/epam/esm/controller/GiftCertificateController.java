@@ -6,6 +6,7 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.WebException;
 import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
 import com.epam.esm.hateoas.impl.PageHateoas;
 import com.epam.esm.service.GiftCertificateService;
@@ -45,14 +46,15 @@ public class GiftCertificateController {
 
     /**
      * @return all dto
-     * @throws ServiceException
      */
     @GetMapping
     public DtoPage<GiftCertificateDto> getAllGiftCertificate(@RequestParam(defaultValue = "0") Integer page,
                                                           @RequestParam(defaultValue = "10") Integer size,
-                                                          @RequestParam(defaultValue = "id") String sort) throws ServiceException {
+                                                          @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
         DtoPage<GiftCertificateDto> dtoPage = service.findAll(page,size,sort);
-        dtoPage.getContent().forEach(hateoas::addLinks);
+        for (GiftCertificateDto dto : dtoPage.getContent()) {
+            hateoas.addLinks(dto);
+        }
         pageHateoas.addGiftsPage(dtoPage);
         return dtoPage;
     }
@@ -60,10 +62,9 @@ public class GiftCertificateController {
     /**
      * @param entity from body parameter
      * @return create status
-     * @throws ServiceException
      */
     @PostMapping
-    public ResponseEntity<String> addGiftCertificate(@Valid @RequestBody GiftCertificateDto entity) throws ServiceException {
+    public ResponseEntity<String> addGiftCertificate(@Valid @RequestBody GiftCertificateDto entity) {
         service.save(entity);
         return ResponseEntity.status(HttpStatus.CREATED).body("created");
     }
@@ -71,10 +72,9 @@ public class GiftCertificateController {
     /**
      * @param id from path
      * @return delete status
-     * @throws ServiceException
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteGiftCertificate(@PathVariable @Min(1) long id) throws ServiceException {
+    public ResponseEntity<String> deleteGiftCertificate(@PathVariable @Min(1) long id) {
         service.delete(id);
         return ResponseEntity.status(HttpStatus.CREATED).body("deleted");
     }
@@ -94,14 +94,13 @@ public class GiftCertificateController {
     /**
      * @param id from path
      * @return find by id
-     * @throws ServiceException
      */
     @GetMapping("/{id}")
-    public DtoPage<GiftCertificateDto> getGiftCertificate(@PathVariable("id") @Min(1) long id) throws ServiceException {
-        GiftCertificateDto dto = service.findById(id);
-        DtoPage<GiftCertificateDto> page = new DtoPage<>();
-        hateoas.addLinks(dto);
-        page.setContent(List.of(dto));
+    public DtoPage<GiftCertificateDto> getGiftCertificate(@PathVariable("id") @Min(1) long id) throws RepositoryException, ServiceException {
+        DtoPage<GiftCertificateDto> page = service.findById(id);
+        for (GiftCertificateDto dto : page.getContent()) {
+            hateoas.addLinks(dto);
+        }
         pageHateoas.addGiftGetBackPage(page);
         return page;
     }
@@ -113,9 +112,11 @@ public class GiftCertificateController {
      */
     @GetMapping("/search")
     public DtoPage<GiftCertificateDto> search(GiftCertificateDto dto,
-                                              @RequestParam(defaultValue = "") String tagList) {
+                                              @RequestParam(defaultValue = "") String tagList) throws ServiceException, RepositoryException {
         DtoPage<GiftCertificateDto> page = service.findAllByParam(dto,tagList);
-        page.getContent().forEach(hateoas::addLinks);
+        for (GiftCertificateDto giftCertificateDto : page.getContent()) {
+            hateoas.addLinks(giftCertificateDto);
+        }
         pageHateoas.addGiftGetBackPage(page);
         return page;
     }

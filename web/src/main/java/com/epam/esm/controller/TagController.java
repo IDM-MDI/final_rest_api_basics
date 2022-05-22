@@ -3,7 +3,9 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.WebException;
 import com.epam.esm.hateoas.impl.PageHateoas;
 import com.epam.esm.hateoas.impl.TagHateoas;
 import com.epam.esm.service.TagService;
@@ -41,9 +43,11 @@ public class TagController {
     @GetMapping
     public DtoPage<TagDto> getTags(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "10") Integer size,
-                                @RequestParam(defaultValue = "id") String sort) {
+                                @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
         DtoPage<TagDto> dtoPage = service.findAll(page,size,sort);
-        dtoPage.getContent().forEach(hateoas::addLinks);
+        for (TagDto tagDto : dtoPage.getContent()) {
+            hateoas.addLinks(tagDto);
+        }
         pageHateoas.addTagsPage(dtoPage);
         return dtoPage;
     }
@@ -52,10 +56,9 @@ public class TagController {
      * @param entity - from body
      * creating tag to database
      * @return create status
-     * @throws ServiceException
      */
     @PostMapping
-    public ResponseEntity<String> addTag(@Valid @RequestBody TagDto entity) throws ServiceException {
+    public ResponseEntity<String> addTag(@Valid @RequestBody TagDto entity) {
         service.save(entity);
         return ResponseEntity.status(HttpStatus.CREATED).body("created");
     }
@@ -64,10 +67,9 @@ public class TagController {
      * @param id from path
      * delete tag by id
      * @return delete status
-     * @throws ServiceException
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTag(@PathVariable @Min(1) long id) throws ServiceException {
+    public ResponseEntity<String> deleteTag(@PathVariable @Min(1) long id) {
         service.delete(id);
         return ResponseEntity.status(HttpStatus.CREATED).body("deleted");
     }
@@ -77,17 +79,21 @@ public class TagController {
      * @return from database by id
      */
     @GetMapping("/{id}")
-    public DtoPage<TagDto> getByIdTag(@PathVariable @Min(1) long id) {
+    public DtoPage<TagDto> getByIdTag(@PathVariable @Min(1) long id) throws ServiceException, RepositoryException {
         DtoPage<TagDto> page = service.findById(id);
-        page.getContent().forEach(hateoas::addLinks);
+        for (TagDto tagDto : page.getContent()) {
+            hateoas.addLinks(tagDto);
+        }
         pageHateoas.addTagGetBackPage(page);
         return page;
     }
 
     @GetMapping("/search")
-    public DtoPage<TagDto> search(TagDto dto) {
+    public DtoPage<TagDto> search(TagDto dto) throws ServiceException, RepositoryException {
         DtoPage<TagDto> page = service.findAllByParam(dto);
-        page.getContent().forEach(hateoas::addLinks);
+        for (TagDto tagDto : page.getContent()) {
+            hateoas.addLinks(tagDto);
+        }
         pageHateoas.addTagGetBackPage(page);
         return page;
     }

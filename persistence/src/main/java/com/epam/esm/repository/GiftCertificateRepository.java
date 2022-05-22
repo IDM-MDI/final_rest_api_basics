@@ -14,7 +14,7 @@ import java.util.List;
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Long> {
     @Modifying
     @Query("update GiftCertificate gf set gf.deleted = 1 where gf.id = :id")
-    long setDelete(@Param("id") Long id);
+    void setDelete(@Param("id") Long id);
 
     GiftCertificate findByName(String name);
     List<GiftCertificate> findByTagListIn(List<Tag> tagList);

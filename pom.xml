@@ -6,7 +6,6 @@
 	<modules>
 		<module>web</module>
 		<module>model</module>
-		<module>logging</module>
 		<module>service</module>
 		<module>persistence</module>
 	</modules>

@@ -1,7 +1,8 @@
 package com.epam.esm.hateoas.impl;
 
 import com.epam.esm.dto.DtoPage;
-import lombok.SneakyThrows;
+import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.ServiceException;
 import org.springframework.stereotype.Component;
 
 import static com.epam.esm.controller.ControllerClass.*;
@@ -32,7 +33,7 @@ public class PageHateoas<T> {
     private final String price = "price";
 
 
-    public void addGiftsPage(DtoPage<T> dtoPage) {
+    public void addGiftsPage(DtoPage<T> dtoPage) throws ServiceException, RepositoryException {
         init(dtoPage);
         if(prevPage >= 0)
             addLinkGift(dtoPage,prevPage,thisSize,thisSort,PREVIOUS_PAGE);
@@ -47,7 +48,7 @@ public class PageHateoas<T> {
         addLinkGift(dtoPage,thisPage,thisSize,name,SORT_BY_NAME);
         addLinkGift(dtoPage,thisPage,thisSize,price,SORT_BY_PRICE);
     }
-    public void addTagsPage(DtoPage<T> dtoPage) {
+    public void addTagsPage(DtoPage<T> dtoPage) throws ServiceException, RepositoryException {
         init(dtoPage);
         if(prevPage >= 0)
             addLinkTag(dtoPage,prevPage,thisSize,thisSort,PREVIOUS_PAGE);
@@ -62,7 +63,7 @@ public class PageHateoas<T> {
         addLinkTag(dtoPage,thisPage,thisSize,name,SORT_BY_NAME);
     }
 
-    public void addUsersPage(DtoPage<T> dtoPage) {
+    public void addUsersPage(DtoPage<T> dtoPage) throws ServiceException, RepositoryException {
         init(dtoPage);
         if(prevPage >= 0)
             addLinkUser(dtoPage,prevPage,thisSize,thisSort,PREVIOUS_PAGE);
@@ -76,13 +77,13 @@ public class PageHateoas<T> {
         addLinkUser(dtoPage,thisPage,thisSize,id,SORT_BY_ID);
         addLinkUser(dtoPage,thisPage,thisSize,name,SORT_BY_NAME);
     }
-    public void addGiftGetBackPage(DtoPage<T> page) {
+    public void addGiftGetBackPage(DtoPage<T> page) throws ServiceException, RepositoryException {
         addLinkGift(page,0,10,id,GET_BACK);
     }
-    public void addTagGetBackPage(DtoPage<T> page) {
+    public void addTagGetBackPage(DtoPage<T> page) throws ServiceException, RepositoryException {
         addLinkTag(page,0,10,id,GET_BACK);
     }
-    public void addUserGetBackPage(DtoPage<T> page) {
+    public void addUserGetBackPage(DtoPage<T> page) throws ServiceException, RepositoryException {
         addLinkUser(page,0,10,id,GET_BACK);
     }
     private void init(DtoPage<T> dtoPage) {
@@ -92,22 +93,19 @@ public class PageHateoas<T> {
         nextPage = thisPage + 1;
         thisSort = dtoPage.getSortBy();
     }
-    @SneakyThrows
-    private void addLinkGift(DtoPage<T> dtoPage, int number, int size, String sort, String rel) {
+    private void addLinkGift(DtoPage<T> dtoPage, int number, int size, String sort, String rel) throws ServiceException, RepositoryException {
         dtoPage.add(linkTo(methodOn(GIFT_CERTIFICATE_CONTROLLER).
                 getAllGiftCertificate(number, size, sort)).
                 withRel(rel));
     }
 
-    @SneakyThrows
-    private void addLinkTag(DtoPage<T> dtoPage, int number, int size, String sort, String rel) {
+    private void addLinkTag(DtoPage<T> dtoPage, int number, int size, String sort, String rel) throws ServiceException, RepositoryException {
         dtoPage.add(linkTo(methodOn(TAG_CONTROLLER).
                 getTags(number, size, sort)).
                 withRel(rel));
     }
 
-    @SneakyThrows
-    private void addLinkUser(DtoPage<T> dtoPage, int number, int size, String sort, String rel) {
+    private void addLinkUser(DtoPage<T> dtoPage, int number, int size, String sort, String rel) throws ServiceException, RepositoryException {
         dtoPage.add(linkTo(methodOn(USER_CONTROLLER).
                 getUsers(number, size, sort)).
                 withRel(rel));

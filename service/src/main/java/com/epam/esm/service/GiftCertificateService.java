@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
 import static com.epam.esm.validator.GiftValidator.*;
 
 
@@ -45,6 +46,7 @@ public class GiftCertificateService {
         this.tagService = tagService;
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public void save(GiftCertificateDto dto) {
         GiftCertificate entity = mapper.toEntity(dto);
         GiftCertificate giftFromDB = repository.findByName(entity.getName());
@@ -64,7 +66,7 @@ public class GiftCertificateService {
     public void update(GiftCertificateDto dto, Long id) throws RepositoryException {
         Optional<GiftCertificate> optionalGift = repository.findById(id);
         if(optionalGift.isEmpty()) {
-            throw new RepositoryException();
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
         }
         GiftCertificate giftFromDB = optionalGift.get();
         GiftCertificate entity = mapper.toEntity(dto);
@@ -86,8 +88,15 @@ public class GiftCertificateService {
         return dtoPage;
     }
 
-    public GiftCertificateDto findById(Long id) {
-        return mapper.toDto(repository.findById(id).get());
+    public DtoPage<GiftCertificateDto> findById(Long id) throws RepositoryException {
+        DtoPage<GiftCertificateDto> dtoPage = new DtoPage<>();
+        Optional<GiftCertificate> byId = repository.findById(id);
+
+        if(byId.isEmpty())
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
+
+        dtoPage.setContent(List.of(mapper.toDto(byId.get())));
+        return dtoPage;
     }
 
 
@@ -95,7 +104,7 @@ public class GiftCertificateService {
         DtoPage<GiftCertificateDto> dtoPage = new DtoPage<>();
         GiftCertificate gift = mapper.toEntity(dto);
         gift.setTagList(null);
-        List<GiftCertificate> result = null;
+        List<GiftCertificate> result;
         if(isGiftEmpty(gift))
             result = new ArrayList<>();
         else

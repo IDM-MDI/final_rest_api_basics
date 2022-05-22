@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 
 import com.epam.esm.exception.ExceptionCode;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.context.annotation.Profile;
@@ -52,6 +53,11 @@ public class ExceptionController {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
+    @ExceptionHandler(RepositoryException.class)
+    public final ResponseEntity<String> repositoryException(RepositoryException exception) {
+        return new ResponseEntity<>(exception.getMessage(), NOT_FOUND);
+    }
+
     /**
      * Validation by Bad Request
      * @return custom one
@@ -69,6 +75,7 @@ public class ExceptionController {
     public final ResponseEntity<String> handleNotFoundException() {
         return new ResponseEntity<>(ExceptionCode.NOT_FOUND_EXCEPTION.toString(), NOT_FOUND);
     }
+
 
     /**
      * Validation by method not alowed

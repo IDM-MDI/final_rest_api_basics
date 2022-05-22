@@ -2,7 +2,9 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.WebException;
 import com.epam.esm.hateoas.impl.PageHateoas;
 import com.epam.esm.hateoas.impl.UserHateoas;
 import com.epam.esm.service.UserService;
@@ -36,9 +38,11 @@ public class UserController {
     @GetMapping
     public DtoPage<UserDto> getUsers(@RequestParam(defaultValue = "0") Integer page,
                                      @RequestParam(defaultValue = "10") Integer size,
-                                     @RequestParam(defaultValue = "id") String sort) {
+                                     @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
         DtoPage<UserDto> dtoPage = service.findAll(page,size,sort);
-        dtoPage.getContent().forEach(hateoas::addLinks);
+        for (UserDto userDto : dtoPage.getContent()) {
+            hateoas.addLinks(userDto);
+        }
         pageHateoas.addUsersPage(dtoPage);
         return dtoPage;
     }
@@ -48,11 +52,11 @@ public class UserController {
      * @return from database by id
      */
     @GetMapping("/{id}")
-    public DtoPage<UserDto> getByIdUser(@PathVariable @Min(1) long id) {
-        UserDto dto = service.findById(id);
-        DtoPage<UserDto> page = new DtoPage<>();
-        hateoas.addLinks(dto);
-        page.setContent(List.of(dto));
+    public DtoPage<UserDto> getByIdUser(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException {
+        DtoPage<UserDto> page = service.findById(id);
+        for (UserDto userDto : page.getContent()) {
+            hateoas.addLinks(userDto);
+        }
         pageHateoas.addUserGetBackPage(page);
         return page;
     }

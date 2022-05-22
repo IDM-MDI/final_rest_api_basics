@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Optional;
 
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
+
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
 @Profile("prod")
@@ -43,6 +45,6 @@ public class OrderService {
             repository.save(order);
         }
         else
-            throw new RepositoryException();
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
     }
 }

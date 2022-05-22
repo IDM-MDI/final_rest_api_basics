@@ -2,8 +2,12 @@ package com.epam.esm.service;
 
 
 import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.RepositoryExceptionCode;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.util.impl.TagModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
+import static com.epam.esm.exception.RepositoryExceptionCode.*;
 
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -44,8 +50,8 @@ public class TagService {
         }
     }
 
-    public long delete(Long id) {
-        return repository.setDelete(id);
+    public void delete(Long id) {
+        repository.setDelete(id);
     }
 
 
@@ -59,16 +65,21 @@ public class TagService {
         return dtoPage;
     }
     public DtoPage<TagDto> findAllByParam(TagDto dto) {
+        DtoPage<TagDto> dtoPage = new DtoPage<>();
         Tag tag = mapper.toEntity(dto);
         List<Tag> tagList = repository.findAll(Example.of(tag));
-        DtoPage<TagDto> dtoPage = new DtoPage<>();
         dtoPage.setContent(mapper.toDtoList(tagList));
         return dtoPage;
     }
 
-    public DtoPage<TagDto> findById(Long id) {
+    public DtoPage<TagDto> findById(Long id) throws RepositoryException {
         DtoPage<TagDto> dtoPage = new DtoPage<>();
-        dtoPage.setContent(List.of(mapper.toDto(repository.findById(id).get())));
+        Optional<Tag> byId = repository.findById(id);
+
+        if(byId.isEmpty())
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
+
+        dtoPage.setContent(List.of(mapper.toDto(byId.get())));
         return dtoPage;
     }
 
