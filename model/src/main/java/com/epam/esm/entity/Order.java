@@ -1,6 +1,5 @@
 package com.epam.esm.entity;
 
-import com.epam.esm.audit.OrderAuditListener;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -12,8 +11,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@EntityListeners(OrderAuditListener.class)
-@Table(name = "user_order")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "user_orders")
 @Getter
 @Setter
 public class Order {
@@ -26,19 +25,15 @@ public class Order {
     private BigDecimal price;
 
     @Column(name = "purchase_time")
-//    @CreatedDate
+    @CreatedDate
     private Date purchaseTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("id")
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "gift_id")
-//    @CreatedBy
     private GiftCertificate gift;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("id")
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "user_id")
-//    @CreatedBy
     private User user;
 
 

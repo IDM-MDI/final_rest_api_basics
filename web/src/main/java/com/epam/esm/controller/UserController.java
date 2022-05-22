@@ -44,35 +44,6 @@ public class UserController {
     }
 
     /**
-     * @param entity - from body
-     * creating tag to database
-     * @return create status
-     */
-    @PostMapping
-    public ResponseEntity<String> addUser(@Valid @RequestBody UserDto entity) {
-        service.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body("created");
-    }
-
-    /**
-     * @param id from path
-     * delete tag by id
-     * @return delete status
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable @Min(1) long id) {
-        service.delete(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body("deleted");
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable("id") @Min(1) long id,
-                                             @Valid @RequestBody UserDto dto) throws ServiceException {
-        service.update(dto,id);
-        return ResponseEntity.status(HttpStatus.CREATED).body("updated");
-    }
-
-    /**
      * @param id from path
      * @return from database by id
      */

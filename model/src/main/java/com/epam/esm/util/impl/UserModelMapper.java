@@ -1,7 +1,9 @@
 package com.epam.esm.util.impl;
 
 import com.epam.esm.builder.impl.UserBuilder;
+import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.util.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,19 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     @Override
     public User toEntity(UserDto dto) {
-        return builder.setId(dto.getId()).setName(dto.getName()).
-                setOrders(giftMapper.toEntityList(dto.getOrders())).build();
+        User user = builder.setId(dto.getId()).setName(dto.getName()).build();
+        List<Order> orders = new ArrayList<>();
+        dto.getOrders().forEach(order -> {
+            Order entity = new Order();
+            entity.setId(order.getId());
+            entity.setPrice(order.getPrice());
+            entity.setPurchaseTime(order.getPurchaseTime());
+            entity.setUser(user);
+            entity.setGift(giftMapper.toEntity(order.getGift()));
+            orders.add(entity);
+        });
+        user.setOrders(orders);
+        return user;
     }
 
     @Override
@@ -34,7 +47,18 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         UserDto result = new UserDto();
         result.setId(entity.getId());
         result.setName(entity.getName());
-        result.setOrders(giftMapper.toDtoList(entity.getOrders()));
+        List<OrderDto> orders = new ArrayList<>();
+        entity.getOrders().forEach(order -> {
+            OrderDto dto = new OrderDto();
+            dto.setId(order.getId());
+            dto.setPrice(order.getPrice());
+            dto.setPurchaseTime(order.getPurchaseTime());
+            dto.setGift(giftMapper.toDto(order.getGift()));
+            dto.setUserId(order.getUser().getId());
+            dto.setGiftId(order.getGift().getId());
+            orders.add(dto);
+        });
+        result.setOrders(orders);
         return result;
     }
 

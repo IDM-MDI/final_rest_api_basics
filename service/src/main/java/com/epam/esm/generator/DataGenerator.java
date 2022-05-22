@@ -5,14 +5,12 @@ import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.UserRepository;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -28,40 +26,59 @@ public class DataGenerator {
     private final TagRepository tagRepository;
     private final GiftCertificateRepository giftRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public DataGenerator(TagRepository tagRepository, GiftCertificateRepository giftRepository, UserRepository userRepository) {
+    public DataGenerator(TagRepository tagRepository, GiftCertificateRepository giftRepository, UserRepository userRepository, OrderRepository orderRepository) {
         this.tagRepository = tagRepository;
         this.giftRepository = giftRepository;
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
     }
 
-    @Transactional
+//    @Transactional
     public void fillRandomData() {
         long tagCount = tagRepository.count();
         long giftCount = giftRepository.count();
         long userCount = userRepository.count();
+        long orderCount = orderRepository.count();
         String[] words = null;
         if(tagCount == 0 || giftCount == 0 || userCount == 0)
             words = getWords();
-
         if(tagCount == 0)
             initTags(words);
-
         if(giftCount == 0)
             initGifts(words);
-
         if(userCount == 0)
             initUsers(getUsernames(words));
+        if(orderCount == 0 &&
+                userCount != 0 &&
+                giftCount != 0)
+            initOrders();
+    }
+
+    private void initOrders() {
+        List<User> users = userRepository.findUsersByOrdersEmpty();
+        users.forEach(user -> {
+            List<Order> orders = new ArrayList<>();
+            List<GiftCertificate> gifts = getRandomGifts();
+            gifts.forEach(i-> {
+                Order order = new Order();
+                order.setPrice(i.getPrice());
+                order.setUser(user);
+                order.setGift(i);
+                orders.add(order);
+            });
+            user.setOrders(orders);
+        });
+        userRepository.saveAll(users);
     }
 
     private void initUsers(List<String> usernames) {
         List<User> users = new ArrayList<>();
         for (String username : usernames) {
             User user = new User();
-            List<GiftCertificate> gifts = getRandomGifts();
             user.setName(username);
-            user.setOrders(gifts);
             users.add(user);
         }
         userRepository.saveAll(users);

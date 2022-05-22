@@ -22,11 +22,7 @@ public class User {
     @Column(name = "deleted")
     private boolean deleted;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_order",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "gift_id")
-    )
-    private List<GiftCertificate> orders;
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Order> orders;
 }
