@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.builder.impl.DtoPageBuilder;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UserDto;
@@ -36,21 +37,21 @@ public class UserService {
 
     public DtoPage<UserDto> findAll(Integer page, Integer size, String sort) {
         List<User> userList = repository.findAll(PageRequest.of(page,size, Sort.by(sort))).toList();
-        DtoPage<UserDto> dtoPage = new DtoPage<>();
-        dtoPage.setContent(mapper.toDtoList(userList));
-        dtoPage.setNumberOfPage(page);
-        dtoPage.setSize(size);
-        dtoPage.setSortBy(sort);
-        return dtoPage;
+        return new DtoPageBuilder<UserDto>()
+                .setContent(mapper.toDtoList(userList))
+                .setSize(size)
+                .setNumberOfPage(page)
+                .setSortBy(sort)
+                .build();
     }
 
     public DtoPage<UserDto> findById(Long id) throws RepositoryException {
-        DtoPage<UserDto> dtoPage = new DtoPage<>();
         Optional<User> byId = repository.findById(id);
-        if(byId.isEmpty())
+        if(byId.isEmpty()) {
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
-
-        dtoPage.setContent(List.of(mapper.toDto(byId.get())));
-        return dtoPage;
+        }
+        return new DtoPageBuilder<UserDto>()
+                .setContent(List.of(mapper.toDto(byId.get())))
+                .build();
     }
 }

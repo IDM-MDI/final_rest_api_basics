@@ -23,13 +23,11 @@ public class UserController {
 
     private final UserService service;
     private final UserHateoas hateoas;
-    private final PageHateoas<UserDto> pageHateoas;
 
     @Autowired
-    public UserController(UserService service, UserHateoas hateoas, PageHateoas<UserDto> pageHateoas) {
+    public UserController(UserService service, UserHateoas hateoas) {
         this.service = service;
         this.hateoas = hateoas;
-        this.pageHateoas = pageHateoas;
     }
 
     /**
@@ -40,10 +38,7 @@ public class UserController {
                                      @RequestParam(defaultValue = "10") Integer size,
                                      @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
         DtoPage<UserDto> dtoPage = service.findAll(page,size,sort);
-        for (UserDto userDto : dtoPage.getContent()) {
-            hateoas.addLinks(userDto);
-        }
-        pageHateoas.addUsersPage(dtoPage);
+        hateoas.setUserHateoas(dtoPage);
         return dtoPage;
     }
 
@@ -54,10 +49,7 @@ public class UserController {
     @GetMapping("/{id}")
     public DtoPage<UserDto> getByIdUser(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException {
         DtoPage<UserDto> page = service.findById(id);
-        for (UserDto userDto : page.getContent()) {
-            hateoas.addLinks(userDto);
-        }
-        pageHateoas.addUserGetBackPage(page);
+        hateoas.setUserHateoas(page);
         return page;
     }
 }

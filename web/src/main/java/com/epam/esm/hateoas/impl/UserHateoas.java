@@ -1,10 +1,11 @@
 package com.epam.esm.hateoas.impl;
 
+import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
-import com.epam.esm.exception.WebException;
 import com.epam.esm.hateoas.HateoasDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.epam.esm.controller.ControllerClass.USER_CONTROLLER;
@@ -13,6 +14,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class UserHateoas implements HateoasDTO<UserDto> {
+
+    private final PageHateoas<UserDto> pageHateoas;
+
+    @Autowired
+    public UserHateoas(PageHateoas<UserDto> pageHateoas) {
+        this.pageHateoas = pageHateoas;
+    }
+
     @Override
     public void addLinks(UserDto dto) throws ServiceException, RepositoryException {
         getByIdLink(dto);
@@ -23,5 +32,17 @@ public class UserHateoas implements HateoasDTO<UserDto> {
                 methodOn(USER_CONTROLLER)
                         .getByIdUser(dto.getId()))
                         .withSelfRel());
+    }
+
+    public void setUserHateoas(DtoPage<UserDto> dtoPage) throws ServiceException, RepositoryException {
+        for (UserDto dto : dtoPage.getContent()) {
+            addLinks(dto);
+        }
+        if(dtoPage.getSize() == 0) {
+            pageHateoas.addUserGetBackPage(dtoPage);
+        }
+        else {
+            pageHateoas.addUsersPage(dtoPage);
+        }
     }
 }

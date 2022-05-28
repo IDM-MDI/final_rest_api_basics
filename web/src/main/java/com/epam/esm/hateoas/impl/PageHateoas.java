@@ -1,8 +1,12 @@
 package com.epam.esm.hateoas.impl;
 
 import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.epam.esm.controller.ControllerClass.*;
@@ -31,7 +35,6 @@ public class PageHateoas<T> {
     private final String id = "id";
     private final String name = "name";
     private final String price = "price";
-
 
     public void addGiftsPage(DtoPage<T> dtoPage) throws ServiceException, RepositoryException {
         init(dtoPage);
@@ -110,4 +113,5 @@ public class PageHateoas<T> {
                 getUsers(number, size, sort)).
                 withRel(rel));
     }
+
 }

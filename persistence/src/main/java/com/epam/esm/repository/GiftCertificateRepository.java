@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Long> {
@@ -16,6 +17,6 @@ public interface GiftCertificateRepository extends JpaRepository<GiftCertificate
     @Query("update GiftCertificate gf set gf.deleted = 1 where gf.id = :id")
     void setDelete(@Param("id") Long id);
 
-    GiftCertificate findByName(String name);
+    Optional<GiftCertificate> findByName(String name);
     List<GiftCertificate> findByTagListIn(List<Tag> tagList);
 }

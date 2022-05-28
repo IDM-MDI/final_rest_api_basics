@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.util.Optional;
 
 import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
+import static com.epam.esm.validator.OrderValidator.isUserAndGiftPresent;
 
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -37,14 +38,20 @@ public class OrderService {
     public void save(OrderDto dto) throws RepositoryException {
         Optional<User> userOptional = userRepository.findById(dto.getUserId());
         Optional<GiftCertificate> giftOptional = giftRepository.findById(dto.getGiftId());
-        if(userOptional.isPresent() && giftOptional.isPresent()) {
-            Order order = new Order();
-            order.setUser(userOptional.get());
-            order.setGift(giftOptional.get());
-            order.setPrice(giftOptional.get().getPrice());
-            repository.save(order);
-        }
-        else
+        if(!isUserAndGiftPresent(userOptional,giftOptional)) {
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
+        }
+        else {
+            repository.save(createOrder(userOptional.get(),
+                    giftOptional.get()));
+        }
+    }
+
+    private Order createOrder(User user, GiftCertificate gift) {
+        Order order = new Order();
+        order.setUser(user);
+        order.setGift(gift);
+        order.setPrice(gift.getPrice());
+        return order;
     }
 }

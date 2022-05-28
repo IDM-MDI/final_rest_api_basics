@@ -1,5 +1,6 @@
 package com.epam.esm.hateoas.impl;
 
+import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.RepositoryException;
@@ -16,10 +17,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
 
     private final TagHateoas tagHateoas;
+    private final PageHateoas<GiftCertificateDto> pageHateoas;
 
     @Autowired
-    public GiftCertificateHateoas(TagHateoas tagHateoas) {
+    public GiftCertificateHateoas(TagHateoas tagHateoas, PageHateoas<GiftCertificateDto> pageHateoas) {
         this.tagHateoas = tagHateoas;
+        this.pageHateoas = pageHateoas;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
                         .updateGiftCertificate(dto.getId(), dto))
                         .withRel("update"));
     }
-    private void addNewLink(GiftCertificateDto dto) throws ServiceException {
+    private void addNewLink(GiftCertificateDto dto) {
         dto.add(linkTo(
                 methodOn(GIFT_CERTIFICATE_CONTROLLER)
                         .addGiftCertificate(dto))
@@ -55,5 +58,17 @@ public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
                 methodOn(GIFT_CERTIFICATE_CONTROLLER)
                         .getGiftCertificate(dto.getId()))
                         .withSelfRel());
+    }
+
+    public void setGiftHateoas(DtoPage<GiftCertificateDto> dtoPage) throws ServiceException, RepositoryException {
+        for (GiftCertificateDto dto : dtoPage.getContent()) {
+            addLinks(dto);
+        }
+        if(dtoPage.getSize() == 0) {
+            pageHateoas.addGiftGetBackPage(dtoPage);
+        }
+        else {
+            pageHateoas.addGiftsPage(dtoPage);
+        }
     }
 }

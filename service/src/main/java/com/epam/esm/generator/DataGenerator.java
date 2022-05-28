@@ -43,18 +43,23 @@ public class DataGenerator {
         long userCount = userRepository.count();
         long orderCount = orderRepository.count();
         String[] words = null;
-        if(tagCount == 0 || giftCount == 0 || userCount == 0)
+        if(tagCount == 0 || giftCount == 0 || userCount == 0) {
             words = getWords();
-        if(tagCount == 0)
+        }
+        if(tagCount == 0) {
             initTags(words);
-        if(giftCount == 0)
+        }
+        if(giftCount == 0) {
             initGifts(words);
-        if(userCount == 0)
+        }
+        if(userCount == 0) {
             initUsers(getUsernames(words));
+        }
         if(orderCount == 0 &&
                 userCount != 0 &&
-                giftCount != 0)
+                giftCount != 0) {
             initOrders();
+        }
     }
 
     private void initOrders() {
@@ -142,10 +147,12 @@ public class DataGenerator {
         long min = 0, max = 68000;
         Set<String> setWords = new HashSet<>();
         for (int i = 0; i < count; i++) {
-            if(setWords.size() == i)
+            if(setWords.size() == i) {
                 setWords.add(words[(int) getRandomNumber(min,max)]);
-            else
+            }
+            else {
                 i = setWords.size()-1;
+            }
         }
         return setWords;
     }
