@@ -2,8 +2,10 @@ package com.epam.esm.util.impl;
 
 import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import com.epam.esm.util.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,12 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     @Override
     public User toEntity(UserDto dto) {
-        User user = builder.setId(dto.getId()).setName(dto.getName()).build();
+        User user = builder
+                .setId(dto.getId())
+                .setName(dto.getUsername())
+                .setStatus(new Status(dto.getStatus().getId(),
+                                      dto.getStatus().getName()))
+                .build();
         List<Order> orders = new ArrayList<>();
         dto.getOrders().forEach(order -> {
             Order entity = new Order();
@@ -39,6 +46,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
             orders.add(entity);
         });
         user.setOrders(orders);
+        user.setPassword(dto.getPassword());
         return user;
     }
 
@@ -46,7 +54,10 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
     public UserDto toDto(User entity) {
         UserDto result = new UserDto();
         result.setId(entity.getId());
-        result.setName(entity.getName());
+        result.setUsername(entity.getUsername());
+        result.setStatus(new StatusDto(entity.getStatus().getId(),
+                                       entity.getStatus().getName()));
+
         List<OrderDto> orders = new ArrayList<>();
         entity.getOrders().forEach(order -> {
             OrderDto dto = new OrderDto();
@@ -59,6 +70,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
             orders.add(dto);
         });
         result.setOrders(orders);
+        result.setPassword(entity.getPassword());
         return result;
     }
 

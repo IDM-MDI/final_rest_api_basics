@@ -29,7 +29,7 @@ public class TagHateoas implements HateoasDTO<TagDto> {
         deleteLink(dto);
     }
 
-    private void addNewLink(TagDto dto) {
+    private void addNewLink(TagDto dto) throws RepositoryException {
         dto.add(linkTo(
                 methodOn(TAG_CONTROLLER)
                         .addTag(dto))

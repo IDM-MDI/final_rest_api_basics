@@ -1,17 +1,13 @@
 package com.epam.esm.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Min;
 
 @Data
-@Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class TagDto extends RepresentationModel<TagDto> {
     @Min(1)
     private Long id;

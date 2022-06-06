@@ -1,14 +1,9 @@
 package com.epam.esm.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Data
-@Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class ResponseDto<T> {
     private T content;
     private int code;

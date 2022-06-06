@@ -1,8 +1,6 @@
 package com.epam.esm.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,7 +14,8 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "gift_certificate")
 @Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
+@ToString
 public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,27 +40,18 @@ public class GiftCertificate {
     @Column(name = "update_date")
     @LastModifiedDate
     private LocalDateTime updateDate;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "gift_tag",
             joinColumns = @JoinColumn(name = "gift_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+
+    @ToString.Exclude
     private List<Tag> tagList;
 
-    @Column(name = "deleted")
-    private boolean deleted;
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "name = " + name + ", " +
-                "description = " + description + ", " +
-                "price = " + price + ", " +
-                "duration = " + duration + ", " +
-                "create_date = " + createDate + ", " +
-                "update_date = " + updateDate + ", " +
-                "deleted = " + deleted + ")";
-    }
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private Status status;
 }

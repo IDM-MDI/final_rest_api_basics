@@ -1,14 +1,12 @@
 package com.epam.esm.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
-@Getter @Setter
-@NoArgsConstructor
+@Data
+@NoArgsConstructor @AllArgsConstructor
 public class DtoPage<T> extends RepresentationModel<DtoPage<T>> {
     private List<T> content;
     private int size;

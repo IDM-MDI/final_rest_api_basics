@@ -39,9 +39,9 @@ public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
         dto.add(linkTo(
                 methodOn(GIFT_CERTIFICATE_CONTROLLER)
                         .updateGiftCertificate(dto.getId(), dto))
-                        .withRel("update"));
+                        .withRel("updateWithResponse"));
     }
-    private void addNewLink(GiftCertificateDto dto) {
+    private void addNewLink(GiftCertificateDto dto) throws RepositoryException {
         dto.add(linkTo(
                 methodOn(GIFT_CERTIFICATE_CONTROLLER)
                         .addGiftCertificate(dto))
@@ -51,7 +51,7 @@ public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
         dto.add(linkTo(
                 methodOn(GIFT_CERTIFICATE_CONTROLLER)
                         .deleteGiftCertificate(dto.getId()))
-                        .withRel("delete"));
+                        .withRel("deleteWithResponse"));
     }
     private void getByLink(GiftCertificateDto dto) throws RepositoryException, ServiceException {
         dto.add(linkTo(

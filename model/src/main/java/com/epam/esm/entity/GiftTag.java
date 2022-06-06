@@ -1,16 +1,14 @@
 package com.epam.esm.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "gift_tag")
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@ToString
 public class GiftTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +17,16 @@ public class GiftTag {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("id")
     @JoinColumn(name = "gift_id")
+    @ToString.Exclude
     private GiftCertificate gift;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("id")
     @JoinColumn(name = "tag_id")
+    @ToString.Exclude
     private Tag tag;
 
-    @Column(name = "deleted")
-    private boolean deleted;
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private Status status;
 }

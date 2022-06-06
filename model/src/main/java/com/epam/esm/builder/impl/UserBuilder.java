@@ -3,6 +3,7 @@ package com.epam.esm.builder.impl;
 import com.epam.esm.builder.ModelBuilder;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,8 @@ public class UserBuilder implements ModelBuilder {
     private Long id;
     private String name;
     private List<Order> orders;
+
+    private Status status;
 
 
     public UserBuilder setId(Long id) {
@@ -32,12 +35,18 @@ public class UserBuilder implements ModelBuilder {
         return this;
     }
 
+    public UserBuilder setStatus(Status status) {
+        this.status = status;
+        return this;
+    }
+
     @Override
     public User build() {
         User result = new User();
         result.setId(id);
-        result.setName(name);
+        result.setUsername(name);
         result.setOrders(orders);
+        result.setStatus(status);
         return result;
     }
 }

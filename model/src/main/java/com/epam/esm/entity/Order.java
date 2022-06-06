@@ -1,8 +1,6 @@
 package com.epam.esm.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,8 +11,9 @@ import java.util.Date;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "user_orders")
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@ToString
 public class Order {
 
     @Id
@@ -36,8 +35,7 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-
-    @Column(name = "deleted")
-    private boolean deleted;
-
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private Status status;
 }

@@ -1,23 +1,21 @@
 package com.epam.esm.entity;
 
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tag")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "status")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString
-public class Tag {
+public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name")
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
 }

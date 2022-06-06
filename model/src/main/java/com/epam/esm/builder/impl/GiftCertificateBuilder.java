@@ -2,6 +2,7 @@ package com.epam.esm.builder.impl;
 
 import com.epam.esm.builder.ModelBuilder;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class GiftCertificateBuilder implements ModelBuilder {
     private Integer duration;
     private LocalDateTime create_date;
     private LocalDateTime update_date;
-    private boolean deleted;
+    private Status status;
 
     private List<Tag> tagList;
 
@@ -28,8 +29,8 @@ public class GiftCertificateBuilder implements ModelBuilder {
         return this;
     }
 
-    public GiftCertificateBuilder setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public GiftCertificateBuilder setStatus(Status status) {
+        this.status = status;
         return this;
     }
 
@@ -79,7 +80,7 @@ public class GiftCertificateBuilder implements ModelBuilder {
         result.setCreateDate(create_date);
         result.setUpdateDate(update_date);
         result.setTagList(tagList == null ? new ArrayList<>() : tagList);
-        result.setDeleted(deleted);
+        result.setStatus(status);
         return result;
     }
 }
