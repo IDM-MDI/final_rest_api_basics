@@ -10,6 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
     @Modifying
@@ -19,4 +20,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<User> findUsersByOrdersEmpty();
 
     List<User> findByStatus(Status status);
+
+    Optional<User> findUserByUsername(String username);
 }

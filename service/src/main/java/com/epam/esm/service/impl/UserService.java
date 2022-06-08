@@ -95,4 +95,8 @@ public class UserService implements EntityService<User,UserDto> {
     public List<User> findByStatus(String statusName) {
         return repository.findByStatus(statusRepository.findByNameIgnoreCase(statusName));
     }
+
+    public Optional<User> findUserByUsername(String username) {
+        return repository.findUserByUsername(username);
+    }
 }

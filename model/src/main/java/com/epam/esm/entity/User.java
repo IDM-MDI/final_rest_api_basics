@@ -26,6 +26,14 @@ public class User {
     @ToString.Exclude
     private List<Order> orders;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
+
     @ManyToOne
     @JoinColumn(name = "status_id")
     private Status status;

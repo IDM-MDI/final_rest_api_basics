@@ -12,7 +12,6 @@ import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.StatusRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.EntityService;
-import com.epam.esm.util.impl.OrderModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ public class OrderService implements EntityService<Order,OrderDto> {
     private final UserRepository userRepository;
 
     @Autowired
-    public OrderService(OrderRepository repository, GiftCertificateRepository giftRepository, StatusRepository statusRepository, UserRepository userRepository, OrderModelMapper mapper) {
+    public OrderService(OrderRepository repository, GiftCertificateRepository giftRepository, StatusRepository statusRepository, UserRepository userRepository) {
         this.repository = repository;
         this.giftRepository = giftRepository;
         this.statusRepository = statusRepository;

@@ -17,6 +17,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 
+import static com.epam.esm.entity.RoleName.USER;
+
 @Component
 public class DataGenerator {
     private static final String uriWord = "http://www-personal.umich.edu/~jlawler/wordlist";
@@ -26,19 +28,21 @@ public class DataGenerator {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final StatusRepository statusRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
     public DataGenerator(RandomHandler handler,
                          TagRepository tagRepository,
                          GiftCertificateRepository giftRepository,
                          UserRepository userRepository,
-                         OrderRepository orderRepository, StatusRepository statusRepository) {
+                         OrderRepository orderRepository, StatusRepository statusRepository, RoleRepository roleRepository) {
         this.handler = handler;
         this.tagRepository = tagRepository;
         this.giftRepository = giftRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.statusRepository = statusRepository;
+        this.roleRepository = roleRepository;
     }
 
     public void fillRandomData() {
@@ -158,6 +162,8 @@ public class DataGenerator {
                 user.setUsername(mrs + i);
             }
             user.setPassword(HashGenerator.generatePassword(i));
+            roleRepository.findRoleByName(USER.name())
+                    .ifPresent(role -> user.setRoles(List.of(role)));
             activeStatus.ifPresent(user::setStatus);
             users.add(user);
         }
