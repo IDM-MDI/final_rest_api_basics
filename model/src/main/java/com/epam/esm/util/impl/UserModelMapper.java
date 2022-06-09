@@ -2,9 +2,11 @@ package com.epam.esm.util.impl;
 
 import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.RoleDto;
 import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Role;
 import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import com.epam.esm.util.ModelMapper;
@@ -47,6 +49,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         });
         user.setOrders(orders);
         user.setPassword(dto.getPassword());
+        user.setRoles(dto.getRoles().stream().map(role -> new Role(role.getId(),role.getName())).toList());
         return user;
     }
 
@@ -71,6 +74,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         });
         result.setOrders(orders);
         result.setPassword(entity.getPassword());
+        result.setRoles(entity.getRoles().stream().map(role -> new RoleDto(role.getId(),role.getName())).toList());
         return result;
     }
 

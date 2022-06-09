@@ -30,9 +30,7 @@ public class UserHateoas implements HateoasDTO<UserDto> {
         dto.getOrders().forEach(i-> {
             try {
                 giftHateoas.addLinks(i.getGift());
-            } catch (ServiceException e) {
-                throw new RuntimeException(e);
-            } catch (RepositoryException e) {
+            } catch (ServiceException | RepositoryException e) {
                 throw new RuntimeException(e);
             }
         });

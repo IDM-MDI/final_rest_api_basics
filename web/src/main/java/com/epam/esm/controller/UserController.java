@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
@@ -34,6 +35,11 @@ public class UserController {
         DtoPage<UserDto> dtoPage = service.findAllPage(page,size,sort);
         hateoas.setUserHateoas(dtoPage);
         return dtoPage;
+    }
+
+    @PostMapping
+    public ResponseDto<UserDto> registration(@RequestBody UserDto user) {
+        return service.saveWithResponse(user);
     }
 
     /**

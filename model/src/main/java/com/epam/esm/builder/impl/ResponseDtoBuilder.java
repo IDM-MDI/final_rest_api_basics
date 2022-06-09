@@ -26,10 +26,6 @@ public class ResponseDtoBuilder<T> implements ModelBuilder {
 
     @Override
     public ResponseDto<T> build() {
-        ResponseDto<T> result = new ResponseDto<>();
-        result.setContent(content);
-        result.setCode(code);
-        result.setText(text);
-        return null;
+        return new ResponseDto<T>(content,code,text);
     }
 }

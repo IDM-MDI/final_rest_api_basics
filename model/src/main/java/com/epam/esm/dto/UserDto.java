@@ -17,4 +17,6 @@ public class UserDto extends RepresentationModel<UserDto> {
     private String password;
     private List<OrderDto> orders;
     private StatusDto status;
+    private List<RoleDto> roles;
+    private String jwt;
 }

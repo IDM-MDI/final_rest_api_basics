@@ -53,9 +53,8 @@ public class TagController {
      * @return create status
      */
     @PostMapping
-    public ResponseEntity<String> addTag(@Valid @RequestBody TagDto entity) throws RepositoryException {
-        service.saveWithResponse(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body("created");
+    public ResponseDto<TagDto> addTag(@Valid @RequestBody TagDto entity) throws RepositoryException {
+        return service.saveWithResponse(entity);
     }
 
     /**

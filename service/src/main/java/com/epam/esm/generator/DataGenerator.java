@@ -8,6 +8,8 @@ import com.epam.esm.repository.*;
 import com.epam.esm.util.HashGenerator;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -161,7 +163,7 @@ public class DataGenerator {
             else {
                 user.setUsername(mrs + i);
             }
-            user.setPassword(HashGenerator.generatePassword(i));
+            user.setPassword(HashGenerator.getEncoder().encode(HashGenerator.generateHash(i)));
             roleRepository.findRoleByName(USER.name())
                     .ifPresent(role -> user.setRoles(List.of(role)));
             activeStatus.ifPresent(user::setStatus);

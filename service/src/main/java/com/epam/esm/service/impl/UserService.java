@@ -1,7 +1,10 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
+import com.epam.esm.builder.impl.ResponseDtoBuilder;
+import com.epam.esm.dto.AuthenticationDto;
 import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.RepositoryException;
@@ -9,12 +12,15 @@ import com.epam.esm.repository.StatusRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.EntityService;
 import com.epam.esm.util.impl.UserModelMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +31,13 @@ import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_
 
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 @Profile("prod")
 public class UserService implements EntityService<User,UserDto> {
 
     private final UserRepository repository;
     private final StatusRepository statusRepository;
     private final UserModelMapper mapper;
-
     @Autowired
     public UserService(UserRepository repository, StatusRepository statusRepository, UserModelMapper mapper) {
         this.repository = repository;
@@ -55,6 +61,26 @@ public class UserService implements EntityService<User,UserDto> {
                 .build();
     }
 
+    public ResponseDto<UserDto> saveWithResponse(UserDto dto) {
+        UserDto user = mapper.toDto(save(dto));
+        log.info("User: " + dto + " successfully added");
+        return new ResponseDtoBuilder<UserDto>()
+                .setCode(200)
+                .setText("")
+                .setContent(user)
+                .build();
+    }
+
+    public DtoPage<UserDto> loginWithDtoPage(AuthenticationDto dto) {
+        UserDto user = login(dto).orElseThrow(() -> {
+            log.error("User not found");
+            return new UsernameNotFoundException("");
+        });
+        log.info("User: " + user + " sign in");
+        return new DtoPageBuilder<UserDto>()
+                .setContent(List.of(user))
+                .build();
+    }
     @Override
     public User save(UserDto dto) {
         return repository.save(mapper.toEntity(dto));
@@ -96,7 +122,13 @@ public class UserService implements EntityService<User,UserDto> {
         return repository.findByStatus(statusRepository.findByNameIgnoreCase(statusName));
     }
 
-    public Optional<User> findUserByUsername(String username) {
-        return repository.findUserByUsername(username);
+    public Optional<UserDto> login(AuthenticationDto authenticationDto) {
+        return Optional.of(findUserByUsername(authenticationDto.getUsername()));
+    }
+
+    @Transactional
+    public UserDto findUserByUsername(String username) {
+        return mapper.toDto(repository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username - " + username + " not found")));
     }
 }

@@ -1,13 +1,16 @@
 package com.epam.esm.util;
 
 import lombok.SneakyThrows;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.security.MessageDigest;
 
 public class HashGenerator {
 
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(5);
+
     @SneakyThrows
-    public static String generatePassword(String password) {
+    public static String generateHash(String password) {
         StringBuilder sb = new StringBuilder();
         MessageDigest md5 = null;
         md5 = MessageDigest.getInstance("md5");
@@ -16,5 +19,9 @@ public class HashGenerator {
             sb.append(String.format("%02X",i));
         }
         return sb.toString();
+    }
+
+    public static BCryptPasswordEncoder getEncoder() {
+        return encoder;
     }
 }
