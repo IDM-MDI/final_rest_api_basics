@@ -22,11 +22,18 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     private final UserBuilder builder;
     private final GiftCertificateModelMapper giftMapper;
+    private final RoleModelMapper roleMapper;
+    private final StatusModelMapper statusMapper;
 
     @Autowired
-    public UserModelMapper(UserBuilder builder, GiftCertificateModelMapper giftMapper) {
+    public UserModelMapper(UserBuilder builder,
+                           GiftCertificateModelMapper giftMapper,
+                           RoleModelMapper roleMapper,
+                           StatusModelMapper statusMapper) {
         this.builder = builder;
         this.giftMapper = giftMapper;
+        this.roleMapper = roleMapper;
+        this.statusMapper = statusMapper;
     }
 
     @Override
@@ -34,22 +41,23 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         User user = builder
                 .setId(dto.getId())
                 .setName(dto.getUsername())
-                .setStatus(new Status(dto.getStatus().getId(),
-                                      dto.getStatus().getName()))
+                .setStatus(statusMapper.toEntity(dto.getStatus()))
                 .build();
-        List<Order> orders = new ArrayList<>();
-        dto.getOrders().forEach(order -> {
-            Order entity = new Order();
-            entity.setId(order.getId());
-            entity.setPrice(order.getPrice());
-            entity.setPurchaseTime(order.getPurchaseTime());
-            entity.setUser(user);
-            entity.setGift(giftMapper.toEntity(order.getGift()));
-            orders.add(entity);
-        });
-        user.setOrders(orders);
+        if(dto.getOrders() != null) {
+            List<Order> orders = new ArrayList<>();
+            dto.getOrders().forEach(order -> {
+                Order entity = new Order();
+                entity.setId(order.getId());
+                entity.setPrice(order.getPrice());
+                entity.setPurchaseTime(order.getPurchaseTime());
+                entity.setUser(user);
+                entity.setGift(giftMapper.toEntity(order.getGift()));
+                orders.add(entity);
+            });
+            user.setOrders(orders);
+        }
         user.setPassword(dto.getPassword());
-        user.setRoles(dto.getRoles().stream().map(role -> new Role(role.getId(),role.getName())).toList());
+        user.setRoles(roleMapper.toEntityList(dto.getRoles()));
         return user;
     }
 
@@ -58,23 +66,25 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         UserDto result = new UserDto();
         result.setId(entity.getId());
         result.setUsername(entity.getUsername());
-        result.setStatus(new StatusDto(entity.getStatus().getId(),
-                                       entity.getStatus().getName()));
+        result.setStatus(statusMapper.toDto(entity.getStatus()));
 
-        List<OrderDto> orders = new ArrayList<>();
-        entity.getOrders().forEach(order -> {
-            OrderDto dto = new OrderDto();
-            dto.setId(order.getId());
-            dto.setPrice(order.getPrice());
-            dto.setPurchaseTime(order.getPurchaseTime());
-            dto.setGift(giftMapper.toDto(order.getGift()));
-            dto.setUserId(order.getUser().getId());
-            dto.setGiftId(order.getGift().getId());
-            orders.add(dto);
-        });
-        result.setOrders(orders);
+        if(entity.getOrders() != null) {
+            List<OrderDto> orders = new ArrayList<>();
+            entity.getOrders().forEach(order -> {
+                OrderDto dto = new OrderDto();
+                dto.setId(order.getId());
+                dto.setPrice(order.getPrice());
+                dto.setPurchaseTime(order.getPurchaseTime());
+                dto.setGift(giftMapper.toDto(order.getGift()));
+                dto.setUserId(order.getUser().getId());
+                dto.setGiftId(order.getGift().getId());
+                orders.add(dto);
+            });
+            result.setOrders(orders);
+        }
+
         result.setPassword(entity.getPassword());
-        result.setRoles(entity.getRoles().stream().map(role -> new RoleDto(role.getId(),role.getName())).toList());
+        result.setRoles(roleMapper.toDtoList(entity.getRoles()));
         return result;
     }
 

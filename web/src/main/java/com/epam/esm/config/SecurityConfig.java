@@ -22,16 +22,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String USER_ENDPOINT = "/orders";
+    private static final String USER_ENDPOINT = "/order/**";
     private static final String REGISTRATION_ENDPOINT = "/users";
     private static final String LOGIN_ENDPOINT = "/login";
     private final JwtTokenProvider provider;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler successHandler;
+    private final OAuth2LoginFailHandler failHandler;
+    private final JwtTokenFilter filter;
+    private final JwtEntryPoint entryPoint;
 
     @Autowired
-    public SecurityConfig(JwtTokenProvider provider, CustomOAuth2UserService customOAuth2UserService) {
+    public SecurityConfig(JwtTokenProvider provider,
+                          CustomOAuth2UserService customOAuth2UserService,
+                          OAuth2LoginSuccessHandler successHandler,
+                          OAuth2LoginFailHandler failHandler,
+                          JwtTokenFilter filter,
+                          JwtEntryPoint entryPoint) {
         this.provider = provider;
         this.customOAuth2UserService = customOAuth2UserService;
+        this.successHandler = successHandler;
+        this.failHandler = failHandler;
+        this.filter = filter;
+        this.entryPoint = entryPoint;
     }
 
     @Bean
@@ -40,51 +53,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Bean
-    public JwtEntryPoint entryPoint() {
-        return new JwtEntryPoint();
-    }
-
-    @Bean
-    public JwtTokenFilter filter() {
-        return new JwtTokenFilter(provider);
-    }
-
-    @Bean
-    public OAuth2LoginSuccessHandler successHandler() {
-        return new OAuth2LoginSuccessHandler();
-    }
-    @Bean
-    public OAuth2LoginFailHandler failHandler() {
-        return new OAuth2LoginFailHandler();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-//                .exceptionHandling().authenticationEntryPoint(entryPoint())
-//                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-//                .anyRequest().permitAll()
-//                .and()
-//                .oauth2Login(Customizer.withDefaults()).oauth2Login()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(HttpMethod.POST,REGISTRATION_ENDPOINT).permitAll()
-                .antMatchers(HttpMethod.GET).authenticated()
-                .antMatchers(USER_ENDPOINT).authenticated()
-                .anyRequest().hasRole("ADMIN")
+                    .antMatchers(LOGIN_ENDPOINT).permitAll()
+                    .antMatchers(HttpMethod.POST,REGISTRATION_ENDPOINT).permitAll()
+                    .antMatchers(USER_ENDPOINT).authenticated()
+                    .antMatchers("/login/oauth").authenticated()
+                    .antMatchers(HttpMethod.GET).permitAll()
+                    .anyRequest()
+                        .hasRole("ADMIN")
                 .and()
                 .oauth2Login()
-                    .userInfoEndpoint()
-                    .userService(customOAuth2UserService)
-                    .and()
-                    .successHandler(successHandler())
-                    .failureHandler(failHandler())
+                    .successHandler(successHandler)
+                    .failureHandler(failHandler)
                 .and()
-                .addFilterBefore(filter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -4,8 +4,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor
-public class ResponseDto<T> {
-    private T content;
+public class ResponseDto {
     private int code;
     private String text;
 }

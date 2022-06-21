@@ -9,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor @AllArgsConstructor
 public class DtoPage<T> extends RepresentationModel<DtoPage<T>> {
     private List<T> content;
+    private ResponseDto response;
     private int size;
     private int numberOfPage;
     private String sortBy;

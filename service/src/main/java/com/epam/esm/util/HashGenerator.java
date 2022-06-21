@@ -10,7 +10,7 @@ public class HashGenerator {
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(5);
 
     @SneakyThrows
-    public static String generateHash(String password) {
+    public static String generateByMD5(String password) {
         StringBuilder sb = new StringBuilder();
         MessageDigest md5 = null;
         md5 = MessageDigest.getInstance("md5");
@@ -19,6 +19,10 @@ public class HashGenerator {
             sb.append(String.format("%02X",i));
         }
         return sb.toString();
+    }
+
+    public static String generateHash(String password) {
+        return encoder.encode(generateByMD5(password));
     }
 
     public static BCryptPasswordEncoder getEncoder() {

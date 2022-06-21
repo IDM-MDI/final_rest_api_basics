@@ -18,12 +18,12 @@ public final class JwtUserFactory {
                 user.getUsername(),
                 user.getPassword(),
                 user.getStatus().getName().toUpperCase().equals(ACTIVE.name()),
-                mapToGrantedAuthorities(new ArrayList<>(user.getRoles())));
+                mapToGrantedAuthorities(user.getRoles()));
     }
 
     private static List<GrantedAuthority> mapToGrantedAuthorities(List<RoleDto> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName())));
         return authorities;
     }
 }

@@ -29,13 +29,13 @@ public class TagHateoas implements HateoasDTO<TagDto> {
         deleteLink(dto);
     }
 
-    private void addNewLink(TagDto dto) throws RepositoryException {
+    private void addNewLink(TagDto dto) throws RepositoryException, ServiceException {
         dto.add(linkTo(
                 methodOn(TAG_CONTROLLER)
                         .addTag(dto))
                 .withRel("add"));
     }
-    private void deleteLink(TagDto dto) {
+    private void deleteLink(TagDto dto) throws RepositoryException, ServiceException {
         dto.add(linkTo(
                 methodOn(TAG_CONTROLLER)
                         .deleteTag(dto.getId()))
@@ -49,6 +49,9 @@ public class TagHateoas implements HateoasDTO<TagDto> {
     }
 
     public void setTagHateoas(DtoPage<TagDto> dtoPage) throws ServiceException, RepositoryException {
+        if(dtoPage == null || dtoPage.getContent() == null) {
+            return;
+        }
         for (TagDto dto : dtoPage.getContent()) {
             addLinks(dto);
         }

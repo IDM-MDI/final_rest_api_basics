@@ -1,17 +1,18 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.builder.impl.ResponseDtoBuilder;
+import com.epam.esm.builder.impl.DtoPageBuilder;
+import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.ResponseDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.StatusRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.EntityService;
+import com.epam.esm.util.impl.GiftCertificateModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -32,23 +33,32 @@ public class OrderService implements EntityService<Order,OrderDto> {
 
     private final OrderRepository repository;
     private final GiftCertificateRepository giftRepository;
-    private final StatusRepository statusRepository;
+    private final StatusService statusService;
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final GiftCertificateModelMapper giftMapper;
 
     @Autowired
-    public OrderService(OrderRepository repository, GiftCertificateRepository giftRepository, StatusRepository statusRepository, UserRepository userRepository) {
+    public OrderService(OrderRepository repository,
+                        GiftCertificateRepository giftRepository,
+                        StatusService statusService, UserRepository userRepository,
+                        UserService userService,
+                        GiftCertificateModelMapper giftMapper) {
         this.repository = repository;
         this.giftRepository = giftRepository;
-        this.statusRepository = statusRepository;
+        this.statusService = statusService;
         this.userRepository = userRepository;
+        this.userService = userService;
+        this.giftMapper = giftMapper;
     }
 
-    public ResponseDto<OrderDto> saveWithResponse(OrderDto dto) throws RepositoryException {
-        save(dto);
-        return new ResponseDtoBuilder<OrderDto>()
-                .setCode(200)
-                .setText("")
-                .setContent(dto)
+    public DtoPage<OrderDto> saveByUserWithDtoPage(String username, long id) throws RepositoryException {
+        UserDto userByUsername = userService.findUserByUsername(username);
+        OrderDto dto = new OrderDto();
+        dto.setGiftId(id);
+        dto.setUserId(userByUsername.getId());
+        return new DtoPageBuilder<OrderDto>()
+                .setContent(List.of(mapper(save(dto))))
                 .build();
     }
 
@@ -61,12 +71,13 @@ public class OrderService implements EntityService<Order,OrderDto> {
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
         }
 
-        return repository.save(createOrder(userOptional.get(),
-                                                        giftOptional.get()));
+        return repository.save(createOrder(
+                                userOptional.get(),
+                                giftOptional.get()));
     }
 
     @Override
-    public Order update(Order entity) throws RepositoryException {
+    public Order update(OrderDto dto) throws RepositoryException {
         return null;
     }
 
@@ -81,8 +92,13 @@ public class OrderService implements EntityService<Order,OrderDto> {
     }
 
     @Override
-    public void delete(long id) {
-        repository.setDelete(id,statusRepository.findByNameIgnoreCase(DELETED.name()));
+    public List<Order> findByParam(OrderDto dto) throws RepositoryException {
+        return null;
+    }
+
+    @Override
+    public void delete(long id) throws RepositoryException {
+        repository.setDelete(id,statusService.findStatus(DELETED.name()));
     }
 
     @Override
@@ -106,5 +122,15 @@ public class OrderService implements EntityService<Order,OrderDto> {
         order.setGift(gift);
         order.setPrice(gift.getPrice());
         return order;
+    }
+    private OrderDto mapper(Order order) {
+        return new OrderDto(
+                order.getId(),
+                order.getPrice(),
+                order.getPurchaseTime(),
+                giftMapper.toDto(order.getGift()),
+                order.getGift().getId(),
+                order.getUser().getId()
+        );
     }
 }

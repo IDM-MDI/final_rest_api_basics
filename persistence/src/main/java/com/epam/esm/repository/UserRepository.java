@@ -17,6 +17,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("update User u set u.status = :status where u.id = :id")
     void setDelete(@Param("id") long id, @Param("status") Status status);
 
+
     List<User> findUsersByOrdersEmpty();
 
     List<User> findByStatus(Status status);

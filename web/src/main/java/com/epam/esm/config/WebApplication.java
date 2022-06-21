@@ -1,5 +1,6 @@
 package com.epam.esm.config;
 
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.generator.DataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +25,7 @@ public class WebApplication {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void fillRandomDataToDatabase() {
+    public void fillRandomDataToDatabase() throws RepositoryException {
         generator.fillRandomData();
     }
 }

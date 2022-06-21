@@ -3,7 +3,6 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
@@ -53,8 +52,10 @@ public class GiftCertificateController {
      * @return create status
      */
     @PostMapping
-    public ResponseDto<GiftCertificateDto> addGiftCertificate(@Valid @RequestBody GiftCertificateDto entity) throws RepositoryException {
-        return service.saveWithResponse(entity);
+    public DtoPage<GiftCertificateDto> addGiftCertificate(@Valid @RequestBody GiftCertificateDto entity) throws RepositoryException, ServiceException {
+        DtoPage<GiftCertificateDto> page = service.saveWithResponse(entity);
+        hateoas.setGiftHateoas(page);
+        return page;
     }
 
     /**
@@ -62,8 +63,10 @@ public class GiftCertificateController {
      * @return deleteWithResponse status
      */
     @DeleteMapping("/{id}")
-    public ResponseDto<GiftCertificateDto> deleteGiftCertificate(@PathVariable @Min(1) long id) {
-        return service.deleteWithResponse(id);
+    public DtoPage<GiftCertificateDto> deleteGiftCertificate(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException {
+        DtoPage<GiftCertificateDto> page = service.deleteWithDtoPage(id);
+        hateoas.setGiftHateoas(page);
+        return page;
     }
 
     /**
@@ -72,9 +75,11 @@ public class GiftCertificateController {
      * @return updateWithResponse status
      */
     @PatchMapping("/{id}")
-    public ResponseDto<GiftCertificateDto> updateGiftCertificate(@PathVariable("id") @Min(1) long id,
-                                             @Valid @RequestBody GiftCertificateDto entity) throws RepositoryException {
-        return service.updateWithResponse(entity,id);
+    public DtoPage<GiftCertificateDto> updateGiftCertificate(@PathVariable("id") @Min(1) long id,
+                                             @Valid @RequestBody GiftCertificateDto entity) throws RepositoryException, ServiceException {
+        DtoPage<GiftCertificateDto> page = service.updateWithDtoPage(entity, id);
+        hateoas.setGiftHateoas(page);
+        return page;
     }
 
     /**
@@ -96,7 +101,7 @@ public class GiftCertificateController {
     @GetMapping("/search")
     public DtoPage<GiftCertificateDto> search(GiftCertificateDto dto,
                                               @RequestParam(defaultValue = "") String tagList) throws ServiceException, RepositoryException {
-        DtoPage<GiftCertificateDto> page = service.findByParamWithPage(dto,tagList);
+        DtoPage<GiftCertificateDto> page = service.findByParamWithDtoPage(dto,tagList);
         hateoas.setGiftHateoas(page);
         return page;
     }

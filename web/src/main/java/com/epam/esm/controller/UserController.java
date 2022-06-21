@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.DtoPage;
-import com.epam.esm.dto.ResponseDto;
+import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
@@ -32,14 +32,16 @@ public class UserController {
     public DtoPage<UserDto> getUsers(@RequestParam(defaultValue = "0") Integer page,
                                      @RequestParam(defaultValue = "10") Integer size,
                                      @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
-        DtoPage<UserDto> dtoPage = service.findAllPage(page,size,sort);
+        DtoPage<UserDto> dtoPage = service.findAllPageWithDtoPage(page,size,sort);
         hateoas.setUserHateoas(dtoPage);
         return dtoPage;
     }
 
     @PostMapping
-    public ResponseDto<UserDto> registration(@RequestBody UserDto user) {
-        return service.saveWithResponse(user);
+    public DtoPage<UserDto> registration(@RequestBody UserDto user) throws RepositoryException, ServiceException {
+        DtoPage<UserDto> page = service.saveWithDtoPage(user);
+        hateoas.setUserHateoas(page);
+        return page;
     }
 
     /**
@@ -48,7 +50,20 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public DtoPage<UserDto> getByIdUser(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException {
-        DtoPage<UserDto> page = service.findByIdWithPage(id);
+        DtoPage<UserDto> page = service.findByIdWithDtoPage(id);
+        hateoas.setUserHateoas(page);
+        return page;
+    }
+    @GetMapping("/top")
+    public DtoPage<UserDto> getTopUsers() throws ServiceException, RepositoryException {
+        DtoPage<UserDto> page = service.findTopWithDtoPage();
+        hateoas.setUserHateoas(page);
+        return page;
+    }
+
+    @GetMapping("/search")
+    public DtoPage<UserDto> search(UserDto dto) throws ServiceException, RepositoryException {
+        DtoPage<UserDto> page = service.findByParamWithDtoPage(dto);
         hateoas.setUserHateoas(page);
         return page;
     }

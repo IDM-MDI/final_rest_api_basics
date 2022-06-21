@@ -2,7 +2,6 @@ package com.epam.esm.controller;
 
 
 import com.epam.esm.dto.DtoPage;
-import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
@@ -10,8 +9,6 @@ import com.epam.esm.hateoas.impl.TagHateoas;
 import com.epam.esm.service.impl.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,8 +50,10 @@ public class TagController {
      * @return create status
      */
     @PostMapping
-    public ResponseDto<TagDto> addTag(@Valid @RequestBody TagDto entity) throws RepositoryException {
-        return service.saveWithResponse(entity);
+    public DtoPage<TagDto> addTag(@Valid @RequestBody TagDto entity) throws RepositoryException, ServiceException {
+        DtoPage<TagDto> page = service.saveWithDtoPage(entity);
+        hateoas.setTagHateoas(page);
+        return page;
     }
 
     /**
@@ -63,8 +62,10 @@ public class TagController {
      * @return deleteWithResponse status
      */
     @DeleteMapping("/{id}")
-    public ResponseDto<TagDto> deleteTag(@PathVariable @Min(1) long id) {
-        return service.deleteWithResponse(id);
+    public DtoPage<TagDto> deleteTag(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException {
+        DtoPage<TagDto> page = service.deleteWithDtoPage(id);
+        hateoas.setTagHateoas(page);
+        return page;
     }
 
     /**
@@ -73,14 +74,14 @@ public class TagController {
      */
     @GetMapping("/{id}")
     public DtoPage<TagDto> getByIdTag(@PathVariable @Min(1) long id) throws ServiceException, RepositoryException {
-        DtoPage<TagDto> page = service.findByIdWithPage(id);
+        DtoPage<TagDto> page = service.findByIdWithDtoPage(id);
         hateoas.setTagHateoas(page);
         return page;
     }
 
     @GetMapping("/search")
     public DtoPage<TagDto> search(TagDto dto) throws ServiceException, RepositoryException {
-        DtoPage<TagDto> page = service.findAllByParamPage(dto);
+        DtoPage<TagDto> page = service.findAllByParamWithDtoPage(dto);
         hateoas.setTagHateoas(page);
         return page;
     }

@@ -2,18 +2,17 @@ package com.epam.esm.service.impl;
 
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
-import com.epam.esm.builder.impl.ResponseDtoBuilder;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Status;
+import com.epam.esm.entity.StatusName;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.GiftTagRepository;
-import com.epam.esm.repository.StatusRepository;
 import com.epam.esm.service.EntityService;
+import com.epam.esm.service.ResponseService;
 import com.epam.esm.util.impl.GiftCertificateModelMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +26,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
+import static com.epam.esm.entity.StatusName.ACTIVE;
+import static com.epam.esm.exception.RepositoryExceptionCode.*;
 import static com.epam.esm.validator.GiftValidator.*;
-
+import static com.epam.esm.dto.ResponseTemplate.*;
 
 
 @Service
@@ -40,58 +39,60 @@ import static com.epam.esm.validator.GiftValidator.*;
 @Slf4j
 public class GiftCertificateService implements EntityService<GiftCertificate,GiftCertificateDto> {
 
-    private static final String UPDATED = "Gift Certificate updated";
-    private static final String CREATED = "Gift Certificate created";
-    private static final String DELETED = "Gift Certificate deleted";
-    private static final String GIFT_EXIST = "Gift Certificate already exist";
+    public static final String GIFT_CERTIFICATE = "Gift Certificate ";
     private static final long DELETED_STATUS_ID = 2;
     private final GiftCertificateRepository repository;
     private final GiftTagRepository giftTagRepository;
-    private final StatusRepository statusRepository;
     private final GiftCertificateModelMapper mapper;
     private final TagService tagService;
+    private final ResponseService responseService;
+    private final StatusService statusService;
 
     @Autowired
-    public GiftCertificateService(GiftCertificateRepository repository, GiftTagRepository giftTagRepository, StatusRepository statusRepository, GiftCertificateModelMapper mapper, TagService tagService) {
+    public GiftCertificateService(GiftCertificateRepository repository,
+                                  GiftTagRepository giftTagRepository,
+                                  GiftCertificateModelMapper mapper,
+                                  TagService tagService,
+                                  ResponseService responseService,
+                                  StatusService statusService) {
         this.repository = repository;
         this.giftTagRepository = giftTagRepository;
-        this.statusRepository = statusRepository;
+        this.statusService = statusService;
         this.mapper = mapper;
         this.tagService = tagService;
+        this.responseService = responseService;
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseDto<GiftCertificateDto> saveWithResponse(GiftCertificateDto dto) throws RepositoryException {
-        save(dto);
-        return new ResponseDtoBuilder<GiftCertificateDto>()
-                .setCode(201)
-                .setText(CREATED)
+    public DtoPage<GiftCertificateDto> saveWithResponse(GiftCertificateDto dto) throws RepositoryException {
+        return new DtoPageBuilder<GiftCertificateDto>()
+                .setResponse(responseService.createdResponse(GIFT_CERTIFICATE + CREATED))
+                .setContent(List.of(mapper.toDto(save(dto))))
                 .build();
     }
 
-    public ResponseDto<GiftCertificateDto> deleteWithResponse(Long id) {
+    public DtoPage<GiftCertificateDto> deleteWithDtoPage(Long id) throws RepositoryException {
         delete(id);
-        return new ResponseDtoBuilder<GiftCertificateDto>()
-                .setCode(200)
-                .setText(DELETED)
+        return new DtoPageBuilder<GiftCertificateDto>()
+                .setResponse(responseService.okResponse(GIFT_CERTIFICATE + DELETED))
                 .build();
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseDto<GiftCertificateDto> updateWithResponse(GiftCertificateDto dto, Long id) throws RepositoryException {
+    public DtoPage<GiftCertificateDto> updateWithDtoPage(GiftCertificateDto dto, Long id) throws RepositoryException {
         dto.setId(id);
-        GiftCertificateDto result = mapper.toDto(update(mapper.toEntity(dto)));
-        return new ResponseDtoBuilder<GiftCertificateDto>()
-                .setCode(202)
-                .setContent(result)
-                .setText(UPDATED)
+        return new DtoPageBuilder<GiftCertificateDto>()
+                .setResponse(responseService.okResponse(GIFT_CERTIFICATE + UPDATED))
+                .setContent(List.of(mapper.toDto(update(dto))))
                 .build();
     }
 
     public DtoPage<GiftCertificateDto> findAllWithPage(int page, int size, String sort) throws RepositoryException {
-        List<GiftCertificate> result = findAll(page,size,sort);
         return new DtoPageBuilder<GiftCertificateDto>()
-                .setContent(mapper.toDtoList(result))
+                .setResponse(responseService.okResponse(
+                        GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
+                ))
+                .setContent(mapper.toDtoList(findAll(page,size,sort)))
                 .setSize(size)
                 .setNumberOfPage(page)
                 .setSortBy(sort)
@@ -101,25 +102,26 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
     public DtoPage<GiftCertificateDto> findByIdWithPage(Long id) throws RepositoryException {
         GiftCertificate result = findById(id);
         return new DtoPageBuilder<GiftCertificateDto>()
+                .setResponse(responseService.okResponse(GIFT_CERTIFICATE + FOUND_BY_ID))
                 .setContent(List.of(mapper.toDto(result)))
                 .build();
     }
 
 
-    public DtoPage<GiftCertificateDto> findByParamWithPage(GiftCertificateDto dto, String tags) {
+    public DtoPage<GiftCertificateDto> findByParamWithDtoPage(GiftCertificateDto dto, String tags) {
         GiftCertificate gift = mapper.toEntity(dto);
         return new DtoPageBuilder<GiftCertificateDto>()
-                .setContent(findByParamWithPage(gift,tags))
+                .setResponse(responseService.okResponse(GIFT_CERTIFICATE + FOUND_BY_PARAM))
+                .setContent(findByParam(gift,tags))
                 .build();
     }
 
 
     @Override
     public GiftCertificate save(GiftCertificateDto dto) throws RepositoryException {
-        Optional<GiftCertificate> giftFromDB = repository.findByName(dto.getName());
-        if(giftFromDB.isPresent()) {
-            log.warn("NOTHING FIND BY ID - GIFT SAVE");
-            throw new RepositoryException();
+        if(checkExist(dto)) {
+            log.warn(GIFT_CERTIFICATE + IS_ALREADY_EXIST);
+            throw new RepositoryException(REPOSITORY_SAVE_ERROR.toString());
         }
         GiftCertificate entity = mapper.toEntity(dto);
         entity.setTagList(tagService.saveAllByName(dto.getTags()));
@@ -129,60 +131,53 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
     }
 
     @Override
-    public GiftCertificate update(GiftCertificate entity) throws RepositoryException {
-        Optional<GiftCertificate> optionalGiftFromDB = repository.findById(entity.getId());
-        GiftCertificateDto dto = mapper.toDto(entity);
-        if(optionalGiftFromDB.isEmpty()) {
-            log.warn("NOTHING FIND BY ID - GIFT UPDATE");
+    public GiftCertificate update(GiftCertificateDto dto) throws RepositoryException {
+        if(!checkExist(dto)) {
+            log.warn(REPOSITORY_NOTHING_FIND_BY_ID.toString());
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
         }
-
-        GiftCertificate result = repository.save(uniteGifts(dto,
-                optionalGiftFromDB.get()));
+        GiftCertificate uniteGifts = uniteGifts(dto, repository.findById(dto.getId()).get());
+        GiftCertificate result = repository.save(uniteGifts);
         log.info("gift - {} was updated", result);
         return result;
     }
 
     @Override
     public List<GiftCertificate> findAll(int page, int size, String sort) throws RepositoryException {
-        List<GiftCertificate> giftList = repository.findAll(PageRequest.of(page, size, Sort.by(sort)))
-                .toList();
+        List<GiftCertificate> giftList = repository
+                                        .findAll(PageRequest.of(page, size, Sort.by(sort)))
+                                        .toList();
         if(giftList.size() == 0) {
-            throw new RepositoryException();
+            log.error(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
         }
         return giftList;
     }
 
     @Override
     public GiftCertificate findById(long id) throws RepositoryException {
-        Optional<GiftCertificate> byId = repository.findById(id);
-        if(byId.isEmpty()) {
-            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
-        }
-        return byId.get();
+        return repository.findById(id)
+                .orElseThrow(()-> new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString()));
     }
 
     @Override
-    public List<GiftCertificate> findActive() {
-        String active = "ACTIVE";
-        return findByStatus(active);
+    public List<GiftCertificate> findActive() throws RepositoryException {
+        return findByStatus(ACTIVE.name());
     }
 
     @Override
-    public List<GiftCertificate> findDeleted() {
-        String deleted = "DELETED";
-        return findByStatus(deleted);
+    public List<GiftCertificate> findDeleted() throws RepositoryException {
+        return findByStatus(StatusName.DELETED.name());
     }
 
     @Override
-    public List<GiftCertificate> findByStatus(String statusName) {
-        return repository.findByStatus(statusRepository.findByNameIgnoreCase(statusName));
+    public List<GiftCertificate> findByStatus(String statusName) throws RepositoryException {
+        return repository.findByStatus(statusService.findStatus(statusName));
     }
 
     @Override
-    public void delete(long id) {
-        Optional<Status> statusOptional = statusRepository.findById(DELETED_STATUS_ID);
-        statusOptional.ifPresent(status -> repository.setDelete(id, status));
+    public void delete(long id) throws RepositoryException {
+        repository.setDelete(id, statusService.findStatus(StatusName.DELETED.name()));
     }
 
     private List<TagDto> createTagsByString(String tags) {
@@ -197,31 +192,26 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
 
     private List<GiftCertificate> findByTagAndEntity(List<GiftCertificate> fromDB, String tags) {
         List<GiftCertificate> giftWithTag = repository.findByTagListIn(
-                                                tagService.findAllByName(
-                                                        createTagsByString(tags)));
+                                                tagService.findAllByName(createTagsByString(tags)));
         if(fromDB == null || fromDB.size() == 0) {
         return giftWithTag;
         }
-        else {
-            return findEquals(fromDB,giftWithTag);
-        }
+        return findEquals(fromDB,giftWithTag);
     }
 
     private GiftCertificate uniteGifts(GiftCertificateDto update,
-                            GiftCertificate fromDB) {
+                            GiftCertificate fromDB) throws RepositoryException {
         GiftCertificate entity = mapper.toEntity(update);
         uniteEntities(entity,fromDB);
         if(update.getTags() != null) {
-            Optional<Status> statusOptional = statusRepository.findById(DELETED_STATUS_ID);
-            fromDB.getTagList().forEach(i-> {
-                statusOptional.ifPresent(status -> giftTagRepository.setDeleteByGift(i.getId(), status));
-            });
+            Status status = statusService.findStatus(StatusName.DELETED.name());
+            fromDB.getTagList().forEach(i-> giftTagRepository.setDeleteByGift(i.getId(), status));
             entity.setTagList(tagService.saveAllByName(update.getTags()));
         }
         return entity;
     }
 
-    private List<GiftCertificateDto> findByParamWithPage(GiftCertificate entity, String tags) {
+    private List<GiftCertificateDto> findByParam(GiftCertificate entity, String tags) {
         List<GiftCertificate> result;
         if(isGiftEmpty(entity)) {
             result = new ArrayList<>();
@@ -236,4 +226,18 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
         return mapper.toDtoList(result);
     }
 
+    private boolean checkExist(GiftCertificateDto dto) throws RepositoryException {
+        if(dto == null || (dto.getId() == null && dto.getName() == null)) {
+            throw new RepositoryException(REPOSITORY_NULL_POINTER.toString());
+        }
+        if(dto.getId() != null) {
+            return repository.findById(dto.getId()).isPresent();
+        }
+        return repository.findByName(dto.getName()).isPresent();
+    }
+
+    @Override
+    public List<GiftCertificate> findByParam(GiftCertificateDto dto) throws RepositoryException {
+        return null;
+    }
 }
