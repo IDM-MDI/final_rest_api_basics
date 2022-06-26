@@ -46,6 +46,16 @@ public class DtoPageBuilder<T> implements ModelBuilder {
         result.setSize(size);
         result.setSortBy(sortBy);
         result.setNumberOfPage(numberOfPage);
+        clear();
         return result;
+    }
+
+    @Override
+    public void clear() {
+        content = null;
+        response = null;
+        size = 0;
+        sortBy = null;
+        numberOfPage = 0;
     }
 }

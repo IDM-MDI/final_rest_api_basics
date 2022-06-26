@@ -23,6 +23,14 @@ public class ResponseDtoBuilder implements ModelBuilder {
 
     @Override
     public ResponseDto build() {
-        return new ResponseDto(code,text);
+        ResponseDto result = new ResponseDto(code,text);
+        clear();
+        return result;
+    }
+
+    @Override
+    public void clear() {
+        code = 0;
+        text = null;
     }
 }

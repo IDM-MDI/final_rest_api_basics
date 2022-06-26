@@ -47,6 +47,15 @@ public class UserBuilder implements ModelBuilder {
         result.setUsername(name);
         result.setOrders(orders);
         result.setStatus(status);
+        clear();
         return result;
+    }
+
+    @Override
+    public void clear() {
+        id = null;
+        name = null;
+        orders = null;
+        status = null;
     }
 }

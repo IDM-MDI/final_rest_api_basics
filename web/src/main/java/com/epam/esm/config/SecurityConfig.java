@@ -31,11 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenFilter filter;
 
     @Autowired
-    public SecurityConfig(JwtTokenProvider provider,
-                          OAuth2LoginSuccessHandler successHandler,
+    public SecurityConfig(OAuth2LoginSuccessHandler successHandler,
                           OAuth2LoginFailHandler failHandler,
-                          JwtTokenFilter filter,
-                          JwtEntryPoint entryPoint) {
+                          JwtTokenFilter filter) {
         this.successHandler = successHandler;
         this.failHandler = failHandler;
         this.filter = filter;

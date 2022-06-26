@@ -27,10 +27,15 @@ public class TagBuilder implements ModelBuilder {
 
     @Override
     public Tag build() {
-        Tag result = new Tag();
-        result.setId(id);
-        result.setName(name);
-        result.setStatus(status);
+        Tag result = new Tag(id,name,status);
+        clear();
         return result;
+    }
+
+    @Override
+    public void clear() {
+        id = null;
+        name = null;
+        status = null;
     }
 }

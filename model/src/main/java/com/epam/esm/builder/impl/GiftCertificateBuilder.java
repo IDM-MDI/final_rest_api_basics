@@ -71,16 +71,28 @@ public class GiftCertificateBuilder implements ModelBuilder {
 
     @Override
     public GiftCertificate build() {
-        GiftCertificate result = new GiftCertificate();
-        result.setId(id);
-        result.setName(name);
-        result.setDescription(description);
-        result.setDuration(duration);
-        result.setPrice(price);
-        result.setCreateDate(create_date);
-        result.setUpdateDate(update_date);
-        result.setTagList(tagList == null ? new ArrayList<>() : tagList);
-        result.setStatus(status);
+        GiftCertificate result = new GiftCertificate(
+                id,
+                name,description,
+                price,duration,
+                create_date,update_date,
+                tagList == null ? new ArrayList<>() : tagList,
+                status
+        );
+        clear();
         return result;
+    }
+
+    @Override
+    public void clear() {
+        id = null;
+        name = null;
+        description = null;
+        duration = null;
+        price = null;
+        create_date = null;
+        update_date = null;
+        tagList = null;
+        status = null;
     }
 }

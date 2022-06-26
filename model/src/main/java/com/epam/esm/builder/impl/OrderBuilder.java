@@ -51,13 +51,18 @@ public class OrderBuilder implements ModelBuilder {
 
     @Override
     public Order build() {
-        Order order = new Order();
-        order.setId(id);
-        order.setPrice(price);
-        order.setPurchaseTime(purchaseTime);
-        order.setUser(user);
-        order.setGift(gift);
-        order.setStatus(status);
+        Order order = new Order(id,price,purchaseTime,gift,user,status);
+        clear();
         return order;
+    }
+
+    @Override
+    public void clear() {
+        id = null;
+        price = null;
+        purchaseTime = null;
+        gift = null;
+        user = null;
+        status = null;
     }
 }

@@ -20,6 +20,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 
+import static com.epam.esm.entity.StatusName.ACTIVE;
+
 @Component
 @Slf4j
 public class DataGenerator {
@@ -79,14 +81,15 @@ public class DataGenerator {
     }
 
     private void initOrders() {
+        OrderBuilder builder = new OrderBuilder();
         List<User> users = userRepository.findUsersByOrdersEmpty();
-        Optional<Status> activeStatus = statusRepository.findById(1L);
+        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
 
         users.forEach(user -> {
             List<Order> orders = new ArrayList<>();
             List<GiftCertificate> gifts = getRandomGifts();
             gifts.forEach(i-> {
-                Order order = new OrderBuilder()
+                Order order = builder
                                     .setPrice(i.getPrice())
                                     .setUser(user)
                                     .setGift(i)
@@ -107,14 +110,15 @@ public class DataGenerator {
     }
 
     private void initGifts(String[] words) {
+        GiftCertificateBuilder builder = new GiftCertificateBuilder();
         long minDuration = 1, maxDuration = 100;
         long minPrice = 1000, maxPrice = 100000000;
         List<GiftCertificate> gifts = new ArrayList<>();
         List<String> giftWords = handler.getCountWords(words,10000).stream().toList();
-        Optional<Status> activeStatus = statusRepository.findById(1L);
+        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
 
         for (String giftWord : giftWords) {
-            GiftCertificate gift = new GiftCertificateBuilder()
+            GiftCertificate gift = builder
                                         .setName(giftWord)
                                         .setPrice(new BigDecimal(handler.getRandomNumber(minPrice, maxPrice)))
                                         .setDuration((int) handler.getRandomNumber(minDuration, maxDuration))
@@ -128,14 +132,17 @@ public class DataGenerator {
     }
 
     private void initTags(String[] words) {
-        Optional<Status> activeStatus = statusRepository.findById(1L);
+        TagBuilder builder = new TagBuilder();
+        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
         List<Tag> tags = new ArrayList<>();
         List<String> tagsWord = handler
                                 .getCountWords(words,1000)
                                 .stream()
                                 .toList();
         tagsWord.forEach(i -> {
-            Tag tag = new TagBuilder().setName(i).build();
+            Tag tag = builder
+                    .setName(i)
+                    .build();
             activeStatus.ifPresent(tag::setStatus);
             tags.add(tag);
         });
