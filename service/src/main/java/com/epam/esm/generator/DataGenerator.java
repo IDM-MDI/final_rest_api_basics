@@ -1,14 +1,15 @@
 package com.epam.esm.generator;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
-import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.TagRepository;
-import com.epam.esm.repository.UserRepository;
+import com.epam.esm.builder.impl.GiftCertificateBuilder;
+import com.epam.esm.builder.impl.OrderBuilder;
+import com.epam.esm.builder.impl.TagBuilder;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.entity.*;
+import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.repository.*;
+import com.epam.esm.service.impl.UserService;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,54 +20,81 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 
+import static com.epam.esm.entity.StatusName.ACTIVE;
+
 @Component
+@Slf4j
 public class DataGenerator {
     private static final String uriWord = "http://www-personal.umich.edu/~jlawler/wordlist";
-    private static final String uriUser = "https://randomuser.me/api";
+    private final RandomHandler handler;
     private final TagRepository tagRepository;
     private final GiftCertificateRepository giftRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final OrderRepository orderRepository;
+    private final StatusRepository statusRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public DataGenerator(TagRepository tagRepository, GiftCertificateRepository giftRepository, UserRepository userRepository, OrderRepository orderRepository) {
+    public DataGenerator(RandomHandler handler,
+                         TagRepository tagRepository,
+                         GiftCertificateRepository giftRepository,
+                         UserRepository userRepository,
+                         OrderRepository orderRepository, StatusRepository statusRepository, UserService userService) {
+        this.handler = handler;
         this.tagRepository = tagRepository;
         this.giftRepository = giftRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.orderRepository = orderRepository;
+        this.statusRepository = statusRepository;
+        this.userRepository = userRepository;
     }
 
-//    @Transactional
-    public void fillRandomData() {
+    public void fillRandomData() throws RepositoryException {
         long tagCount = tagRepository.count();
         long giftCount = giftRepository.count();
         long userCount = userRepository.count();
         long orderCount = orderRepository.count();
         String[] words = null;
-        if(tagCount == 0 || giftCount == 0 || userCount == 0)
+        if(tagCount == 0 || giftCount == 0 || userCount == 0) {
             words = getWords();
-        if(tagCount == 0)
+        }
+        if(tagCount == 0) {
+            log.info("Starting generate random tags");
             initTags(words);
-        if(giftCount == 0)
+        }
+        if(giftCount == 0) {
+            log.info("Starting generate random gifts");
             initGifts(words);
-        if(userCount == 0)
-            initUsers(getUsernames(words));
+        }
+        if(userCount == 0) {
+            log.info("Starting generate random users");
+            initUsers(getRandomUsers(words));
+        }
+        userCount = userRepository.count();
         if(orderCount == 0 &&
                 userCount != 0 &&
-                giftCount != 0)
+                giftCount != 0) {
+            log.info("Starting generate orders for user");
             initOrders();
+        }
+        log.info("All data has successfully generated");
     }
 
     private void initOrders() {
+        OrderBuilder builder = new OrderBuilder();
         List<User> users = userRepository.findUsersByOrdersEmpty();
+        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
+
         users.forEach(user -> {
             List<Order> orders = new ArrayList<>();
             List<GiftCertificate> gifts = getRandomGifts();
             gifts.forEach(i-> {
-                Order order = new Order();
-                order.setPrice(i.getPrice());
-                order.setUser(user);
-                order.setGift(i);
+                Order order = builder
+                                    .setPrice(i.getPrice())
+                                    .setUser(user)
+                                    .setGift(i)
+                                    .build();
+                activeStatus.ifPresent(order::setStatus);
                 orders.add(order);
             });
             user.setOrders(orders);
@@ -74,41 +102,50 @@ public class DataGenerator {
         userRepository.saveAll(users);
     }
 
-    private void initUsers(List<String> usernames) {
-        List<User> users = new ArrayList<>();
-        for (String username : usernames) {
-            User user = new User();
-            user.setName(username);
-            users.add(user);
+    private void initUsers(List<UserDto> users) throws RepositoryException {
+        for (int i = 0; i < users.size(); i++) {
+            userService.save(users.get(i));
+            log.info("User[{}]: is saved", i);
         }
-        userRepository.saveAll(users);
     }
 
     private void initGifts(String[] words) {
+        GiftCertificateBuilder builder = new GiftCertificateBuilder();
         long minDuration = 1, maxDuration = 100;
         long minPrice = 1000, maxPrice = 100000000;
         List<GiftCertificate> gifts = new ArrayList<>();
-        List<String> giftWords = getCountWords(words,10000).stream().toList();
+        List<String> giftWords = handler.getCountWords(words,10000).stream().toList();
+        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
+
         for (String giftWord : giftWords) {
-            GiftCertificate gift = new GiftCertificate();
-            gift.setName(giftWord);
-            gift.setTagList(getRandomTags());
-            gift.setDuration((int) getRandomNumber(minDuration, maxDuration));
-            gift.setPrice(new BigDecimal(getRandomNumber(minPrice, maxPrice)));
-            gift.setDescription(getRandomDescription(words));
+            GiftCertificate gift = builder
+                                        .setName(giftWord)
+                                        .setPrice(new BigDecimal(handler.getRandomNumber(minPrice, maxPrice)))
+                                        .setDuration((int) handler.getRandomNumber(minDuration, maxDuration))
+                                        .setDescription(getRandomDescription(words))
+                                        .setTagList(getRandomTags())
+                                        .build();
+            activeStatus.ifPresent(gift::setStatus);
             gifts.add(gift);
         }
         giftRepository.saveAll(gifts);
     }
 
     private void initTags(String[] words) {
+        TagBuilder builder = new TagBuilder();
+        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
         List<Tag> tags = new ArrayList<>();
-        List<String> tagsWord = getCountWords(words,1000).stream().toList();
-        for (String s : tagsWord) {
-            Tag tag = new Tag();
-            tag.setName(s);
+        List<String> tagsWord = handler
+                                .getCountWords(words,1000)
+                                .stream()
+                                .toList();
+        tagsWord.forEach(i -> {
+            Tag tag = builder
+                    .setName(i)
+                    .build();
+            activeStatus.ifPresent(tag::setStatus);
             tags.add(tag);
-        }
+        });
         tagRepository.saveAll(tags);
     }
     @SneakyThrows
@@ -123,73 +160,63 @@ public class DataGenerator {
         return word.split("\r\n");
     }
     @SneakyThrows
-    private List<String> getUsernames(String[] words) {
-        String mr = "Mr ", mrs = "Mrs ";
-        List<String> usernames = new ArrayList<>();
-        List<String> exampleUsernames = getCountWords(words,1000).stream().toList();
-        for (String exampleUsername : exampleUsernames) {
-            String user;
-            if (getRandomNumber(0, 1) == 0)
-                user = mr + exampleUsername;
-            else
-                user = mrs + exampleUsername;
-            usernames.add(user);
+    private List<UserDto> getRandomUsers(String[] words) {
+        String mr = "Mr ";
+        String mrs = "Mrs ";
+        List<UserDto> users = new ArrayList<>();
+        List<String> exampleUsernames = handler
+                                        .getCountWords(words,1000)
+                                        .stream()
+                                        .toList();
+
+        for (String i : exampleUsernames) {
+            UserDto user = new UserDto();
+            if (handler.getRandomNumber(0, 1) == 0) {
+                user.setUsername(mr + i);
+            }
+            else {
+                user.setUsername(mrs + i);
+            }
+            user.setPassword(i);
+            users.add(user);
         }
-        return usernames;
+        return users;
     }
 
-    private Set<String> getCountWords(String[] words,int count) {
-        long min = 0, max = 68000;
-        Set<String> setWords = new HashSet<>();
-        for (int i = 0; i < count; i++) {
-            if(setWords.size() == i)
-                setWords.add(words[(int) getRandomNumber(min,max)]);
-            else
-                i = setWords.size()-1;
-        }
-        return setWords;
-    }
-
-    private long getRandomNumber(long min,long max) {
-        Random random = new Random();
-        return random.nextLong((max - min) + 1) + min;
-    }
-    private String getRandomWord(String[] words) {
-        Random random = new Random();
-        int min = 0,max = 68000;
-        return words[random.nextInt((max - min) + 1) + min];
-    }
 
     private String getRandomDescription(String[] words) {
         StringBuilder builder = new StringBuilder();
-        long min = 20,max = 35;
-        long random = getRandomNumber(min,max);
+        long min = 20;
+        long max = 35;
+        long random = handler.getRandomNumber(min,max);
         for (int i = 0; i < random; i++) {
-            builder.append(getRandomWord(words))
+            builder.append(handler.getRandomWord(words))
                     .append(" ");
         }
         return builder.toString().trim();
     }
 
     private List<Tag> getRandomTags() {
-        long min = 0, max = 3;
+        long min = 0;
+        long max = 3;
         long maxTags = tagRepository.count();
         List<Tag> tags = new ArrayList<>();
-        long randomCount = getRandomNumber(min,max);
+        long randomCount = handler.getRandomNumber(min,max);
         for (int j = 0; j < randomCount; j++) {
-            long randomNumber = getRandomNumber(min,maxTags);
+            long randomNumber = handler.getRandomNumber(min,maxTags);
             Optional<Tag> tagOptional = tagRepository.findById(randomNumber);
             tagOptional.ifPresent(tags::add);
         }
         return tags;
     }
     private List<GiftCertificate> getRandomGifts() {
-        long min = 0, max = 5;
+        long min = 0;
+        long max = 5;
         long maxGifts = giftRepository.count();
         List<GiftCertificate> gifts = new ArrayList<>();
-        long randomCount = getRandomNumber(min,max);
+        long randomCount = handler.getRandomNumber(min,max);
         for (int j = 0; j < randomCount; j++) {
-            long randomNumber = getRandomNumber(min, maxGifts);
+            long randomNumber = handler.getRandomNumber(min, maxGifts);
             Optional<GiftCertificate> optionalGift = giftRepository.findById(randomNumber);
             optionalGift.ifPresent(gifts::add);
         }

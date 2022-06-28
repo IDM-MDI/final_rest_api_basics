@@ -14,8 +14,9 @@ public class GiftValidator {
         List<GiftCertificate> result = new ArrayList<>();
         for (GiftCertificate i : first) {
             for (GiftCertificate j : second) {
-                if(Objects.equals(i.getId(), j.getId()))
+                if(Objects.equals(i.getId(), j.getId())) {
                     result.add(i);
+                }
             }
         }
         return result;
@@ -47,8 +48,9 @@ public class GiftValidator {
         boolean result = false;
         for (Tag i: giftTags) {
             for (Tag j: searchTags) {
-                if(i.getName().equals(j.getName())) {
+                if (i.getName().equals(j.getName())) {
                     result = true;
+                    break;
                 }
             }
         }
@@ -56,17 +58,23 @@ public class GiftValidator {
     }
 
     public static void uniteEntities(GiftCertificate first, GiftCertificate second) {
-        if(first.getId() == null)
+        if(first.getId() == null) {
             first.setId(second.getId());
-        if(first.getName() == null ||first.getName().trim().isEmpty())
+        }
+        if(first.getName() == null ||first.getName().trim().isEmpty()) {
             first.setName(second.getName());
-        if(first.getDescription() == null || first.getDescription().trim().isEmpty())
+        }
+        if(first.getDescription() == null || first.getDescription().trim().isEmpty()) {
             first.setDescription(second.getDescription());
-        if(first.getPrice() == null)
+        }
+        if(first.getPrice() == null) {
             first.setPrice(second.getPrice());
-        if(first.getDuration() == null)
+        }
+        if(first.getDuration() == null) {
             first.setDuration(second.getDuration());
-        if(first.getTagList() == null || first.getTagList().size() == 0)
+        }
+        if(first.getTagList() == null || first.getTagList().size() == 0) {
             first.setTagList(second.getTagList());
+        }
     }
 }

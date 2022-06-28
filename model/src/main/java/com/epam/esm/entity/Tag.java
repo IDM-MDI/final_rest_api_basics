@@ -1,15 +1,14 @@
 package com.epam.esm.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "tag")
 @Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
+@ToString
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +17,7 @@ public class Tag {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "deleted")
-    private boolean deleted;
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "name = " + name + ", " +
-                "deleted = " + deleted + ")";
-    }
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private Status status;
 }

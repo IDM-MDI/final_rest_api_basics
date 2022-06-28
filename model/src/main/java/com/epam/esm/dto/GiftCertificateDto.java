@@ -1,9 +1,8 @@
 package com.epam.esm.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.RepresentationModel;
@@ -14,8 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
     @Min(1)
     private Long id;

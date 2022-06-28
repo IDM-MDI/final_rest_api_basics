@@ -27,10 +27,7 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
 
     @Override
     public TagDto toDto(Tag entity) {
-        TagDto result = new TagDto();
-        result.setId(entity.getId());
-        result.setName(entity.getName());
-        return result;
+        return new TagDto(entity.getId(),entity.getName());
     }
 
     @Override

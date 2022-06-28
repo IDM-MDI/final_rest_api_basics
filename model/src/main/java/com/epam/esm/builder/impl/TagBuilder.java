@@ -1,6 +1,7 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.builder.ModelBuilder;
+import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class TagBuilder implements ModelBuilder {
     private Long id;
     private String name;
-    private boolean isDeleted;
+    private Status status;
 
     public TagBuilder setId(Long id) {
         this.id = id;
@@ -20,16 +21,21 @@ public class TagBuilder implements ModelBuilder {
         return this;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
     public Tag build() {
-        Tag result = new Tag();
-        result.setId(id);
-        result.setName(name);
-        result.setDeleted(isDeleted);
+        Tag result = new Tag(id,name,status);
+        clear();
         return result;
+    }
+
+    @Override
+    public void clear() {
+        id = null;
+        name = null;
+        status = null;
     }
 }
