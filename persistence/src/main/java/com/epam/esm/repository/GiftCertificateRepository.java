@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Long> {
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update GiftCertificate gf set gf.status = :status where gf.id = :id")
     void setDelete(@Param("id") long id, @Param("status") Status status);
 

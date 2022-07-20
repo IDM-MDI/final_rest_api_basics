@@ -23,7 +23,7 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
 
     @Override
     public GiftCertificate toEntity(GiftCertificateDto dto) {
-        return builder.setId(dto.getId()).setName(dto.getName()).setDescription(dto.getDescription()).
+        return dto == null ? null : builder.setId(dto.getId()).setName(dto.getName()).setDescription(dto.getDescription()).
                 setDuration(dto.getDuration()).setPrice(dto.getPrice()).
                 setCreate_date(dto.getCreate_date()).setUpdate_date(dto.getUpdate_date())
                 .setTagList(tagModelMapper.toEntityList(dto.getTags())).build();
@@ -31,6 +31,9 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
 
     @Override
     public GiftCertificateDto toDto(GiftCertificate entity) {
+        if(entity == null) {
+            return null;
+        }
         GiftCertificateDto result = new GiftCertificateDto();
         result.setId(entity.getId());
         result.setName(entity.getName());
@@ -45,15 +48,11 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
 
     @Override
     public List<GiftCertificate> toEntityList(List<GiftCertificateDto> dtoList) {
-        List<GiftCertificate> result = new ArrayList<>();
-        dtoList.forEach(i -> result.add(toEntity(i)));
-        return result;
+        return dtoList == null ? null : dtoList.stream().map(this::toEntity).toList();
     }
 
     @Override
     public List<GiftCertificateDto> toDtoList(List<GiftCertificate> entityList) {
-        List<GiftCertificateDto> result = new ArrayList<>();
-        entityList.forEach(i -> result.add(toDto(i)));
-        return result;
+        return entityList == null ? null : entityList.stream().map(this::toDto).toList();
     }
 }

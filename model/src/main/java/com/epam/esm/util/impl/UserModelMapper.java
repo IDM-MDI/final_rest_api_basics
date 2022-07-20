@@ -38,6 +38,9 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     @Override
     public User toEntity(UserDto dto) {
+        if(dto == null) {
+            return null;
+        }
         User user = builder
                 .setId(dto.getId())
                 .setName(dto.getUsername())
@@ -63,6 +66,9 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     @Override
     public UserDto toDto(User entity) {
+        if(entity == null) {
+            return null;
+        }
         UserDto result = new UserDto();
         result.setId(entity.getId());
         result.setUsername(entity.getUsername());
@@ -90,12 +96,12 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
     @Override
     public List<User> toEntityList(List<UserDto> dtoList) {
-        return dtoList.stream().map(this::toEntity).toList();
+        return dtoList == null ? null : dtoList.stream().map(this::toEntity).toList();
     }
 
     @Override
     public List<UserDto> toDtoList(List<User> entityList) {
-        return entityList.stream().map(this::toDto).toList();
+        return entityList == null ? null : entityList.stream().map(this::toDto).toList();
     }
 }
 

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update User u set u.status = :status where u.id = :id")
     void setDelete(@Param("id") long id, @Param("status") Status status);
 

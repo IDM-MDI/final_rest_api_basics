@@ -2,6 +2,7 @@ package com.epam.esm.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
     @Min(1)
     private Long id;

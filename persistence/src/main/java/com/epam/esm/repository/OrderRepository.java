@@ -21,7 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "GROUP BY o.user.id " +
             "ORDER BY SUM(o.price) DESC")
     List<User> getTop();
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Order o set o.status = :status where o.id = :id")
     void setDelete(@Param("id") long id, @Param("status") Status status);
 }

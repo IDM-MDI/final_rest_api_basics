@@ -9,6 +9,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor
+@EqualsAndHashCode
 public class OrderDto implements Serializable {
     @Min(1)
     private long id;

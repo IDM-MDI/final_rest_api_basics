@@ -18,13 +18,13 @@ public class RandomHandler {
     }
     public String getRandomWord(String[] words) {
         min = 0;
-        max = 68000;
-        return words[random.nextInt((max - min) + 1) + min];
+        max = words.length-1;
+        return words[(int) getRandomNumber(min,max)];
     }
 
     public Set<String> getCountWords(String[] words, int count) {
         min = 0;
-        max = 68000;
+        max = words.length-1;
         Set<String> setWords = new HashSet<>();
         for (int i = 0; i < count; i++) {
             if(setWords.size() == i) {

@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

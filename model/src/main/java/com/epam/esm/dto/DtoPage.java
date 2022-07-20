@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class DtoPage<T> extends RepresentationModel<DtoPage<T>> {
     private List<T> content;
     private ResponseDto response;

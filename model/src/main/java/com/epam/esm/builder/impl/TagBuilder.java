@@ -21,8 +21,9 @@ public class TagBuilder implements ModelBuilder {
         return this;
     }
 
-    public void setStatus(Status status) {
+    public TagBuilder setStatus(Status status) {
         this.status = status;
+        return this;
     }
 
     @Override

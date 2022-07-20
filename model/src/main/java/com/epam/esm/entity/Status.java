@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

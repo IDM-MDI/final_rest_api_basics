@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor
+@EqualsAndHashCode
 public class TagDto extends RepresentationModel<TagDto> {
     @Min(1)
     private Long id;

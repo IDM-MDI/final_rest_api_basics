@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface TagRepository extends JpaRepository<Tag, Long> {
     Optional<Tag> findByName(String name);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Tag t set t.status = :status where t.id = :id")
     void setDelete(@Param("id") long id, @Param("status") Status status);
 

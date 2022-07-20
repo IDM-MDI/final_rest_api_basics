@@ -9,6 +9,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class UserDto extends RepresentationModel<UserDto> {
     @Min(1)
     private long id;

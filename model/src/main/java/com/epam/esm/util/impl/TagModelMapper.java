@@ -21,30 +21,22 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
 
     @Override
     public Tag toEntity(TagDto dto) {
-        return builder.setId(dto.getId()).setName(dto.getName()).
+        return dto == null ? null : builder.setId(dto.getId()).setName(dto.getName()).
                 build();
     }
 
     @Override
     public TagDto toDto(Tag entity) {
-        return new TagDto(entity.getId(),entity.getName());
+        return entity == null ? null : new TagDto(entity.getId(),entity.getName());
     }
 
     @Override
     public List<Tag> toEntityList(List<TagDto> dtoList) {
-        List<Tag> result = new ArrayList<>();
-        if(dtoList != null) {
-            dtoList.forEach(i -> result.add(toEntity(i)));
-        }
-        return result;
+        return dtoList == null ? null : dtoList.stream().map(this::toEntity).toList();
     }
 
     @Override
     public List<TagDto> toDtoList(List<Tag> entityList) {
-        List<TagDto> result = new ArrayList<>();
-        if(entityList != null) {
-            entityList.forEach(i -> result.add(toDto(i)));
-        }
-        return result;
+        return entityList == null ? null : entityList.stream().map(this::toDto).toList();
     }
 }

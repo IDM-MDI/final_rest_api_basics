@@ -16,6 +16,7 @@ import java.util.List;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
