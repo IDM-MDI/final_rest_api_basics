@@ -40,7 +40,6 @@ import static com.epam.esm.dto.ResponseTemplate.*;
 public class GiftCertificateService implements EntityService<GiftCertificate,GiftCertificateDto> {
 
     public static final String GIFT_CERTIFICATE = "Gift Certificate ";
-    private static final long DELETED_STATUS_ID = 2;
     private final GiftCertificateRepository repository;
     private final GiftTagRepository giftTagRepository;
     private final GiftCertificateModelMapper mapper;

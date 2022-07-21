@@ -77,7 +77,7 @@ public class OrderService implements EntityService<Order,OrderDto> {
     }
 
     @Override
-    public Order update(OrderDto dto) throws RepositoryException {
+    public Order update(OrderDto dto) {
         return null;
     }
 
