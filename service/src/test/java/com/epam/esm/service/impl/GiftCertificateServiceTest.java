@@ -27,7 +27,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,8 +43,6 @@ class GiftCertificateServiceTest {
     @Mock
     private GiftCertificateRepository repository = Mockito.mock(GiftCertificateRepository.class);
     @Mock
-    private GiftTagRepository giftTagRepository = Mockito.mock(GiftTagRepository.class);
-    @Mock
     private TagService tagService = Mockito.mock(TagService.class);;
     @Mock
     private StatusService statusService = Mockito.mock(StatusService.class);;
@@ -53,17 +50,15 @@ class GiftCertificateServiceTest {
     private GiftCertificateModelMapper modelMapper = Mockito.mock(GiftCertificateModelMapper.class);
     @Mock
     private ResponseService responseService = Mockito.mock(ResponseService.class);
-    @Mock
-    private TagBuilder tagBuilder = Mockito.mock(TagBuilder.class);
-    @Mock
-    private TagModelMapper tagModelMapper = Mockito.mock(TagModelMapper.class);
     @InjectMocks
     private GiftCertificateService service;
 
     private final GiftCertificateModelMapper mapper;
     private final ResponseService response;
     private final GiftCertificateDto dto;
+    private final GiftCertificateDto dtoUpdated;
     private final GiftCertificate entity;
+    private final GiftCertificate entityUpdated;
     private final List<GiftCertificateDto> dtoList;
     private final List<GiftCertificate> entityList;
 
@@ -81,6 +76,17 @@ class GiftCertificateServiceTest {
                 null
         );
         this.entity = mapper.toEntity(dto);
+        this.dtoUpdated = new GiftCertificateDto(
+                1L,
+                "name 2",
+                "description 2",
+                new BigDecimal("2"),
+                2,
+                null,
+                null,
+                null
+        );
+        this.entityUpdated = mapper.toEntity(dtoUpdated);
         dtoList = List.of(
                 dto,
                 new GiftCertificateDto(
@@ -142,17 +148,6 @@ class GiftCertificateServiceTest {
     @SneakyThrows
     @Test
     void updateWithDtoPage() {
-        GiftCertificateDto dtoUpdated = new GiftCertificateDto(
-                1L,
-                "name 2",
-                "description 2",
-                new BigDecimal("2"),
-                2,
-                null,
-                null,
-                null
-        );
-        GiftCertificate entityUpdated = mapper.toEntity(dtoUpdated);
         ResponseDto responseDto = response.okResponse(GIFT_CERTIFICATE + UPDATED);
         DtoPage<GiftCertificateDto> expected = new DtoPage<>(List.of(dtoUpdated),responseDto,0,0,null);
 
@@ -238,39 +233,58 @@ class GiftCertificateServiceTest {
         Assertions.assertEquals(expected,actual);
     }
 
+    @SneakyThrows
     @Test
     void save() {
+        when(repository.findById(dto.getId()))
+                .thenReturn(Optional.empty());
+        when(modelMapper.toEntity(dto))
+                .thenReturn(entity);
+        when(tagService.saveAllByName(dto.getTags()))
+                .thenReturn(null);
+        when(repository.save(entity))
+                .thenReturn(entity);
+
+        GiftCertificate actual = service.save(dto);
+        Assertions.assertEquals(entity,actual);
     }
 
+    @SneakyThrows
     @Test
     void update() {
+        when(repository.findById(dtoUpdated.getId()))
+                .thenReturn(Optional.of(entity));
+        when(modelMapper.toEntity(dtoUpdated))
+                .thenReturn(entityUpdated);
+        when(repository.save(entityUpdated))
+                .thenReturn(entityUpdated);
+
+        GiftCertificate actual = service.update(dtoUpdated);
+        Assertions.assertEquals(entityUpdated,actual);
     }
 
+    @SneakyThrows
     @Test
     void findAll() {
+        int page = 1;
+        int size = 1;
+        String sort = "id";
+
+        when(repository.findAll(PageRequest.of(page, size, Sort.by(sort))))
+                .thenReturn(new PageImpl<>(entityList));
+
+        List<GiftCertificate> actual = service.findAll(page, size, sort);
+        Assertions.assertEquals(entityList,actual);
     }
 
+    @SneakyThrows
     @Test
     void findById() {
-    }
+        long id = dto.getId();
 
-    @Test
-    void findActive() {
-    }
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
 
-    @Test
-    void findDeleted() {
-    }
-
-    @Test
-    void findByStatus() {
-    }
-
-    @Test
-    void delete() {
-    }
-
-    @Test
-    void findByParam() {
+        GiftCertificate actual = service.findById(id);
+        Assertions.assertEquals(entity,actual);
     }
 }

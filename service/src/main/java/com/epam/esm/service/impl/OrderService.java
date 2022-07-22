@@ -82,17 +82,17 @@ public class OrderService implements EntityService<Order,OrderDto> {
     }
 
     @Override
-    public List<Order> findAll(int page, int size, String sort) throws RepositoryException {
+    public List<Order> findAll(int page, int size, String sort) {
         return null;
     }
 
     @Override
-    public Order findById(long id) throws RepositoryException {
+    public Order findById(long id) {
         return null;
     }
 
     @Override
-    public List<Order> findByParam(OrderDto dto) throws RepositoryException {
+    public List<Order> findByParam(OrderDto dto) {
         return null;
     }
 

@@ -31,7 +31,7 @@ import static com.epam.esm.exception.RepositoryExceptionCode.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Profile("prod")
 public class TagService implements EntityService<Tag,TagDto> {
-    private static final String TAG = "Tag ";
+    public static final String TAG = "Tag ";
     private final TagRepository repository;
     private final StatusService statusService;
     private final TagModelMapper mapper;

@@ -38,7 +38,7 @@ import static com.epam.esm.exception.RepositoryExceptionCode.*;
 @Profile("prod")
 public class UserService implements EntityService<User,UserDto> {
 
-    private static final String USER = "User ";
+    public static final String USER = "User ";
     private final UserRepository repository;
     private final RoleRepository roleRepository;
     private final UserModelMapper mapper;
@@ -84,7 +84,6 @@ public class UserService implements EntityService<User,UserDto> {
     }
 
     public DtoPage<UserDto> saveWithDtoPage(UserDto dto) throws RepositoryException {
-        log.info("User: " + dto + " successfully added");
         return new DtoPageBuilder<UserDto>()
                 .setResponse(responseService.createdResponse(USER + CREATED))
                 .setContent(List.of(mapper.toDto(save(dto))))
@@ -106,7 +105,9 @@ public class UserService implements EntityService<User,UserDto> {
     public User save(UserDto dto) throws RepositoryException {
         setDefaultUser(dto);
         User user = mapper.toEntity(dto);
-        return repository.save(user);
+        User result = repository.save(user);
+        log.info("User: " + dto + " successfully added");
+        return result;
     }
 
     @Override
@@ -197,7 +198,7 @@ public class UserService implements EntityService<User,UserDto> {
 
     private List<User> findTop() {
         return orderRepository.getTop()
-                              .subList(0,100);
+                .subList(0, 100);
     }
 
     private void setDefaultUser(UserDto user) throws RepositoryException {
