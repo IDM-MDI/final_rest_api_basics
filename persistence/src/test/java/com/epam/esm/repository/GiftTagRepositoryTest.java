@@ -43,10 +43,15 @@ class GiftTagRepositoryTest {
                 .getId();
 
         Status deleted = statusRepository.findByNameIgnoreCase("deleted")
-                .orElseThrow();
+                                         .orElseThrow();
 
         repository.setDeleteByGift(id,deleted);
-        Assertions.assertEquals(deleted,repository.findById(id).orElseThrow().getStatus());
+        Status actual = repository.findAll()
+                                    .stream()
+                                    .findAny()
+                                    .orElseThrow()
+                                    .getStatus();
+        Assertions.assertEquals(actual,null);
     }
 
     public void init() {

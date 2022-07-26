@@ -42,11 +42,6 @@ public class JwtTokenProvider {
         this.secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     public String createToken(UserDto user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("roles", getRoleNames(user.getRoles()));

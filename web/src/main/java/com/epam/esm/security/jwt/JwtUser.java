@@ -1,11 +1,15 @@
 package com.epam.esm.security.jwt;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@ToString
+@EqualsAndHashCode
 public class JwtUser implements UserDetails {
     private final long id;
     private final String username;
