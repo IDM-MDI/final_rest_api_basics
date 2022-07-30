@@ -66,8 +66,8 @@ class GiftTagRepositoryTest {
                 .setDescription("test")
                 .setDuration(1)
                 .setPrice(new BigDecimal(1))
-                .setCreate_date(LocalDateTime.of(1,1,1,1,1))
-                .setUpdate_date(LocalDateTime.of(2,2,2,2,2))
+                .setCreateDate(LocalDateTime.of(1,1,1,1,1))
+                .setUpdateDate(LocalDateTime.of(2,2,2,2,2))
                 .setStatus(active)
                 .setTagList(tagRepository.findAll())
                 .build();

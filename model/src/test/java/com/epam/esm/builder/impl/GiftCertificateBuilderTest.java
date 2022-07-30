@@ -3,14 +3,16 @@ package com.epam.esm.builder.impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GiftCertificateBuilderTest {
@@ -68,15 +70,15 @@ class GiftCertificateBuilderTest {
 
     @Test
     @Order(8)
-    void setCreate_date() {
-        GiftCertificateBuilder actual = builder.setCreate_date(LocalDateTime.of(2000,1, 1,0,5));
+    void setCreateDate() {
+        GiftCertificateBuilder actual = builder.setCreateDate(LocalDateTime.of(2000,1, 1,0,5));
         Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(9)
-    void setUpdate_date() {
-        GiftCertificateBuilder actual = builder.setUpdate_date(LocalDateTime.of(1,1,1,1,1));
+    void setUpdateDate() {
+        GiftCertificateBuilder actual = builder.setUpdateDate(LocalDateTime.of(1,1,1,1,1));
         Assertions.assertEquals(builder,actual);
     }
 

@@ -29,10 +29,10 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private Integer duration;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime create_date;
+    private LocalDateTime createDate;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime update_date;
+    private LocalDateTime updateDate;
 
     private List<TagDto> tags;
 }

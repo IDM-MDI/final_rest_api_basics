@@ -9,7 +9,6 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.repository.GiftTagRepository;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.util.impl.GiftCertificateModelMapper;
 import com.epam.esm.util.impl.TagModelMapper;
@@ -32,7 +31,6 @@ import java.util.Optional;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
 import static com.epam.esm.service.impl.GiftCertificateService.GIFT_CERTIFICATE;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -212,8 +210,8 @@ class GiftCertificateServiceTest {
                 dto.getDescription(),
                 dto.getPrice(),
                 dto.getDuration(),
-                dto.getCreate_date(),
-                dto.getUpdate_date(),
+                dto.getCreateDate(),
+                dto.getUpdateDate(),
                 tags
         );
         List<Tag> tagList = mapper.toEntity(dtoByParam).getTagList();

@@ -7,7 +7,6 @@ import com.epam.esm.util.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -25,7 +24,7 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
     public GiftCertificate toEntity(GiftCertificateDto dto) {
         return dto == null ? null : builder.setId(dto.getId()).setName(dto.getName()).setDescription(dto.getDescription()).
                 setDuration(dto.getDuration()).setPrice(dto.getPrice()).
-                setCreate_date(dto.getCreate_date()).setUpdate_date(dto.getUpdate_date())
+                setCreateDate(dto.getCreateDate()).setUpdateDate(dto.getUpdateDate())
                 .setTagList(tagModelMapper.toEntityList(dto.getTags())).build();
     }
 
@@ -40,8 +39,8 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
         result.setDescription(entity.getDescription());
         result.setPrice(entity.getPrice());
         result.setDuration(entity.getDuration());
-        result.setCreate_date(entity.getCreateDate());
-        result.setUpdate_date(entity.getUpdateDate());
+        result.setCreateDate(entity.getCreateDate());
+        result.setUpdateDate(entity.getUpdateDate());
         result.setTags(tagModelMapper.toDtoList(entity.getTagList()));
         return result;
     }

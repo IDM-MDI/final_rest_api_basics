@@ -18,8 +18,8 @@ public class GiftCertificateBuilder implements ModelBuilder {
     private String description;
     private BigDecimal price;
     private Integer duration;
-    private LocalDateTime create_date;
-    private LocalDateTime update_date;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
     private Status status;
 
     private List<Tag> tagList;
@@ -49,13 +49,13 @@ public class GiftCertificateBuilder implements ModelBuilder {
         return this;
     }
 
-    public GiftCertificateBuilder setCreate_date(LocalDateTime create_date) {
-        this.create_date = create_date;
+    public GiftCertificateBuilder setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
         return this;
     }
 
-    public GiftCertificateBuilder setUpdate_date(LocalDateTime update_date) {
-        this.update_date = update_date;
+    public GiftCertificateBuilder setUpdateDate(LocalDateTime updateDate) {
+        this.updateDate = updateDate;
         return this;
     }
 
@@ -75,7 +75,7 @@ public class GiftCertificateBuilder implements ModelBuilder {
                 id,
                 name,description,
                 price,duration,
-                create_date,update_date,
+                createDate, updateDate,
                 tagList == null ? new ArrayList<>() : tagList,
                 status
         );
@@ -90,8 +90,8 @@ public class GiftCertificateBuilder implements ModelBuilder {
         description = null;
         duration = null;
         price = null;
-        create_date = null;
-        update_date = null;
+        createDate = null;
+        updateDate = null;
         tagList = null;
         status = null;
     }

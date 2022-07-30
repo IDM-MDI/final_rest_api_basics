@@ -106,8 +106,8 @@ class OrderRepositoryTest {
                     .setDescription("test" + i)
                     .setDuration(i)
                     .setPrice(new BigDecimal(i))
-                    .setCreate_date(LocalDateTime.of(i,i,i,i,i))
-                    .setUpdate_date(LocalDateTime.of(i+1,i+1,i+1,i+1,i+1))
+                    .setCreateDate(LocalDateTime.of(i,i,i,i,i))
+                    .setUpdateDate(LocalDateTime.of(i+1,i+1,i+1,i+1,i+1))
                     .setStatus(active)
                     .setTagList(tags)
                     .build();
