@@ -110,6 +110,7 @@ public class UserService implements EntityService<User,UserDto> {
         return result;
     }
 
+    @Transactional
     @Override
     public User update(UserDto dto) {
         UserDto userByUsername = findUserByUsername(dto.getUsername());
@@ -176,7 +177,6 @@ public class UserService implements EntityService<User,UserDto> {
         return findUserByUsername(oauthUser.getUsername());
     }
 
-    @Transactional
     public UserDto findUserByUsername(String username) {
         return mapper.toDto(repository.findUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username - " + username + " not found")));

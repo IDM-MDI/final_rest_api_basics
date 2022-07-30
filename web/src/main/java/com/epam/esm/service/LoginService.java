@@ -47,10 +47,7 @@ public class LoginService {
     }
     private DtoPage<UserDto> getDtoPage(AuthenticationDto authentication) {
         DtoPage<UserDto> page = service.loginWithDtoPage(authentication);
-        UserDto user = page.getContent()
-                .stream()
-                .findFirst()
-                .get();
+        UserDto user = page.getContent().get(0);
         user.setJwt(createToken(user));
         return page;
     }
