@@ -13,13 +13,24 @@ pipeline {
             }
         }
       }
-      stage("Quality Gate"){
-                timeout(time: 20, unit: 'SECONDS') {
-                    set qg = waitForQualityGate()
-                    if (qg.status != 'OK') {
+      stage('Quality Gate'){
+        timeout(time: 20, unit: 'SECONDS') {
+             set qg = waitForQualityGate()
+             if (qg.status != 'OK') {
                         error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                    }
-                }
-            }
+             }
+        }
+      }
+      stage('Deploy'){
+        steps {
+            bat 'copy "web\target\certificate-1.0.war" "%Tomcat_Path%\webapps"'
+        }
+      }
+      stage('Start-Tomcat'){
+         steps {
+             bat 'cd "%Tomcat_Path%\bin"'
+             bat 'startup.bat'
+         }
+      }
   }
 }
