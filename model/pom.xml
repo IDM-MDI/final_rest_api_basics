@@ -6,16 +6,14 @@
         <artifactId>final_rest_api_basics</artifactId>
         <groupId>com.epam.esm</groupId>
         <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>model</artifactId>
-
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
