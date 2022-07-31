@@ -16,6 +16,7 @@ pipeline {
       }
       stage('Deploy'){
         steps {
+            bat 'dir'
             bat 'copy "web/target/certificate-1.0.war" "${TOMCAT_9_WEBAPPS}"'
         }
       }
