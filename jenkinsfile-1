@@ -11,7 +11,7 @@ pipeline {
       stage("Quality gate") {
          steps {
             sleep(time: 15, unit: 'SECONDS')
-             waitForQualityGate abortPipeline: true
+            waitForQualityGate abortPipeline: true
          }
       }
       stage('Deploy'){
@@ -21,10 +21,12 @@ pipeline {
       }
       stage('Start-Tomcat'){
          steps {
+             sleep(time: 5, unit: 'SECONDS')
              bat """
                 cd "%Tomcat_Path%\\bin\\"
                 startup.bat
              """
+             sleep(time: 60, unit: 'SECONDS')
          }
       }
   }
