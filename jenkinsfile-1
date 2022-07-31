@@ -21,8 +21,7 @@ pipeline {
       }
       stage('Start-Tomcat'){
          steps {
-             bat 'cd "${TOMCAT_9_BIN}"'
-             bat 'startup.bat'
+             bat '"%Tomcat_Path%\bin\startup.bat"'
          }
       }
   }
