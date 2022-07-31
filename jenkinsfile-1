@@ -16,12 +16,12 @@ pipeline {
       }
       stage('Deploy'){
         steps {
-            bat 'copy "web/target/certificate-1.0.war" "%Tomcat_Path%/webapps"'
+            bat 'copy "web/target/certificate-1.0.war" "${TOMCAT_9_WEBAPPS}"'
         }
       }
       stage('Start-Tomcat'){
          steps {
-             bat 'cd "%Tomcat_Path%\bin"'
+             bat 'cd "${TOMCAT_9_BIN}"'
              bat 'startup.bat'
          }
       }
