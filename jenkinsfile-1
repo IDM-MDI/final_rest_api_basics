@@ -21,8 +21,10 @@ pipeline {
       }
       stage('Start-Tomcat'){
          steps {
-             bat 'echo %Tomcat_Path%'
-             bat '"%Tomcat_Path%\\bin\\startup.bat"'
+             bat """
+                cd "%Tomcat_Path%\\bin\\"
+                startup.bat
+             """
          }
       }
   }
