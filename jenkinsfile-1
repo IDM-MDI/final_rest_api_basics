@@ -3,7 +3,9 @@ pipeline {
   stages {
       stage('build and scan') {
         steps {
-            bat './mvnw clean verify sonar:sonar -Dproject.settings=../sonar-project.properties'
+            withSonarQubeEnv(installationName: 'sonar1') {
+                 bat './mvnw clean verify sonar:sonar -Dproject.settings=../sonar-project.properties'
+            }
         }
       }
       stage("Quality gate") {
