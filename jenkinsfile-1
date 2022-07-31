@@ -1,12 +1,25 @@
 pipeline {
   agent any
   stages {
-    stage('Scan') {
-      steps {
-        withSonarQubeEnv(installationName: 'sonar1') {
-          bat './mvnw clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar -Dproject.settings=../sonar-project.properties'
+      stage('build') {
+        steps {
+            bat './mvnw clean verify'
         }
       }
-    }
+      stage('Scan') {
+        steps {
+            withSonarQubeEnv(installationName: 'sonar1') {
+              bat 'sonar:sonar -Dproject.settings=../sonar-project.properties'
+            }
+        }
+      }
+      stage("Quality Gate"){
+                timeout(time: 20, unit: 'SECONDS') {
+                    set qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                }
+            }
   }
 }
