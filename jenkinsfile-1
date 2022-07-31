@@ -18,7 +18,7 @@ pipeline {
         steps {
             bat 'cd web/target'
             bat 'dir'
-            bat 'copy "web/target/certificate-1.0.war" "${TOMCAT_9_WEBAPPS}"'
+            bat 'copy "web\\target\\certificate-1.0.war" "${TOMCAT_9_WEBAPPS}"'
         }
       }
       stage('Start-Tomcat'){
