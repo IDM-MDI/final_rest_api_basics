@@ -45,6 +45,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.content[0].username", anything()))
                 .andExpect(jsonPath("$.content[0].password", anything())
                 );
+
     }
 
     @Test
