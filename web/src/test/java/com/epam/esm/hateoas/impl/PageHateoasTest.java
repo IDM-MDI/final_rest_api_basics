@@ -63,7 +63,7 @@ class PageHateoasTest {
                 .setNumberOfPage(1)
                 .setSortBy("sort")
                 .build();
-        tagHateoas.addGiftsPage(actual);
+        tagHateoas.addTagsPage(actual);
         Assertions.assertNotNull(actual.getLinks());
     }
 
