@@ -7,12 +7,21 @@ import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Role;
+import com.epam.esm.entity.Status;
+import com.epam.esm.entity.User;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.ResponseService;
-import com.epam.esm.util.impl.*;
+import com.epam.esm.util.impl.GiftCertificateModelMapper;
+import com.epam.esm.util.impl.RoleModelMapper;
+import com.epam.esm.util.impl.StatusModelMapper;
+import com.epam.esm.util.impl.TagModelMapper;
+import com.epam.esm.util.impl.UserModelMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -120,5 +130,14 @@ class OrderServiceTest {
 
         Order actual = service.save(dto);
         Assertions.assertEquals(entity,actual);
+    }
+
+    @Test
+    void saveShouldThrowException() {
+        when(userRepository.findById(dto.getUserId()))
+                .thenReturn(Optional.empty());
+        when(giftRepository.findById(dto.getGiftId()))
+                .thenReturn(Optional.empty());
+        Assertions.assertThrows(RepositoryException.class,() -> service.save(dto), REPOSITORY_NOTHING_FIND_BY_ID.toString());
     }
 }

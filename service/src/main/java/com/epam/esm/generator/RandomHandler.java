@@ -1,11 +1,11 @@
 package com.epam.esm.generator;
 
+import java.security.SecureRandom;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 public class RandomHandler {
-    private static final Random random = new Random();
+    private static final SecureRandom random = new SecureRandom();
     private static int min;
     private static int max;
 
