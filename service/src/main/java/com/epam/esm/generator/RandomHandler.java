@@ -18,7 +18,8 @@ public class RandomHandler {
     public static String getRandomWord(String[] words) {
         min = 0;
         max = words.length-1;
-        return words[(int) getRandomNumber(min,max)];
+        long randomNumber = getRandomNumber(min, max);
+        return words[(int) randomNumber];
     }
 
     public static Set<String> getCountWords(String[] words, int count) {

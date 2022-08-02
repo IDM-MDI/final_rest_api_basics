@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RandomHandlerTest {
     @Test
     void getRandomNumber() {
-        long actual = RandomHandler.getRandomNumber(1, 5);
-        assertTrue(actual >= 1 && actual <= 5);
+        long actual = RandomHandler.getRandomNumber(0, 5);
+        assertTrue(actual >= 0 && actual <= 5);
     }
 
     @Test

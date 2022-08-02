@@ -47,7 +47,6 @@ class DataGeneratorTest {
     @SneakyThrows
     @Test
     void fillRandomData() {
-        MockedStatic<RandomHandler> randomHandler = mockStatic(RandomHandler.class);
         Optional<Status> optionalStatus = Optional.of(new Status(1L,"ACTIVE"));
         Set<String> words = Set.of("tag","gift","five","press");
 
@@ -56,10 +55,13 @@ class DataGeneratorTest {
         doReturn(0L).doReturn(5L).when(userRepository).count();
         when(orderRepository.count()).thenReturn(0L);
         when(statusRepository.findByNameIgnoreCase(ACTIVE.name())).thenReturn(optionalStatus);
-        randomHandler.when(()-> RandomHandler.getCountWords(any(String[].class),eq(1000))).thenReturn(words);
-        randomHandler.when(()-> RandomHandler.getCountWords(any(String[].class),eq(10000))).thenReturn(words);
 
-        generator.fillRandomData();
+        try(MockedStatic<RandomHandler> randomHandler = mockStatic(RandomHandler.class)) {
+            when(RandomHandler.getCountWords(any(String[].class),eq(1000))).thenReturn(words);
+            when(RandomHandler.getCountWords(any(String[].class),eq(10000))).thenReturn(words);
+
+            generator.fillRandomData();
+        }
 
         verify(tagRepository,atLeast(1)).count();
         verify(giftRepository,atLeast(1)).count();
