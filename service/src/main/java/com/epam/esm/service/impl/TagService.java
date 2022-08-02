@@ -48,7 +48,7 @@ public class TagService implements EntityService<Tag,TagDto> {
         this.responseService = responseService;
     }
 
-    public DtoPage<TagDto> saveWithDtoPage(TagDto dto) throws RepositoryException {
+    public DtoPage<TagDto> saveWithDtoPage(TagDto dto) {
         return new DtoPageBuilder<TagDto>()
                 .setResponse(responseService.createdResponse(TAG + CREATED))
                 .setContent(List.of(mapper.toDto(save(dto))))
@@ -88,7 +88,7 @@ public class TagService implements EntityService<Tag,TagDto> {
                 .build();
     }
 
-    public List<Tag> saveAllByName(List<TagDto> dtos) throws RepositoryException {
+    public List<Tag> saveAllByName(List<TagDto> dtos) {
         List<Tag> validTags = new ArrayList<>();
         for (TagDto dto : dtos) {
             validTags.add(save(dto));
@@ -128,7 +128,7 @@ public class TagService implements EntityService<Tag,TagDto> {
     @Override
     public List<Tag> findByParam(TagDto dto) throws RepositoryException {
         List<Tag> tags = repository.findAll(Example.of(mapper.toEntity(dto)));
-        if(tags.size() == 0) {
+        if(tags.isEmpty()) {
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
         }
         return tags;

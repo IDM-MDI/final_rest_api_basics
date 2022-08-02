@@ -3,13 +3,14 @@ package com.epam.esm.builder.impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class OrderBuilderTest {
@@ -20,21 +21,21 @@ class OrderBuilderTest {
     @Order(1)
     void setId() {
         OrderBuilder actual = builder.setId(1L);
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(2)
     void setPrice() {
         OrderBuilder actual = builder.setPrice(new BigDecimal("0"));
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(3)
     void setPurchaseTime() {
         OrderBuilder actual = builder.setPurchaseTime(new Date(0));
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
@@ -50,7 +51,7 @@ class OrderBuilderTest {
                 null,
                 null,
                 new Status(1L,"testStatus")));
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
@@ -63,14 +64,14 @@ class OrderBuilderTest {
                 null,
                 null,
                 new Status(1L,"testStatus")));
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(6)
     void setStatus() {
         OrderBuilder actual = builder.setStatus(new Status(1L, "testStatus"));
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test

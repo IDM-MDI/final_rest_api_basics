@@ -51,7 +51,7 @@ class GiftTagRepositoryTest {
                                     .findAny()
                                     .orElseThrow()
                                     .getStatus();
-        Assertions.assertEquals(actual,null);
+        Assertions.assertEquals(null,actual);
     }
 
     public void init() {

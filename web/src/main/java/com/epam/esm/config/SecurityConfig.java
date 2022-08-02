@@ -1,8 +1,6 @@
 package com.epam.esm.config;
 
-import com.epam.esm.security.jwt.JwtEntryPoint;
 import com.epam.esm.security.jwt.JwtTokenFilter;
-import com.epam.esm.security.jwt.JwtTokenProvider;
 import com.epam.esm.security.oauth.OAuth2LoginFailHandler;
 import com.epam.esm.security.oauth.OAuth2LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;

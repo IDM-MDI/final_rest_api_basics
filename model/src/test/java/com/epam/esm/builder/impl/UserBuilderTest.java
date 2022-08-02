@@ -3,11 +3,13 @@ package com.epam.esm.builder.impl;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserBuilderTest {
@@ -18,7 +20,7 @@ class UserBuilderTest {
     @Order(1)
     void setId() {
         UserBuilder actual = builder.setId(1L);
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
 
@@ -26,35 +28,35 @@ class UserBuilderTest {
     @Order(2)
     void setName() {
         UserBuilder actual = builder.setName("testUser");
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(3)
     void setOrders() {
         UserBuilder actual = builder.setOrders(null);
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(4)
     void setStatus() {
         UserBuilder actual = builder.setStatus(new Status(1L,"testStatus"));
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(5)
     void setPassword() {
         UserBuilder actual = builder.setPassword("testPassword");
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(6)
     void setRoles() {
         UserBuilder actual = builder.setRoles(List.of(new Role(1L,"testRole")));
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
@@ -69,7 +71,7 @@ class UserBuilderTest {
                 List.of(new Role(1L,"testRole")),
                 new Status(1L,"testStatus")
         );
-        Assertions.assertEquals(actual,expected);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -84,6 +86,6 @@ class UserBuilderTest {
                 null,
                 null
         );
-        Assertions.assertEquals(actual,expected);
+        Assertions.assertEquals(expected,actual);
     }
 }

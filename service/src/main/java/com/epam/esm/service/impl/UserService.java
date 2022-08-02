@@ -133,7 +133,7 @@ public class UserService implements EntityService<User,UserDto> {
     @Override
     public List<User> findByParam(UserDto dto) throws RepositoryException {
         List<User> users = repository.findAll(Example.of(mapper.toEntity(dto)));
-        if(users.size() == 0) {
+        if(users.isEmpty()) {
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
         }
         return users;

@@ -1,8 +1,8 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.config.WebApplication;
-import com.epam.esm.dto.UserDto;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,14 +10,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anything;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
@@ -50,17 +48,21 @@ class UserControllerTest {
 
     @Test
     void registration() {
+        Assertions.assertTrue(true);    //TODO: FINISH TEST
     }
 
     @Test
     void getByIdUser() {
+        Assertions.assertTrue(true);    //TODO: FINISH TEST
     }
 
     @Test
     void getTopUsers() {
+        Assertions.assertTrue(true);    //TODO: FINISH TEST
     }
 
     @Test
     void search() {
+        Assertions.assertTrue(true);    //TODO: FINISH TEST
     }
 }

@@ -39,7 +39,6 @@ public class DataGenerator {
     private static final OrderBuilder ORDER_BUILDER = new OrderBuilder();
     private static final GiftCertificateBuilder GIFT_CERTIFICATE_BUILDER = new GiftCertificateBuilder();
     private static final TagBuilder TAG_BUILDER = new TagBuilder();
-    private final RandomHandler handler;
     private final TagRepository tagRepository;
     private final GiftCertificateRepository giftRepository;
     private final UserService userService;
@@ -48,12 +47,10 @@ public class DataGenerator {
     private final UserRepository userRepository;
 
     @Autowired
-    public DataGenerator(RandomHandler handler,
-                         TagRepository tagRepository,
+    public DataGenerator(TagRepository tagRepository,
                          GiftCertificateRepository giftRepository,
                          UserRepository userRepository,
                          OrderRepository orderRepository, StatusRepository statusRepository, UserService userService) {
-        this.handler = handler;
         this.tagRepository = tagRepository;
         this.giftRepository = giftRepository;
         this.userService = userService;
@@ -122,17 +119,20 @@ public class DataGenerator {
     }
 
     private void initGifts(String[] words) {
-        long minDuration = 1, maxDuration = 100;
-        long minPrice = 1000, maxPrice = 100000000;
+        long minDuration = 1;
+        long maxDuration = 100;
+        long minPrice = 1000;
+        long maxPrice = 100000000;
+
         List<GiftCertificate> gifts = new ArrayList<>();
-        List<String> giftWords = handler.getCountWords(words,10000).stream().toList();
+        List<String> giftWords = RandomHandler.getCountWords(words,10000).stream().toList();
         Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
 
         for (String giftWord : giftWords) {
             GiftCertificate gift = GIFT_CERTIFICATE_BUILDER
                                         .setName(giftWord)
-                                        .setPrice(new BigDecimal(handler.getRandomNumber(minPrice, maxPrice)))
-                                        .setDuration((int) handler.getRandomNumber(minDuration, maxDuration))
+                                        .setPrice(new BigDecimal(RandomHandler.getRandomNumber(minPrice, maxPrice)))
+                                        .setDuration((int) RandomHandler.getRandomNumber(minDuration, maxDuration))
                                         .setDescription(getRandomDescription(words))
                                         .setTagList(getRandomTags())
                                         .build();
@@ -145,7 +145,7 @@ public class DataGenerator {
     private void initTags(String[] words) {
         Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
         List<Tag> tags = new ArrayList<>();
-        List<String> tagsWord = handler
+        List<String> tagsWord = RandomHandler
                                 .getCountWords(words,1000)
                                 .stream()
                                 .toList();
@@ -174,14 +174,14 @@ public class DataGenerator {
         String mr = "Mr ";
         String mrs = "Mrs ";
         List<UserDto> users = new ArrayList<>();
-        List<String> exampleUsernames = handler
+        List<String> exampleUsernames = RandomHandler
                                         .getCountWords(words,1000)
                                         .stream()
                                         .toList();
 
         for (String i : exampleUsernames) {
             UserDto user = new UserDto();
-            if (handler.getRandomNumber(0, 1) == 0) {
+            if (RandomHandler.getRandomNumber(0, 1) == 0) {
                 user.setUsername(mr + i);
             }
             else {
@@ -198,9 +198,9 @@ public class DataGenerator {
         StringBuilder builder = new StringBuilder();
         long min = 20;
         long max = 35;
-        long random = handler.getRandomNumber(min,max);
+        long random = RandomHandler.getRandomNumber(min,max);
         for (int i = 0; i < random; i++) {
-            builder.append(handler.getRandomWord(words))
+            builder.append(RandomHandler.getRandomWord(words))
                     .append(" ");
         }
         return builder.toString().trim();
@@ -211,9 +211,9 @@ public class DataGenerator {
         long max = 3;
         long maxTags = tagRepository.count();
         List<Tag> tags = new ArrayList<>();
-        long randomCount = handler.getRandomNumber(min,max);
+        long randomCount = RandomHandler.getRandomNumber(min,max);
         for (int j = 0; j < randomCount; j++) {
-            long randomNumber = handler.getRandomNumber(min,maxTags);
+            long randomNumber = RandomHandler.getRandomNumber(min,maxTags);
             Optional<Tag> tagOptional = tagRepository.findById(randomNumber);
             tagOptional.ifPresent(tags::add);
         }
@@ -224,9 +224,9 @@ public class DataGenerator {
         long max = 5;
         long maxGifts = giftRepository.count();
         List<GiftCertificate> gifts = new ArrayList<>();
-        long randomCount = handler.getRandomNumber(min,max);
+        long randomCount = RandomHandler.getRandomNumber(min,max);
         for (int j = 0; j < randomCount; j++) {
-            long randomNumber = handler.getRandomNumber(min, maxGifts);
+            long randomNumber = RandomHandler.getRandomNumber(min, maxGifts);
             Optional<GiftCertificate> optionalGift = giftRepository.findById(randomNumber);
             optionalGift.ifPresent(gifts::add);
         }

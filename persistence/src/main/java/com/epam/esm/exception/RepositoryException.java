@@ -21,8 +21,4 @@ public class RepositoryException extends Exception {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    @Override
-    public String getMessage() {
-        return super.getMessage();
-    }
 }

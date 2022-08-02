@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,17 +104,17 @@ public class OrderService implements EntityService<Order,OrderDto> {
 
     @Override
     public List<Order> findActive() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<Order> findDeleted() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<Order> findByStatus(String statusName) {
-        return null;
+        return Collections.emptyList();
     }
 
     private Order createOrder(User user, GiftCertificate gift) {

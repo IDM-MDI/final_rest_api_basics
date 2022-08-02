@@ -1,14 +1,14 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class GiftValidator {
+
+    private GiftValidator(){}
 
     public static List<GiftCertificate> findEquals(List<GiftCertificate> first, List<GiftCertificate> second) {
         List<GiftCertificate> result = new ArrayList<>();
@@ -33,30 +33,6 @@ public class GiftValidator {
                 (entity.getDescription() == null || entity.getDescription().trim().isEmpty() || entity.getDescription().trim().isBlank());
     }
 
-    public static boolean isTagListNotEmpty(List<Tag> tagList) {
-        boolean result = false;
-        for (Tag tag : tagList) {
-            if (tag != null) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-    private static boolean isGiftByTag(List<Tag> giftTags, List<Tag> searchTags) {
-        boolean result = false;
-        for (Tag i: giftTags) {
-            for (Tag j: searchTags) {
-                if (i.getName().equals(j.getName())) {
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
     public static void uniteEntities(GiftCertificate first, GiftCertificate second) {
         if(first.getId() == null) {
             first.setId(second.getId());
@@ -73,7 +49,7 @@ public class GiftValidator {
         if(first.getDuration() == null) {
             first.setDuration(second.getDuration());
         }
-        if(first.getTagList() == null || first.getTagList().size() == 0) {
+        if(first.getTagList() == null || first.getTagList().isEmpty()) {
             first.setTagList(second.getTagList());
         }
     }

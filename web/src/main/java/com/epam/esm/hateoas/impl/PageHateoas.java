@@ -1,15 +1,13 @@
 package com.epam.esm.hateoas.impl;
 
 import com.epam.esm.dto.DtoPage;
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.epam.esm.controller.ControllerClass.*;
+import static com.epam.esm.controller.ControllerClass.GIFT_CERTIFICATE_CONTROLLER;
+import static com.epam.esm.controller.ControllerClass.TAG_CONTROLLER;
+import static com.epam.esm.controller.ControllerClass.USER_CONTROLLER;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -24,17 +22,19 @@ public class PageHateoas<T> {
     private static final String SORT_BY_ID = "sort-by-id";
     private static final String SORT_BY_NAME = "sort-by-name";
     private static final String SORT_BY_PRICE = "sort-by-price";
-    private final int sizeOfFive = 5;
-    private final int sizeOfTen = 10;
-    private final int sizeOfFifth = 15;
+    private static final int sizeOfFive = 5;
+    private static final int sizeOfTen = 10;
+    private static final int sizeOfFifth = 15;
 
 
-    private int thisSize, thisPage;
-    private int prevPage, nextPage;
+    private static final String id = "id";
+    private static final String name = "name";
+    private static final String price = "price";
+    private int thisSize;
+    private int thisPage;
+    private int prevPage;
+    private int nextPage;
     private String thisSort;
-    private final String id = "id";
-    private final String name = "name";
-    private final String price = "price";
 
     public void addGiftsPage(DtoPage<T> dtoPage) throws ServiceException, RepositoryException {
         init(dtoPage);

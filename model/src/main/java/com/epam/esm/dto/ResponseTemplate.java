@@ -1,6 +1,9 @@
 package com.epam.esm.dto;
 
 public class ResponseTemplate {
+
+    private ResponseTemplate(){}
+
     public static final String IS_ALREADY_EXIST = "is already exist";
     public static final String CREATED = "created";
     public static final String UPDATED = "updated";

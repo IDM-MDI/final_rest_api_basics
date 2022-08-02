@@ -1,28 +1,27 @@
 package com.epam.esm.generator;
 
-import org.springframework.stereotype.Component;
-
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-@Component
 public class RandomHandler {
-    private final Random random = new Random();
+    private static final Random random = new Random();
     private static int min;
     private static int max;
 
 
-    public long getRandomNumber(long min,long max) {
+    private RandomHandler(){}
+
+    public static long getRandomNumber(long min,long max) {
         return random.nextLong((max - min) + 1) + min;
     }
-    public String getRandomWord(String[] words) {
+    public static String getRandomWord(String[] words) {
         min = 0;
         max = words.length-1;
         return words[(int) getRandomNumber(min,max)];
     }
 
-    public Set<String> getCountWords(String[] words, int count) {
+    public static Set<String> getCountWords(String[] words, int count) {
         min = 0;
         max = words.length-1;
         Set<String> setWords = new HashSet<>();
@@ -31,7 +30,7 @@ public class RandomHandler {
                 setWords.add(words[(int) getRandomNumber(min,max)]);
             }
             else {
-                i = setWords.size()-1;
+                i = setWords.size() - 1;
             }
         }
         return setWords;

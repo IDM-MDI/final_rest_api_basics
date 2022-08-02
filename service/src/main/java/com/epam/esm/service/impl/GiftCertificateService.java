@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
@@ -146,7 +147,7 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
         List<GiftCertificate> giftList = repository
                                         .findAll(PageRequest.of(page, size, Sort.by(sort)))
                                         .toList();
-        if(giftList.size() == 0) {
+        if(giftList.isEmpty()) {
             log.error(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
         }
@@ -192,8 +193,8 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
     private List<GiftCertificate> findByTagAndEntity(List<GiftCertificate> fromDB, String tags) {
         List<GiftCertificate> giftWithTag = repository.findByTagListIn(
                                                 tagService.findAllByName(createTagsByString(tags)));
-        if(fromDB == null || fromDB.size() == 0) {
-        return giftWithTag;
+        if(fromDB == null || fromDB.isEmpty()) {
+            return giftWithTag;
         }
         return findEquals(fromDB,giftWithTag);
     }
@@ -237,6 +238,6 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
 
     @Override
     public List<GiftCertificate> findByParam(GiftCertificateDto dto) throws RepositoryException {
-        return null;
+        return Collections.emptyList();
     }
 }

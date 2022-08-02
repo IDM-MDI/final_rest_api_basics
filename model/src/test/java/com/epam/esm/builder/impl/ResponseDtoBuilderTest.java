@@ -1,9 +1,11 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.dto.ResponseDto;
-import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ResponseDtoBuilderTest {
@@ -14,14 +16,14 @@ class ResponseDtoBuilderTest {
     @Order(1)
     void setCode() {
         ResponseDtoBuilder actual = builder.setCode(1);
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(2)
     void setText() {
         ResponseDtoBuilder actual = builder.setText("testText");
-        Assertions.assertEquals(actual,builder);
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
@@ -29,7 +31,7 @@ class ResponseDtoBuilderTest {
     void build() {
         ResponseDto actual = builder.build();
         ResponseDto expected = new ResponseDto(1,"testText");
-        Assertions.assertEquals(actual,expected);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
@@ -37,6 +39,6 @@ class ResponseDtoBuilderTest {
     void clear() {
         ResponseDto actual = builder.build();
         ResponseDto expected = new ResponseDto(0,null);
-        Assertions.assertEquals(actual,expected);
+        Assertions.assertEquals(expected,actual);
     }
 }

@@ -9,6 +9,8 @@ public class HashGenerator {
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(5);
 
+    private HashGenerator(){}
+
     @SneakyThrows
     public static String generateByMD5(String password) {
         StringBuilder sb = new StringBuilder();
