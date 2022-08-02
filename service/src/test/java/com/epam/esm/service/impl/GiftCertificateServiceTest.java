@@ -7,7 +7,9 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.util.impl.GiftCertificateModelMapper;
@@ -30,6 +32,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
+import static com.epam.esm.entity.StatusName.ACTIVE;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NULL_POINTER;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_SAVE_ERROR;
 import static com.epam.esm.service.impl.GiftCertificateService.GIFT_CERTIFICATE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -249,6 +255,19 @@ class GiftCertificateServiceTest {
 
     @SneakyThrows
     @Test
+    void saveShouldThrowCustomNullPointer() {
+        Assertions.assertThrows(RepositoryException.class,() -> service.save(new GiftCertificateDto()), REPOSITORY_NULL_POINTER.toString());
+    }
+    @SneakyThrows
+    @Test
+    void saveShouldThrowRepositoryException() {
+        when(repository.findById(dto.getId()))
+                .thenReturn(Optional.of(entity));
+        Assertions.assertThrows(RepositoryException.class,() -> service.save(dto), REPOSITORY_SAVE_ERROR.toString());
+    }
+
+    @SneakyThrows
+    @Test
     void update() {
         when(repository.findById(dtoUpdated.getId()))
                 .thenReturn(Optional.of(entity));
@@ -259,6 +278,14 @@ class GiftCertificateServiceTest {
 
         GiftCertificate actual = service.update(dtoUpdated);
         Assertions.assertEquals(entityUpdated,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void updateShouldThrowRepositoryException() {
+        when(repository.findById(dto.getId()))
+                .thenReturn(Optional.empty());
+        Assertions.assertThrows(RepositoryException.class,() -> service.update(dto), REPOSITORY_NOTHING_FIND_BY_ID.toString());
     }
 
     @SneakyThrows
@@ -284,5 +311,35 @@ class GiftCertificateServiceTest {
 
         GiftCertificate actual = service.findById(id);
         Assertions.assertEquals(entity,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void findActive() {
+        Status active = new Status(1L,"active");
+        when(statusService.findStatus(ACTIVE.name())).thenReturn(active);
+        when(repository.findByStatus(active)).thenReturn(entityList);
+        List<GiftCertificate> actual = service.findActive();
+        Assertions.assertEquals(entityList,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void findDeleted() {
+        Status active = new Status(1L,"deleted");
+        when(statusService.findStatus(DELETED.toUpperCase())).thenReturn(active);
+        when(repository.findByStatus(active)).thenReturn(entityList);
+        List<GiftCertificate> actual = service.findDeleted();
+        Assertions.assertEquals(entityList,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void findByStatus() {
+        Status active = new Status(1L,"active");
+        when(statusService.findStatus(ACTIVE.name())).thenReturn(active);
+        when(repository.findByStatus(active)).thenReturn(entityList);
+        List<GiftCertificate> actual = service.findByStatus(ACTIVE.name());
+        Assertions.assertEquals(entityList,actual);
     }
 }
