@@ -237,7 +237,7 @@ public class GiftCertificateService implements EntityService<GiftCertificate,Gif
     }
 
     @Override
-    public List<GiftCertificate> findByParam(GiftCertificateDto dto) throws RepositoryException {
+    public List<GiftCertificate> findByParam(GiftCertificateDto dto) {
         return Collections.emptyList();
     }
 }

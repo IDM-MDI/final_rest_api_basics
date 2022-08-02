@@ -11,10 +11,13 @@ import com.epam.esm.entity.Role;
 import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.RoleRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.ResponseService;
-import com.epam.esm.util.impl.*;
+import com.epam.esm.util.impl.GiftCertificateModelMapper;
+import com.epam.esm.util.impl.RoleModelMapper;
+import com.epam.esm.util.impl.StatusModelMapper;
+import com.epam.esm.util.impl.TagModelMapper;
+import com.epam.esm.util.impl.UserModelMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +38,6 @@ import java.util.Optional;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
 import static com.epam.esm.service.impl.UserService.USER;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +54,7 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService service;
+
 
     private final User entity;
     private final UserDto dto;
@@ -189,10 +193,8 @@ class UserServiceTest {
     void login() {
         findUserByUsername();
         AuthenticationDto auth = new AuthenticationDto(dto.getUsername(),dto.getPassword());
-        Optional<UserDto> expected = Optional.of(dto);
-
-        Optional<UserDto> actual = service.login(auth);
-        Assertions.assertEquals(expected,actual);
+        UserDto actual = service.login(auth);
+        Assertions.assertEquals(dto,actual);
     }
 
     @SneakyThrows
@@ -243,5 +245,9 @@ class UserServiceTest {
         UserDto actual = service.findUserByUsername(auth.getUsername());
 
         Assertions.assertEquals(dto,actual);
+    }
+    @Test
+    void findUserByUsernameShouldThrowException() {
+        Assertions.assertThrows(UsernameNotFoundException.class,() -> service.findUserByUsername(dto.getUsername()), "User with username - " + dto.getUsername() + " not found");
     }
 }

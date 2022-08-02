@@ -84,7 +84,7 @@ public class OrderService implements EntityService<Order,OrderDto> {
 
     @Override
     public List<Order> findAll(int page, int size, String sort) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class OrderService implements EntityService<Order,OrderDto> {
 
     @Override
     public List<Order> findByParam(OrderDto dto) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

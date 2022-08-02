@@ -22,14 +22,14 @@ public class PageHateoas<T> {
     private static final String SORT_BY_ID = "sort-by-id";
     private static final String SORT_BY_NAME = "sort-by-name";
     private static final String SORT_BY_PRICE = "sort-by-price";
-    private static final int sizeOfFive = 5;
-    private static final int sizeOfTen = 10;
-    private static final int sizeOfFifth = 15;
+    private static final int SIZE_OF_FIVE = 5;
+    private static final int SIZE_OF_TEN = 10;
+    private static final int SIZE_OF_FIFTH = 15;
 
 
-    private static final String id = "id";
-    private static final String name = "name";
-    private static final String price = "price";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String PRICE = "price";
     private int thisSize;
     private int thisPage;
     private int prevPage;
@@ -43,13 +43,13 @@ public class PageHateoas<T> {
         if(dtoPage.getContent().size() == thisSize)
             addLinkGift(dtoPage,nextPage,thisSize,thisSort,NEXT_PAGE);
 
-        addLinkGift(dtoPage,thisPage,sizeOfFive,thisSort,SIZE_5);
-        addLinkGift(dtoPage,thisPage,sizeOfTen,thisSort,SIZE_10);
-        addLinkGift(dtoPage,thisPage,sizeOfFifth,thisSort,SIZE_15);
+        addLinkGift(dtoPage,thisPage,SIZE_OF_FIVE,thisSort,SIZE_5);
+        addLinkGift(dtoPage,thisPage,SIZE_OF_TEN,thisSort,SIZE_10);
+        addLinkGift(dtoPage,thisPage,SIZE_OF_FIFTH,thisSort,SIZE_15);
 
-        addLinkGift(dtoPage,thisPage,thisSize,id,SORT_BY_ID);
-        addLinkGift(dtoPage,thisPage,thisSize,name,SORT_BY_NAME);
-        addLinkGift(dtoPage,thisPage,thisSize,price,SORT_BY_PRICE);
+        addLinkGift(dtoPage,thisPage,thisSize, ID,SORT_BY_ID);
+        addLinkGift(dtoPage,thisPage,thisSize, NAME,SORT_BY_NAME);
+        addLinkGift(dtoPage,thisPage,thisSize, PRICE,SORT_BY_PRICE);
     }
     public void addTagsPage(DtoPage<T> dtoPage) throws ServiceException, RepositoryException {
         init(dtoPage);
@@ -58,12 +58,12 @@ public class PageHateoas<T> {
         if(dtoPage.getContent().size() == thisSize)
             addLinkTag(dtoPage,nextPage,thisSize,thisSort,NEXT_PAGE);
 
-        addLinkTag(dtoPage,thisPage,sizeOfFive,thisSort,SIZE_5);
-        addLinkTag(dtoPage,thisPage,sizeOfTen,thisSort,SIZE_10);
-        addLinkTag(dtoPage,thisPage,sizeOfFifth,thisSort,SIZE_15);
+        addLinkTag(dtoPage,thisPage,SIZE_OF_FIVE,thisSort,SIZE_5);
+        addLinkTag(dtoPage,thisPage,SIZE_OF_TEN,thisSort,SIZE_10);
+        addLinkTag(dtoPage,thisPage,SIZE_OF_FIFTH,thisSort,SIZE_15);
 
-        addLinkTag(dtoPage,thisPage,thisSize,id,SORT_BY_ID);
-        addLinkTag(dtoPage,thisPage,thisSize,name,SORT_BY_NAME);
+        addLinkTag(dtoPage,thisPage,thisSize, ID,SORT_BY_ID);
+        addLinkTag(dtoPage,thisPage,thisSize, NAME,SORT_BY_NAME);
     }
 
     public void addUsersPage(DtoPage<T> dtoPage) throws ServiceException, RepositoryException {
@@ -73,21 +73,21 @@ public class PageHateoas<T> {
         if(dtoPage.getContent().size() == thisSize)
             addLinkUser(dtoPage,nextPage,thisSize,thisSort,NEXT_PAGE);
 
-        addLinkUser(dtoPage,thisPage,sizeOfFive,thisSort,SIZE_5);
-        addLinkUser(dtoPage,thisPage,sizeOfTen,thisSort,SIZE_10);
-        addLinkUser(dtoPage,thisPage,sizeOfFifth,thisSort,SIZE_15);
+        addLinkUser(dtoPage,thisPage,SIZE_OF_FIVE,thisSort,SIZE_5);
+        addLinkUser(dtoPage,thisPage,SIZE_OF_TEN,thisSort,SIZE_10);
+        addLinkUser(dtoPage,thisPage,SIZE_OF_FIFTH,thisSort,SIZE_15);
 
-        addLinkUser(dtoPage,thisPage,thisSize,id,SORT_BY_ID);
-        addLinkUser(dtoPage,thisPage,thisSize,name,SORT_BY_NAME);
+        addLinkUser(dtoPage,thisPage,thisSize, ID,SORT_BY_ID);
+        addLinkUser(dtoPage,thisPage,thisSize, NAME,SORT_BY_NAME);
     }
     public void addGiftGetBackPage(DtoPage<T> page) throws ServiceException, RepositoryException {
-        addLinkGift(page,0,10,id,GET_BACK);
+        addLinkGift(page,0,10, ID,GET_BACK);
     }
     public void addTagGetBackPage(DtoPage<T> page) throws ServiceException, RepositoryException {
-        addLinkTag(page,0,10,id,GET_BACK);
+        addLinkTag(page,0,10, ID,GET_BACK);
     }
     public void addUserGetBackPage(DtoPage<T> page) throws ServiceException, RepositoryException {
-        addLinkUser(page,0,10,id,GET_BACK);
+        addLinkUser(page,0,10, ID,GET_BACK);
     }
     private void init(DtoPage<T> dtoPage) {
         thisSize = dtoPage.getSize();

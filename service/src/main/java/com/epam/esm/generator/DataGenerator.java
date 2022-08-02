@@ -46,6 +46,8 @@ public class DataGenerator {
     private final StatusRepository statusRepository;
     private final UserRepository userRepository;
 
+    private Optional<Status> activeStatus;
+
     @Autowired
     public DataGenerator(TagRepository tagRepository,
                          GiftCertificateRepository giftRepository,
@@ -66,6 +68,7 @@ public class DataGenerator {
         long orderCount = orderRepository.count();
         String[] words = null;
         if(tagCount == 0 || giftCount == 0 || userCount == 0) {
+            activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
             words = getWords();
         }
         if(tagCount == 0) {
@@ -81,6 +84,7 @@ public class DataGenerator {
             initUsers(getRandomUsers(words));
         }
         userCount = userRepository.count();
+        giftCount = giftRepository.count();
         if(orderCount == 0 &&
                 userCount != 0 &&
                 giftCount != 0) {
@@ -92,7 +96,6 @@ public class DataGenerator {
 
     private void initOrders() {
         List<User> users = userRepository.findUsersByOrdersEmpty();
-        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
 
         users.forEach(user -> {
             List<Order> orders = new ArrayList<>();
@@ -126,7 +129,6 @@ public class DataGenerator {
 
         List<GiftCertificate> gifts = new ArrayList<>();
         List<String> giftWords = RandomHandler.getCountWords(words,10000).stream().toList();
-        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
 
         for (String giftWord : giftWords) {
             GiftCertificate gift = GIFT_CERTIFICATE_BUILDER
@@ -143,7 +145,6 @@ public class DataGenerator {
     }
 
     private void initTags(String[] words) {
-        Optional<Status> activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
         List<Tag> tags = new ArrayList<>();
         List<String> tagsWord = RandomHandler
                                 .getCountWords(words,1000)

@@ -91,10 +91,7 @@ public class UserService implements EntityService<User,UserDto> {
     }
 
     public DtoPage<UserDto> loginWithDtoPage(AuthenticationDto dto) {
-        UserDto user = login(dto).orElseThrow(() -> {
-            log.error("User not found");
-            return new UsernameNotFoundException("");
-        });
+        UserDto user = login(dto);
         log.info("User: " + user + " sign in");
         return new DtoPageBuilder<UserDto>()
                 .setResponse(responseService.okResponse(USER + LOGGED_IN))
@@ -161,8 +158,8 @@ public class UserService implements EntityService<User,UserDto> {
     private Status findStatus(String name) throws RepositoryException {
         return statusService.findStatus(name);
     }
-    public Optional<UserDto> login(AuthenticationDto authenticationDto) {
-        return Optional.of(findUserByUsername(authenticationDto.getUsername()));
+    public UserDto login(AuthenticationDto authenticationDto) {
+        return findUserByUsername(authenticationDto.getUsername());
     }
 
     @Transactional
