@@ -39,6 +39,7 @@ import static com.epam.esm.entity.StatusName.DELETED;
 import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -172,6 +173,8 @@ class OrderServiceTest {
         when(statusService.findStatus(DELETED.name())).thenReturn(null);
         doNothing().when(repository).setDelete(id,null);
         service.delete(id);
+
+        verify(statusService).findStatus(DELETED.name());
     }
 
     @Test

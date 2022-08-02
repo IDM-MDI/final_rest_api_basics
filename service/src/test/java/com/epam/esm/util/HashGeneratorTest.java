@@ -9,8 +9,8 @@ class HashGeneratorTest {
     @Test
     void generateByMD5() {
         String password = "password";
-        String expected = "5F4DCC3B5AA765D61D8327DEB882CF99";
-        String actual = HashGenerator.generateByMD5(password);
+        String expected = "5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8";
+        String actual = HashGenerator.generateBySHA(password);
         assertEquals(expected,actual);
     }
 }

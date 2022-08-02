@@ -43,7 +43,7 @@ public class LoginService {
     }
     private void authenticateByManager(AuthenticationDto authentication) {
         manager.authenticate(new UsernamePasswordAuthenticationToken(authentication.getUsername(),
-                HashGenerator.generateByMD5(authentication.getPassword())));
+                HashGenerator.generateBySHA(authentication.getPassword())));
     }
     private DtoPage<UserDto> getDtoPage(AuthenticationDto authentication) {
         DtoPage<UserDto> page = service.loginWithDtoPage(authentication);

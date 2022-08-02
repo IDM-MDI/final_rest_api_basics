@@ -12,10 +12,10 @@ public class HashGenerator {
     private HashGenerator(){}
 
     @SneakyThrows
-    public static String generateByMD5(String password) {
+    public static String generateBySHA(String password) {
         StringBuilder sb = new StringBuilder();
         MessageDigest md5 = null;
-        md5 = MessageDigest.getInstance("md5");
+        md5 = MessageDigest.getInstance("SHA-256");
         byte[] bytes = md5.digest(password.getBytes());
         for (byte i: bytes) {
             sb.append(String.format("%02X",i));
@@ -24,7 +24,7 @@ public class HashGenerator {
     }
 
     public static String generateHash(String password) {
-        return encoder.encode(generateByMD5(password));
+        return encoder.encode(generateBySHA(password));
     }
 
     public static BCryptPasswordEncoder getEncoder() {
