@@ -248,6 +248,8 @@ class UserServiceTest {
     }
     @Test
     void findUserByUsernameShouldThrowException() {
-        Assertions.assertThrows(UsernameNotFoundException.class,() -> service.findUserByUsername(dto.getUsername()), "User with username - " + dto.getUsername() + " not found");
+        Assertions.assertThrows(UsernameNotFoundException.class,() -> {
+            service.findUserByUsername(dto.getUsername());
+        });
     }
 }
