@@ -35,8 +35,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.entity.StatusName.DELETED;
 import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +46,8 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository repository = Mockito.mock(OrderRepository.class);
+    @Mock
+    private StatusService statusService = Mockito.mock(StatusService.class);
     @Mock
     private GiftCertificateRepository giftRepository = Mockito.mock(GiftCertificateRepository.class);
     @Mock
@@ -139,5 +143,49 @@ class OrderServiceTest {
         when(giftRepository.findById(dto.getGiftId()))
                 .thenReturn(Optional.empty());
         Assertions.assertThrows(RepositoryException.class,() -> service.save(dto), REPOSITORY_NOTHING_FIND_BY_ID.toString());
+    }
+
+    @Test
+    void update() {
+        Assertions.assertNull(service.update(new OrderDto()));
+    }
+
+    @Test
+    void findAll() {
+        Assertions.assertTrue(service.findAll(0,0,"").isEmpty());
+    }
+
+    @Test
+    void findById() {
+        Assertions.assertNull(service.findById(1));
+    }
+
+    @Test
+    void findByParam() {
+        Assertions.assertTrue(service.findByParam(new OrderDto()).isEmpty());
+    }
+
+    @SneakyThrows
+    @Test
+    void delete() {
+        long id = 1;
+        when(statusService.findStatus(DELETED.name())).thenReturn(null);
+        doNothing().when(repository).setDelete(id,null);
+        service.delete(id);
+    }
+
+    @Test
+    void findActive() {
+        Assertions.assertTrue(service.findActive().isEmpty());
+    }
+
+    @Test
+    void findDeleted() {
+        Assertions.assertTrue(service.findDeleted().isEmpty());
+    }
+
+    @Test
+    void findByStatus() {
+        Assertions.assertTrue(service.findByStatus(DELETED.toString()).isEmpty());
     }
 }
