@@ -1,9 +1,13 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
-import com.epam.esm.builder.impl.GiftCertificateBuilder;
 import com.epam.esm.config.WebApplication;
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.RoleDto;
+import com.epam.esm.dto.StatusDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
 import com.epam.esm.security.JwtUserDetailsService;
 import com.epam.esm.security.jwt.JwtTokenProvider;
@@ -25,13 +29,17 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
@@ -116,7 +124,7 @@ class GiftCertificateControllerTest {
         when(service.saveWithResponse(certificate)).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(post("/gifts")
+        mockMvc.perform(post("/gifts").with(csrf())
                                 .contentType(halJsonUTF)
                                 .content(new ObjectMapper().writeValueAsString(certificate))
                                 .header("Authorization","Bearer " + token))
@@ -139,7 +147,7 @@ class GiftCertificateControllerTest {
         when(service.deleteWithDtoPage(certificate.getId())).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(delete("/gifts/1")
+        mockMvc.perform(delete("/gifts/1").with(csrf())
                         .header("Authorization","Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -160,7 +168,7 @@ class GiftCertificateControllerTest {
         when(service.updateWithDtoPage(certificate,certificate.getId())).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(patch("/gifts/1")
+        mockMvc.perform(patch("/gifts/1").with(csrf())
                         .contentType(halJsonUTF)
                         .content(new ObjectMapper().writeValueAsString(certificate))
                         .header("Authorization","Bearer " + token))

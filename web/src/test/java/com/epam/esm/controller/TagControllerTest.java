@@ -27,6 +27,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -105,7 +106,7 @@ class TagControllerTest {
         when(service.saveWithDtoPage(tag)).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
-        mockMvc.perform(post("/tags")
+        mockMvc.perform(post("/tags").with(csrf())
                         .header("Authorization","Bearer " + token)
                         .contentType(halJsonUTF)
                         .content(new ObjectMapper().writeValueAsString(tag)))
@@ -128,7 +129,7 @@ class TagControllerTest {
         when(service.deleteWithDtoPage(tag.getId())).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
-        mockMvc.perform(delete("/tags/1")
+        mockMvc.perform(delete("/tags/1").with(csrf())
                         .header("Authorization","Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
