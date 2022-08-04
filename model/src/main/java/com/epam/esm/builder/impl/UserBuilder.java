@@ -16,7 +16,7 @@ public class UserBuilder implements ModelBuilder {
     private List<Order> orders;
     private List<Role> roles;
 
-    private Status status;
+    private String status;
 
 
     public UserBuilder setId(Long id) {
@@ -44,7 +44,7 @@ public class UserBuilder implements ModelBuilder {
         return this;
     }
 
-    public UserBuilder setStatus(Status status) {
+    public UserBuilder setStatus(String status) {
         this.status = status;
         return this;
     }

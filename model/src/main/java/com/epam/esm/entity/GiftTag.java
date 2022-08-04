@@ -27,7 +27,6 @@ public class GiftTag {
     @ToString.Exclude
     private Tag tag;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+    @Column(name = "status")
+    private String status;
 }

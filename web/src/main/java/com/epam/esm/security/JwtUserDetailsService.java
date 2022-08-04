@@ -3,7 +3,7 @@ package com.epam.esm.security;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.security.jwt.JwtUser;
 import com.epam.esm.security.jwt.JwtUserFactory;
-import com.epam.esm.service.impl.UserService;
+import com.epam.esm.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class JwtUserDetailsService implements UserDetailsService {
-    private final UserService service;
+    private final UserServiceImpl service;
 
     @Autowired
-    public JwtUserDetailsService(UserService service) {
+    public JwtUserDetailsService(UserServiceImpl service) {
         this.service = service;
     }
 

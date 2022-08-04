@@ -4,7 +4,7 @@ import com.epam.esm.dto.AuthenticationDto;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.security.jwt.JwtTokenProvider;
-import com.epam.esm.service.impl.UserService;
+import com.epam.esm.service.page.PageUserService;
 import com.epam.esm.util.HashGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,13 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginService {
     private final AuthenticationManager manager;
     private final JwtTokenProvider provider;
-    private final UserService service;
+    private final PageUserService service;
 
     @Autowired
-    public LoginService(AuthenticationManager manager, JwtTokenProvider provider, UserService userService) {
+    public LoginService(AuthenticationManager manager, JwtTokenProvider provider, PageUserService userServiceImpl) {
         this.manager = manager;
         this.provider = provider;
-        this.service = userService;
+        this.service = userServiceImpl;
     }
 
     public DtoPage<UserDto> authenticate(AuthenticationDto authentication) {
@@ -46,7 +46,7 @@ public class LoginService {
                 HashGenerator.generateBySHA(authentication.getPassword())));
     }
     private DtoPage<UserDto> getDtoPage(AuthenticationDto authentication) {
-        DtoPage<UserDto> page = service.loginWithDtoPage(authentication);
+        DtoPage<UserDto> page = service.login(authentication);
         UserDto user = page.getContent().get(0);
         user.setJwt(createToken(user));
         return page;

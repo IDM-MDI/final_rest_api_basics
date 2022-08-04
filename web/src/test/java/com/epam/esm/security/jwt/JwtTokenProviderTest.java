@@ -2,7 +2,6 @@ package com.epam.esm.security.jwt;
 
 import com.epam.esm.config.WebApplication;
 import com.epam.esm.dto.RoleDto;
-import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.security.JwtUserDetailsService;
 import org.junit.jupiter.api.Assertions;
@@ -19,9 +18,8 @@ import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
-import static org.mockito.Mockito.doReturn;
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @SpringBootTest(classes = WebApplication.class)
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +40,7 @@ class JwtTokenProviderTest {
             "test",
             "password",
             null,
-            new StatusDto(1L,"ACTIVE"),
+            ACTIVE.name(),
             List.of(new RoleDto(1L, "user")),
             null
     );

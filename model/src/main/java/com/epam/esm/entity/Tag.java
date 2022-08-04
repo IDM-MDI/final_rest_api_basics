@@ -18,7 +18,6 @@ public class Tag {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+    @Column(name = "status")
+    private String status;
 }

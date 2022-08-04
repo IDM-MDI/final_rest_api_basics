@@ -1,17 +1,19 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.config.PersistenceConfig;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.epam.esm.entity.StatusName.ACTIVE;
+import static com.epam.esm.entity.StatusName.DELETED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest()
 @ContextConfiguration(classes= PersistenceConfig.class)
@@ -20,15 +22,14 @@ class TagRepositoryTest {
 
     @Autowired
     private TagRepository tagRepository;
-    @Autowired
-    private StatusRepository statusRepository;
-
 
     public void init() {
-        statusRepository.saveAll(List.of(new Status(null,"active"),new Status(null,"deleted")));
-        Status active = statusRepository.findByNameIgnoreCase("active")
-                .orElseThrow();
-        tagRepository.saveAll(List.of(new Tag(null,"testTag1",active),new Tag(null,"testTag2",active)));
+        tagRepository.saveAll(
+                List.of(
+                        new Tag(null,"testTag1",ACTIVE.name()),
+                        new Tag(null,"testTag2",ACTIVE.name())
+                )
+        );
     }
 
     @Test
@@ -41,28 +42,26 @@ class TagRepositoryTest {
     @Test
     void setDelete() {
         init();
-        Status deleted = statusRepository.findByNameIgnoreCase("deleted").orElseThrow();
         Tag tag = tagRepository.findByName("testTag2").orElseThrow();
-        tagRepository.setDelete(tag.getId(),deleted);
+        tagRepository.setDelete(tag.getId(),DELETED.name());
         assertEquals(
                 tagRepository.findByName("testTag2")
                                 .orElseThrow()
                                 .getStatus(),
-                deleted
+                DELETED.name()
         );
     }
 
     @Test
     void findByStatus() {
         init();
-        Status active = statusRepository.findByNameIgnoreCase("active").orElseThrow();
         assertEquals(
-                tagRepository.findByStatus(active)
+                tagRepository.findByStatus(ACTIVE.name(), PageRequest.of(0, 1))
                                 .stream()
                                 .findAny()
                                 .orElseThrow()
                                 .getStatus(),
-                active
+                ACTIVE.name()
         );
     }
 }

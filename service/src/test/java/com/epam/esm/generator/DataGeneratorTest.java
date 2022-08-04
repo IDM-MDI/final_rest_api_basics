@@ -1,12 +1,10 @@
 package com.epam.esm.generator;
 
-import com.epam.esm.entity.Status;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.StatusRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.service.impl.UserService;
+import com.epam.esm.service.impl.UserServiceImpl;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,10 +14,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.Set;
 
-import static com.epam.esm.entity.StatusName.ACTIVE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -32,11 +28,9 @@ class DataGeneratorTest {
     @Mock
     private GiftCertificateRepository giftRepository = Mockito.mock(GiftCertificateRepository.class);
     @Mock
-    private UserService userService = Mockito.mock(UserService.class);
+    private UserServiceImpl userServiceImpl = Mockito.mock(UserServiceImpl.class);
     @Mock
     private OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
-    @Mock
-    private StatusRepository statusRepository = Mockito.mock(StatusRepository.class);
     @Mock
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
 
@@ -47,14 +41,12 @@ class DataGeneratorTest {
     @SneakyThrows
     @Test
     void fillRandomData() {
-        Optional<Status> optionalStatus = Optional.of(new Status(1L,"ACTIVE"));
         Set<String> words = Set.of("tag","gift","five","press");
 
         when(tagRepository.count()).thenReturn(0L);
         doReturn(0L).doReturn(5L).when(giftRepository).count();
         doReturn(0L).doReturn(5L).when(userRepository).count();
         when(orderRepository.count()).thenReturn(0L);
-        when(statusRepository.findByNameIgnoreCase(ACTIVE.name())).thenReturn(optionalStatus);
 
         try(MockedStatic<RandomHandler> randomHandler = mockStatic(RandomHandler.class)) {
             when(RandomHandler.getCountWords(any(String[].class),eq(1000))).thenReturn(words);
@@ -67,6 +59,5 @@ class DataGeneratorTest {
         verify(giftRepository,atLeast(1)).count();
         verify(userRepository,atLeast(1)).count();
         verify(orderRepository).count();
-        verify(statusRepository).findByNameIgnoreCase(ACTIVE.name());
     }
 }

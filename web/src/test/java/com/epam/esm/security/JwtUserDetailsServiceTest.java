@@ -2,11 +2,10 @@ package com.epam.esm.security;
 
 import com.epam.esm.config.WebApplication;
 import com.epam.esm.dto.RoleDto;
-import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.security.jwt.JwtUser;
 import com.epam.esm.security.jwt.JwtUserFactory;
-import com.epam.esm.service.impl.UserService;
+import com.epam.esm.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = WebApplication.class)
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class JwtUserDetailsServiceTest {
 
     @MockBean
-    private UserService service;
+    private UserServiceImpl service;
 
     @Autowired
     private JwtUserDetailsService userDetailsService;
@@ -35,7 +35,7 @@ class JwtUserDetailsServiceTest {
             "test",
             "password",
             null,
-            new StatusDto(1L,"ACTIVE"),
+            ACTIVE.name(),
             List.of(new RoleDto(1L, "user")),
             null
     );

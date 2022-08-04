@@ -3,7 +3,7 @@ package com.epam.esm.repository;
 import com.epam.esm.builder.impl.GiftCertificateBuilder;
 import com.epam.esm.config.PersistenceConfig;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Status;
+import com.epam.esm.entity.GiftTag;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,9 @@ import org.springframework.test.context.ContextConfiguration;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.epam.esm.entity.StatusName.ACTIVE;
+import static com.epam.esm.entity.StatusName.DELETED;
 
 
 @DataJpaTest()
@@ -30,8 +33,6 @@ class GiftTagRepositoryTest {
     private TagRepository tagRepository;
     @Autowired
     private GiftTagRepository repository;
-    @Autowired
-    private StatusRepository statusRepository;
 
     @Test
     void setDeleteByGift() {
@@ -42,24 +43,21 @@ class GiftTagRepositoryTest {
                 .orElseThrow()
                 .getId();
 
-        Status deleted = statusRepository.findByNameIgnoreCase("deleted")
-                                         .orElseThrow();
+        repository.setDeleteByGift(id,DELETED.name());
 
-        repository.setDeleteByGift(id,deleted);
-        Status actual = repository.findAll()
-                                    .stream()
-                                    .findAny()
-                                    .orElseThrow()
-                                    .getStatus();
-        Assertions.assertEquals(null,actual);
+        GiftTag actual = repository.findById(id).orElseThrow();
+
+        Assertions.assertEquals(null, actual.getStatus());
     }
 
     public void init() {
-        statusRepository.saveAll(List.of(new Status(null,"active"),new Status(null,"deleted")));
-        Status active = statusRepository.findByNameIgnoreCase("active")
-                .orElseThrow();
-
-        tagRepository.saveAll(List.of(new Tag(null,"testTag1",active),new Tag(null,"testTag2",active),new Tag(null,"testTag3",active)));
+        tagRepository.saveAll(
+                List.of(
+                        new Tag(null,"testTag1",ACTIVE.name()),
+                        new Tag(null,"testTag2",ACTIVE.name()),
+                        new Tag(null,"testTag3",ACTIVE.name())
+                )
+        );
 
         GiftCertificate entity = builder
                 .setName("test")
@@ -68,7 +66,7 @@ class GiftTagRepositoryTest {
                 .setPrice(new BigDecimal(1))
                 .setCreateDate(LocalDateTime.of(1,1,1,1,1))
                 .setUpdateDate(LocalDateTime.of(2,2,2,2,2))
-                .setStatus(active)
+                .setStatus(ACTIVE.name())
                 .setTagList(tagRepository.findAll())
                 .build();
         giftRepository.save(entity);

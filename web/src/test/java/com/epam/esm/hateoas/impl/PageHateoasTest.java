@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.epam.esm.controller.ControllerClass.TAG_CONTROLLER;
 import static com.epam.esm.controller.ControllerClass.USER_CONTROLLER;
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -40,7 +41,7 @@ class PageHateoasTest {
     @SneakyThrows
     @Test
     void addGiftsPage() {
-        List<GiftCertificateDto> content = List.of(new GiftCertificateDto(1L, "name", "desc", null, null, null, null, null));
+        List<GiftCertificateDto> content = List.of(new GiftCertificateDto(1L, "name", "desc", null, null, null, null, null,ACTIVE.name()));
         DtoPage<GiftCertificateDto> actual = giftDtoPageBuilder
                 .setContent(content)
                 .setResponse(responseService.okResponse("ok"))
@@ -55,7 +56,7 @@ class PageHateoasTest {
     @SneakyThrows
     @Test
     void addTagsPage() {
-        List<TagDto> content = List.of(new TagDto(1L, "name"));
+        List<TagDto> content = List.of(new TagDto(1L, "name",ACTIVE.name()));
         DtoPage<TagDto> actual = tagDtoPageBuilder
                 .setContent(content)
                 .setResponse(responseService.okResponse("ok"))
@@ -114,7 +115,7 @@ class PageHateoasTest {
     @SneakyThrows
     @Test
     void addTagGetBackPage() {
-        List<TagDto> content = List.of(new TagDto(1L, "name"));
+        List<TagDto> content = List.of(new TagDto(1L, "name",ACTIVE.name()));
 
         DtoPage<TagDto> expected = tagDtoPageBuilder
                 .setContent(content)

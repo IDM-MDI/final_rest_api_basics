@@ -7,7 +7,6 @@ import com.epam.esm.util.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -21,13 +20,15 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
 
     @Override
     public Tag toEntity(TagDto dto) {
-        return dto == null ? null : builder.setId(dto.getId()).setName(dto.getName()).
-                build();
+        return dto == null ? null : builder.setId(dto.getId())
+                                           .setName(dto.getName())
+                                           .setStatus(dto.getStatus())
+                                           .build();
     }
 
     @Override
     public TagDto toDto(Tag entity) {
-        return entity == null ? null : new TagDto(entity.getId(),entity.getName());
+        return entity == null ? null : new TagDto(entity.getId(),entity.getName(),entity.getStatus());
     }
 
     @Override

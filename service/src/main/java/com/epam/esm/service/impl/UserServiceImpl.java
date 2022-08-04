@@ -1,17 +1,18 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.builder.impl.DtoPageBuilder;
-import com.epam.esm.dto.*;
-import com.epam.esm.entity.*;
+import com.epam.esm.dto.AuthenticationDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Role;
+import com.epam.esm.entity.RoleName;
+import com.epam.esm.entity.User;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.RoleRepository;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.service.EntityService;
-import com.epam.esm.service.ResponseService;
+import com.epam.esm.service.UserService;
 import com.epam.esm.util.HashGenerator;
 import com.epam.esm.util.impl.RoleModelMapper;
-import com.epam.esm.util.impl.StatusModelMapper;
 import com.epam.esm.util.impl.UserModelMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,86 +25,45 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.esm.dto.ResponseTemplate.*;
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
-import static com.epam.esm.exception.RepositoryExceptionCode.*;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_EXCEPTION;
 
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
 @Profile("prod")
-public class UserService implements EntityService<User,UserDto> {
+public class UserServiceImpl implements UserService {
 
     public static final String USER = "User ";
     private final UserRepository repository;
     private final RoleRepository roleRepository;
     private final UserModelMapper mapper;
     private final RoleModelMapper roleMapper;
-    private final ResponseService responseService;
-    private final StatusService statusService;
-    private final StatusModelMapper statusMapper;
     private final OrderRepository orderRepository;
     @Autowired
-    public UserService(UserRepository repository,
-                       StatusService statusService,
-                       RoleRepository roleRepository,
-                       UserModelMapper mapper,
-                       RoleModelMapper roleMapper,
-                       ResponseService responseService, StatusModelMapper statusMapper, OrderRepository orderRepository) {
+    public UserServiceImpl(UserRepository repository,
+                           RoleRepository roleRepository,
+                           UserModelMapper mapper,
+                           RoleModelMapper roleMapper,
+                           OrderRepository orderRepository) {
         this.repository = repository;
-        this.statusService = statusService;
         this.roleRepository = roleRepository;
         this.mapper = mapper;
         this.roleMapper = roleMapper;
-        this.responseService = responseService;
-        this.statusMapper = statusMapper;
         this.orderRepository = orderRepository;
-    }
-
-    public DtoPage<UserDto> findAllPageWithDtoPage(Integer page, Integer size, String sort) {
-        return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(
-                        USER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-                ))
-                .setContent(mapper.toDtoList(findAll(page,size,sort)))
-                .setSize(size)
-                .setNumberOfPage(page)
-                .setSortBy(sort)
-                .build();
-    }
-
-    public DtoPage<UserDto> findByIdWithDtoPage(Long id) throws RepositoryException {
-        return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(USER + FOUND_BY_ID))
-                .setContent(List.of(mapper.toDto(findById(id))))
-                .build();
-    }
-
-    public DtoPage<UserDto> saveWithDtoPage(UserDto dto) throws RepositoryException {
-        return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.createdResponse(USER + CREATED))
-                .setContent(List.of(mapper.toDto(save(dto))))
-                .build();
-    }
-
-    public DtoPage<UserDto> loginWithDtoPage(AuthenticationDto dto) {
-        UserDto user = login(dto);
-        log.info("User: " + user + " sign in");
-        return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(USER + LOGGED_IN))
-                .setContent(List.of(user))
-                .build();
     }
     @Override
     public User save(UserDto dto) throws RepositoryException {
         setDefaultUser(dto);
         User user = mapper.toEntity(dto);
         User result = repository.save(user);
-        log.info("User: " + dto + " successfully added");
+        log.info("User: " + dto.getUsername() + " successfully added");
         return result;
     }
 
@@ -137,29 +97,18 @@ public class UserService implements EntityService<User,UserDto> {
     }
 
     @Override
-    public List<User> findActive() throws RepositoryException {
-        return findByStatus(DELETED.name());
-    }
-
-    @Override
-    public List<User> findDeleted() throws RepositoryException {
-        return findByStatus(ACTIVE.name());
-    }
-
-    @Override
     public void delete(long id) throws RepositoryException {
-        repository.setDelete(id,findStatus(DELETED.name()));
+        repository.setDelete(id,DELETED.name());
     }
 
     @Override
-    public List<User> findByStatus(String statusName) throws RepositoryException {
-        return repository.findByStatus(findStatus(statusName));
-    }
-    private Status findStatus(String name) throws RepositoryException {
-        return statusService.findStatus(name);
+    public List<User> findByStatus(int page, int size, String sort, String statusName) throws RepositoryException {
+        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(sort)));
     }
     public UserDto login(AuthenticationDto authenticationDto) {
-        return findUserByUsername(authenticationDto.getUsername());
+        UserDto user = findUserByUsername(authenticationDto.getUsername());
+        log.info("User: " + user.getUsername() + " sign in");
+        return user;
     }
 
     @Transactional
@@ -179,29 +128,17 @@ public class UserService implements EntityService<User,UserDto> {
                 .orElseThrow(() -> new UsernameNotFoundException("User with username - " + username + " not found")));
     }
 
-    public DtoPage<UserDto> findByParamWithDtoPage(UserDto dto) throws RepositoryException {
-        return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(USER + FOUND_BY_PARAM))
-                .setContent(mapper.toDtoList(findByParam(dto)))
-                .build();
-    }
 
-    public DtoPage<UserDto> findTopWithDtoPage() {
-        return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(USER + PAGE))
-                .setContent(mapper.toDtoList(findTop()))
-                .build();
-    }
-
-    private List<User> findTop() {
-        return orderRepository.getTop()
-                .subList(0, 100);
+    public List<User> findTop() {
+        List<Order> topOrder = orderRepository.getTop(PageRequest.of(0, 100));
+        List<User> result = new ArrayList<>();
+        topOrder.forEach(i -> result.add(i.getUser()));
+        return result;
     }
 
     private void setDefaultUser(UserDto user) throws RepositoryException {
         if(user.getStatus() == null) {
-            Status status = findStatus(ACTIVE.name());
-            user.setStatus(statusMapper.toDto(status));
+            user.setStatus(ACTIVE.name());
         }
         if(user.getRoles() == null) {
             Role role = roleRepository.findRoleByName(RoleName.USER.name())

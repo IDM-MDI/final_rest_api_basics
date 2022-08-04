@@ -35,4 +35,5 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private LocalDateTime updateDate;
 
     private List<TagDto> tags;
+    private String status;
 }

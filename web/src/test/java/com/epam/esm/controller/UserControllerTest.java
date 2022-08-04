@@ -35,7 +35,7 @@ class UserControllerTest {
     @SneakyThrows
     @Test
     void getUsers() {
-        this.mockMvc.perform(get("/users"))
+        this.mockMvc.perform(get("/api/v1/users"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))

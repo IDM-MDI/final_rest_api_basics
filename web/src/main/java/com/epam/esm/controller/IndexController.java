@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "api/v1/")
 @Profile("prod")
 public class IndexController {
 
@@ -26,11 +26,6 @@ public class IndexController {
     public IndexController(LoginService loginService, UserHateoas hateoas) {
         this.loginService = loginService;
         this.hateoas = hateoas;
-    }
-
-    @GetMapping
-    public String empty() {
-        return "";
     }
 
     @GetMapping("/login/oauth/success")

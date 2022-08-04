@@ -1,17 +1,13 @@
 package com.epam.esm.util.impl;
 
 import com.epam.esm.builder.impl.TagBuilder;
-import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class TagModelMapperTest {
 
@@ -27,35 +23,39 @@ class TagModelMapperTest {
         entity = new Tag(
                 1L,
                 "testRole1",
-                null
+                "testStatus"
         );
         dto = new TagDto(
                 1L,
-                "testRole1"
+                "testRole1",
+                "testStatus"
         );
         entityList = List.of(
                 new Tag(
                         2L,
                         "testRole2",
-                        null),
+                        "testStatus"),
                 new Tag(
                         3L,
                         "testRole3",
-                        null),
+                        "testStatus"),
                 new Tag(
                         4L,
                         "testRole4",
-                        null));
+                        "testStatus"));
         dtoList = List.of(
                 new TagDto(
                         2L,
-                        "testRole2"),
+                        "testRole2",
+                        "testStatus"),
                 new TagDto(
                         3L,
-                        "testRole3"),
+                        "testRole3",
+                        "testStatus"),
                 new TagDto(
                         4L,
-                        "testRole4"));
+                        "testRole4",
+                        "testStatus"));
     }
 
 

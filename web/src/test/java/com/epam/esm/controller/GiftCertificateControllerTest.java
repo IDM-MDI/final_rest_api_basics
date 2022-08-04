@@ -5,7 +5,6 @@ import com.epam.esm.config.WebApplication;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.RoleDto;
-import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
@@ -14,7 +13,7 @@ import com.epam.esm.security.jwt.JwtTokenProvider;
 import com.epam.esm.security.jwt.JwtUser;
 import com.epam.esm.security.jwt.JwtUserFactory;
 import com.epam.esm.service.ResponseService;
-import com.epam.esm.service.impl.GiftCertificateService;
+import com.epam.esm.service.page.PageGiftCertificateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -28,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -48,7 +48,7 @@ class GiftCertificateControllerTest {
     @Autowired
     private GiftCertificateController controller;
     @MockBean
-    private GiftCertificateService service;
+    private PageGiftCertificateService service;
     @MockBean
     private GiftCertificateHateoas hateoas;
 
@@ -74,9 +74,10 @@ class GiftCertificateControllerTest {
             null,
             null,
             List.of(
-                    new TagDto(1L,"tag1"),
-                    new TagDto(2L,"tag2")
-            )
+                    new TagDto(1L,"tag1",ACTIVE.name()),
+                    new TagDto(2L,"tag2",ACTIVE.name())
+            ),
+            ACTIVE.name()
     );
 
     private final UserDto user = new UserDto(
@@ -84,8 +85,7 @@ class GiftCertificateControllerTest {
             "usernameTest",
             "passwordTest",
             null,
-            new StatusDto(1L,"ACTIVE"),
-//            List.of(new RoleDto(1L,"USER")),
+            ACTIVE.name(),
             List.of(new RoleDto(1L,"ADMIN"),new RoleDto(2L,"USER")),
             null);
 
@@ -100,11 +100,11 @@ class GiftCertificateControllerTest {
         int pageNumber = 0;
         String sort = "id";
 
-        when(service.findAllWithPage(pageNumber,size,sort))
+        when(service.findByPage(pageNumber,size,sort))
                 .thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(get("/gifts"))
+        mockMvc.perform(get("/api/v1/gifts"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
@@ -121,10 +121,10 @@ class GiftCertificateControllerTest {
 
         when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
                 .thenReturn(jwtUser);
-        when(service.saveWithResponse(certificate)).thenReturn(page);
+        when(service.save(certificate)).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(post("/gifts").with(csrf())
+        mockMvc.perform(post("/api/v1/gifts").with(csrf())
                                 .contentType(halJsonUTF)
                                 .content(new ObjectMapper().writeValueAsString(certificate))
                                 .header("Authorization","Bearer " + token))
@@ -144,10 +144,10 @@ class GiftCertificateControllerTest {
 
         when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
                 .thenReturn(jwtUser);
-        when(service.deleteWithDtoPage(certificate.getId())).thenReturn(page);
+        when(service.delete(certificate.getId())).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(delete("/gifts/1").with(csrf())
+        mockMvc.perform(delete("/api/v1/gifts/1").with(csrf())
                         .header("Authorization","Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -165,10 +165,10 @@ class GiftCertificateControllerTest {
 
         when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
                 .thenReturn(jwtUser);
-        when(service.updateWithDtoPage(certificate,certificate.getId())).thenReturn(page);
+        when(service.update(certificate,certificate.getId())).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(patch("/gifts/1").with(csrf())
+        mockMvc.perform(patch("/api/v1/gifts/1").with(csrf())
                         .contentType(halJsonUTF)
                         .content(new ObjectMapper().writeValueAsString(certificate))
                         .header("Authorization","Bearer " + token))
@@ -183,10 +183,10 @@ class GiftCertificateControllerTest {
     @SneakyThrows
     @Test
     void getGiftCertificate() {
-        when(service.findByIdWithPage(certificate.getId())).thenReturn(page);
+        when(service.findById(certificate.getId())).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(get("/gifts/1"))
+        mockMvc.perform(get("/api/v1/gifts/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
@@ -201,14 +201,15 @@ class GiftCertificateControllerTest {
         GiftCertificateDto dtoSearch = new GiftCertificateDto(
                 certificate.getId(),
                 certificate.getName(),
-                null,null,null,null,null,null
-                );
+                null,null,null,null,null,null,
+                null
+        );
 
         String tags = "tag1,tag2";
-        when(service.findByParamWithDtoPage(dtoSearch,tags)).thenReturn(page);
+        when(service.findByParam(dtoSearch,tags)).thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 
-        mockMvc.perform(get("/gifts/search")
+        mockMvc.perform(get("/api/v1/gifts/search")
                         .contentType(MediaType.TEXT_PLAIN)
                         .param("id",certificate.getId().toString())
                         .param("name",certificate.getName())

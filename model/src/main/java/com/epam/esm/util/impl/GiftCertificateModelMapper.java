@@ -22,10 +22,16 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
 
     @Override
     public GiftCertificate toEntity(GiftCertificateDto dto) {
-        return dto == null ? null : builder.setId(dto.getId()).setName(dto.getName()).setDescription(dto.getDescription()).
-                setDuration(dto.getDuration()).setPrice(dto.getPrice()).
-                setCreateDate(dto.getCreateDate()).setUpdateDate(dto.getUpdateDate())
-                .setTagList(tagModelMapper.toEntityList(dto.getTags())).build();
+        return dto == null ? null : builder.setId(dto.getId())
+                .setName(dto.getName())
+                .setDescription(dto.getDescription())
+                .setDuration(dto.getDuration())
+                .setPrice(dto.getPrice())
+                .setCreateDate(dto.getCreateDate())
+                .setUpdateDate(dto.getUpdateDate())
+                .setTagList(tagModelMapper.toEntityList(dto.getTags()))
+                .setStatus(dto.getStatus())
+                .build();
     }
 
     @Override
@@ -42,6 +48,7 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
         result.setCreateDate(entity.getCreateDate());
         result.setUpdateDate(entity.getUpdateDate());
         result.setTags(tagModelMapper.toDtoList(entity.getTagList()));
+        result.setStatus(entity.getStatus());
         return result;
     }
 

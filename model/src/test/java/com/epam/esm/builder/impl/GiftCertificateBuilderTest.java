@@ -1,7 +1,6 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -43,14 +42,14 @@ class GiftCertificateBuilderTest {
     @Test
     @Order(4)
     void setStatus() {
-        GiftCertificateBuilder actual = builder.setStatus(new Status(1L,"testStatus"));
+        GiftCertificateBuilder actual = builder.setStatus("testStatus");
         Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(5)
     void setTagList() {
-        GiftCertificateBuilder actual = builder.setTagList(List.of(new Tag(1L,"testTag",new Status(1L,"testStatus"))));
+        GiftCertificateBuilder actual = builder.setTagList(List.of(new Tag(1L,"testTag","testStatus")));
         Assertions.assertEquals(builder,actual);
     }
 
@@ -94,8 +93,8 @@ class GiftCertificateBuilderTest {
                 0,
                 LocalDateTime.of(2000,1, 1,0,5),
                 LocalDateTime.of(1,1,1,1,1),
-                List.of(new Tag(1L,"testTag",new Status(1L,"testStatus"))),
-                new Status(1L,"testStatus"));
+                List.of(new Tag(1L,"testTag","testStatus")),
+                "testStatus");
         Assertions.assertEquals(expected,actual);
     }
 

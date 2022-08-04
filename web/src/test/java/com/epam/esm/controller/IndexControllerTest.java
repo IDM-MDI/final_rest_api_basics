@@ -63,19 +63,9 @@ class IndexControllerTest {
 
     @SneakyThrows
     @Test
-    void empty() {
-        this.mockMvc.perform(get("/"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(textPlainType))
-                .andExpect(content().string(""));
-    }
-
-    @SneakyThrows
-    @Test
     void successLogin() {
         final String token = "someToken";
-        this.mockMvc.perform(get("/login/oauth/success?token=" + token))
+        this.mockMvc.perform(get("/api/v1/login/oauth/success?token=" + token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
@@ -90,7 +80,7 @@ class IndexControllerTest {
         when(loginService.authenticate(authentication)).thenReturn(page);
         doNothing().when(hateoas).setUserHateoas(page);
 
-        this.mockMvc.perform(post("/login").with(csrf())
+        this.mockMvc.perform(post("/api/v1/login").with(csrf())
                         .contentType(halJsonUTF)
                         .content(new ObjectMapper().writeValueAsString(authentication)))
                 .andDo(print())

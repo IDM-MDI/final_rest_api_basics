@@ -20,10 +20,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String USER_ENDPOINT = "/order/**";
-    private static final String REGISTRATION_ENDPOINT = "/users";
-    private static final String LOGIN_ENDPOINT = "/login";
-    private static final String OAUTH_ENDPOINT = "/login/oauth";
+    private static final String USER_ENDPOINT = "/api/v1/order/**";
+    private static final String REGISTRATION_ENDPOINT = "/api/v1/users";
+    private static final String LOGIN_ENDPOINT = "/api/v1/login";
+    private static final String OAUTH_ENDPOINT = "/api/v1/login/oauth";
     private static final String ADMIN_ROLE = "ADMIN";
     private final OAuth2LoginSuccessHandler successHandler;
     private final OAuth2LoginFailHandler failHandler;

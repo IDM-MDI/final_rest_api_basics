@@ -2,12 +2,8 @@ package com.epam.esm.util.impl;
 
 import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.RoleDto;
-import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Role;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import com.epam.esm.util.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +19,14 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
     private final UserBuilder builder;
     private final GiftCertificateModelMapper giftMapper;
     private final RoleModelMapper roleMapper;
-    private final StatusModelMapper statusMapper;
 
     @Autowired
     public UserModelMapper(UserBuilder builder,
                            GiftCertificateModelMapper giftMapper,
-                           RoleModelMapper roleMapper,
-                           StatusModelMapper statusMapper) {
+                           RoleModelMapper roleMapper) {
         this.builder = builder;
         this.giftMapper = giftMapper;
         this.roleMapper = roleMapper;
-        this.statusMapper = statusMapper;
     }
 
     @Override
@@ -44,7 +37,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         User user = builder
                 .setId(dto.getId())
                 .setName(dto.getUsername())
-                .setStatus(statusMapper.toEntity(dto.getStatus()))
+                .setStatus(dto.getStatus())
                 .build();
         if(dto.getOrders() != null) {
             List<Order> orders = new ArrayList<>();
@@ -61,6 +54,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         }
         user.setPassword(dto.getPassword());
         user.setRoles(roleMapper.toEntityList(dto.getRoles()));
+        user.setStatus(dto.getStatus());
         return user;
     }
 
@@ -72,7 +66,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
         UserDto result = new UserDto();
         result.setId(entity.getId());
         result.setUsername(entity.getUsername());
-        result.setStatus(statusMapper.toDto(entity.getStatus()));
+        result.setStatus(entity.getStatus());
 
         if(entity.getOrders() != null) {
             List<OrderDto> orders = new ArrayList<>();
@@ -91,6 +85,7 @@ public class UserModelMapper implements ModelMapper<User, UserDto> {
 
         result.setPassword(entity.getPassword());
         result.setRoles(roleMapper.toDtoList(entity.getRoles()));
+        result.setStatus(entity.getStatus());
         return result;
     }
 

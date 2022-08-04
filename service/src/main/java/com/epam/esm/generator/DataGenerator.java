@@ -6,20 +6,19 @@ import com.epam.esm.builder.impl.TagBuilder;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.StatusRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.service.impl.UserService;
+import com.epam.esm.service.impl.UserServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -41,26 +40,23 @@ public class DataGenerator {
     private static final TagBuilder TAG_BUILDER = new TagBuilder();
     private final TagRepository tagRepository;
     private final GiftCertificateRepository giftRepository;
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final OrderRepository orderRepository;
-    private final StatusRepository statusRepository;
     private final UserRepository userRepository;
-
-    private Optional<Status> activeStatus;
 
     @Autowired
     public DataGenerator(TagRepository tagRepository,
                          GiftCertificateRepository giftRepository,
                          UserRepository userRepository,
-                         OrderRepository orderRepository, StatusRepository statusRepository, UserService userService) {
+                         OrderRepository orderRepository, UserServiceImpl userServiceImpl) {
         this.tagRepository = tagRepository;
         this.giftRepository = giftRepository;
-        this.userService = userService;
+        this.userServiceImpl = userServiceImpl;
         this.orderRepository = orderRepository;
-        this.statusRepository = statusRepository;
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public void fillRandomData() throws RepositoryException {
         long tagCount = tagRepository.count();
         long giftCount = giftRepository.count();
@@ -68,7 +64,6 @@ public class DataGenerator {
         long orderCount = orderRepository.count();
         String[] words = null;
         if(tagCount == 0 || giftCount == 0 || userCount == 0) {
-            activeStatus = statusRepository.findByNameIgnoreCase(ACTIVE.name());
             words = getWords();
         }
         if(tagCount == 0) {
@@ -105,8 +100,8 @@ public class DataGenerator {
                                     .setPrice(i.getPrice())
                                     .setUser(user)
                                     .setGift(i)
+                                    .setStatus(ACTIVE.name())
                                     .build();
-                activeStatus.ifPresent(order::setStatus);
                 orders.add(order);
             });
             user.setOrders(orders);
@@ -116,9 +111,9 @@ public class DataGenerator {
 
     private void initUsers(List<UserDto> users) throws RepositoryException {
         for (int i = 0; i < users.size(); i++) {
-            userService.save(users.get(i));
-            log.info("User[{}]: is saved", i);
+            userServiceImpl.save(users.get(i));
         }
+        log.info("all users saved");
     }
 
     private void initGifts(String[] words) {
@@ -137,8 +132,8 @@ public class DataGenerator {
                                         .setDuration((int) RandomHandler.getRandomNumber(minDuration, maxDuration))
                                         .setDescription(getRandomDescription(words))
                                         .setTagList(getRandomTags())
+                                        .setStatus(ACTIVE.name())
                                         .build();
-            activeStatus.ifPresent(gift::setStatus);
             gifts.add(gift);
         }
         giftRepository.saveAll(gifts);
@@ -153,8 +148,8 @@ public class DataGenerator {
         tagsWord.forEach(i -> {
             Tag tag = TAG_BUILDER
                     .setName(i)
+                    .setStatus(ACTIVE.name())
                     .build();
-            activeStatus.ifPresent(tag::setStatus);
             tags.add(tag);
         });
         tagRepository.saveAll(tags);

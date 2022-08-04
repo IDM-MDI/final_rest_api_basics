@@ -1,7 +1,6 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -50,7 +49,7 @@ class OrderBuilderTest {
                 null,
                 null,
                 null,
-                new Status(1L,"testStatus")));
+                "testStatus"));
         Assertions.assertEquals(builder,actual);
     }
 
@@ -63,14 +62,14 @@ class OrderBuilderTest {
                 "testPassword",
                 null,
                 null,
-                new Status(1L,"testStatus")));
+                "testStatus"));
         Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(6)
     void setStatus() {
-        OrderBuilder actual = builder.setStatus(new Status(1L, "testStatus"));
+        OrderBuilder actual = builder.setStatus("testStatus");
         Assertions.assertEquals(builder,actual);
     }
 
@@ -91,15 +90,15 @@ class OrderBuilderTest {
                         null,
                         null,
                         null,
-                        new Status(1L,"testStatus")),
+                        "testStatus"),
                 new User(
                         1L,
                         "testLogin",
                         "testPassword",
                         null,
                         null,
-                        new Status(1L,"testStatus")),
-                new Status(1L,"testStatus")
+                        "testStatus"),
+                "testStatus"
         );
         Assertions.assertEquals(actual,expected);
     }

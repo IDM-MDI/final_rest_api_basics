@@ -19,7 +19,7 @@ public final class JwtUserFactory {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                user.getStatus().getName().toUpperCase().equals(ACTIVE.name()),
+                user.getStatus().toUpperCase().equals(ACTIVE.name()),
                 mapToGrantedAuthorities(user.getRoles()));
     }
 

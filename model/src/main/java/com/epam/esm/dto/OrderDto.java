@@ -20,4 +20,5 @@ public class OrderDto implements Serializable {
 
     private long giftId;
     private long userId;
+    private String status;
 }

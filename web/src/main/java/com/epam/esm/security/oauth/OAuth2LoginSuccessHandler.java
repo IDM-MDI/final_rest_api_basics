@@ -1,20 +1,16 @@
 package com.epam.esm.security.oauth;
 
-import com.epam.esm.controller.IndexController;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.security.jwt.JwtTokenProvider;
-import com.epam.esm.service.impl.UserService;
+import com.epam.esm.service.impl.UserServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,11 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UserService service;
+    private final UserServiceImpl service;
     private final JwtTokenProvider provider;
 
     @Autowired
-    public OAuth2LoginSuccessHandler(UserService service, JwtTokenProvider provider) {
+    public OAuth2LoginSuccessHandler(UserServiceImpl service, JwtTokenProvider provider) {
         this.service = service;
         this.provider = provider;
     }

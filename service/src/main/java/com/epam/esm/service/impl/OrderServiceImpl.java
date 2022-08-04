@@ -1,9 +1,6 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.builder.impl.DtoPageBuilder;
-import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
@@ -11,8 +8,7 @@ import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.service.EntityService;
-import com.epam.esm.util.impl.GiftCertificateModelMapper;
+import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -22,46 +18,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.entity.StatusName.DELETED;
 import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
 import static com.epam.esm.validator.OrderValidator.isUserAndGiftEmpty;
-import static com.epam.esm.entity.StatusName.*;
 
 
 @Service
 @EnableTransactionManagement(proxyTargetClass = true)
 @Profile("prod")
-public class OrderService implements EntityService<Order,OrderDto> {
-
+public class OrderServiceImpl implements OrderService {
+    public static final String ORDER = "Order ";
     private final OrderRepository repository;
     private final GiftCertificateRepository giftRepository;
-    private final StatusService statusService;
     private final UserRepository userRepository;
-    private final UserService userService;
-    private final GiftCertificateModelMapper giftMapper;
+
 
     @Autowired
-    public OrderService(OrderRepository repository,
-                        GiftCertificateRepository giftRepository,
-                        StatusService statusService, UserRepository userRepository,
-                        UserService userService,
-                        GiftCertificateModelMapper giftMapper) {
+    public OrderServiceImpl(OrderRepository repository,
+                            GiftCertificateRepository giftRepository,
+                            UserRepository userRepository) {
         this.repository = repository;
         this.giftRepository = giftRepository;
-        this.statusService = statusService;
         this.userRepository = userRepository;
-        this.userService = userService;
-        this.giftMapper = giftMapper;
     }
 
-    public DtoPage<OrderDto> saveByUserWithDtoPage(String username, long id) throws RepositoryException {
-        UserDto userByUsername = userService.findUserByUsername(username);
-        OrderDto dto = new OrderDto();
-        dto.setGiftId(id);
-        dto.setUserId(userByUsername.getId());
-        return new DtoPageBuilder<OrderDto>()
-                .setContent(List.of(mapper(save(dto))))
-                .build();
-    }
+
 
     @Override
     public Order save(OrderDto dto) throws RepositoryException {
@@ -99,21 +80,11 @@ public class OrderService implements EntityService<Order,OrderDto> {
 
     @Override
     public void delete(long id) throws RepositoryException {
-        repository.setDelete(id,statusService.findStatus(DELETED.name()));
+        repository.setDelete(id, DELETED.name());
     }
 
     @Override
-    public List<Order> findActive() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Order> findDeleted() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Order> findByStatus(String statusName) {
+    public List<Order> findByStatus(int page, int size, String sort, String statusName) {
         return Collections.emptyList();
     }
 
@@ -124,14 +95,5 @@ public class OrderService implements EntityService<Order,OrderDto> {
         order.setPrice(gift.getPrice());
         return order;
     }
-    private OrderDto mapper(Order order) {
-        return new OrderDto(
-                order.getId(),
-                order.getPrice(),
-                order.getPurchaseTime(),
-                giftMapper.toDto(order.getGift()),
-                order.getGift().getId(),
-                order.getUser().getId()
-        );
-    }
+
 }

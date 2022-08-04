@@ -5,7 +5,7 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.impl.UserHateoas;
-import com.epam.esm.service.impl.UserService;
+import com.epam.esm.service.page.PageUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.Min;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/v1/users")
 public class UserController {
 
-    private final UserService service;
+    private final PageUserService service;
     private final UserHateoas hateoas;
 
     @Autowired
-    public UserController(UserService service, UserHateoas hateoas) {
+    public UserController(PageUserService service, UserHateoas hateoas) {
         this.service = service;
         this.hateoas = hateoas;
     }
@@ -37,14 +37,14 @@ public class UserController {
     public DtoPage<UserDto> getUsers(@RequestParam(defaultValue = "0") Integer page,
                                      @RequestParam(defaultValue = "10") Integer size,
                                      @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
-        DtoPage<UserDto> dtoPage = service.findAllPageWithDtoPage(page,size,sort);
+        DtoPage<UserDto> dtoPage = service.findByPage(page,size,sort);
         hateoas.setUserHateoas(dtoPage);
         return dtoPage;
     }
 
     @PostMapping
     public DtoPage<UserDto> registration(@RequestBody UserDto user) throws RepositoryException, ServiceException {
-        DtoPage<UserDto> page = service.saveWithDtoPage(user);
+        DtoPage<UserDto> page = service.save(user);
         hateoas.setUserHateoas(page);
         return page;
     }
@@ -55,20 +55,20 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public DtoPage<UserDto> getByIdUser(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException {
-        DtoPage<UserDto> page = service.findByIdWithDtoPage(id);
+        DtoPage<UserDto> page = service.findById(id);
         hateoas.setUserHateoas(page);
         return page;
     }
     @GetMapping("/top")
     public DtoPage<UserDto> getTopUsers() throws ServiceException, RepositoryException {
-        DtoPage<UserDto> page = service.findTopWithDtoPage();
+        DtoPage<UserDto> page = service.findTop();
         hateoas.setUserHateoas(page);
         return page;
     }
 
     @GetMapping("/search")
     public DtoPage<UserDto> search(UserDto dto) throws ServiceException, RepositoryException {
-        DtoPage<UserDto> page = service.findByParamWithDtoPage(dto);
+        DtoPage<UserDto> page = service.findByParam(dto);
         hateoas.setUserHateoas(page);
         return page;
     }

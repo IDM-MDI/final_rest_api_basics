@@ -14,4 +14,5 @@ public class TagDto extends RepresentationModel<TagDto> {
     private Long id;
     @Length(min = 2,max = 42)
     private String name;
+    private String status;
 }

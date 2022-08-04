@@ -4,11 +4,16 @@ import com.epam.esm.builder.impl.GiftCertificateBuilder;
 import com.epam.esm.builder.impl.OrderBuilder;
 import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.config.PersistenceConfig;
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Role;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
@@ -17,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.epam.esm.entity.StatusName.ACTIVE;
+import static com.epam.esm.entity.StatusName.DELETED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,8 +43,6 @@ class OrderRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private StatusRepository statusRepository;
-    @Autowired
     private TagRepository tagRepository;
     @Autowired
     private RoleRepository roleRepository;
@@ -45,17 +50,18 @@ class OrderRepositoryTest {
     private OrderRepository repository;
 
     private void init() {
-        statusRepository.saveAll(new ArrayList<>(List.of(new Status(null,"active"),new Status(null,"deleted"))));
-        Status active = statusRepository.findByNameIgnoreCase("active")
-                .orElseThrow();
-
-        tagRepository.saveAll(new ArrayList<>(List.of(new Tag(null,"testTag1",active),new Tag(null,"testTag2",active),new Tag(null,"testTag3",active))));
+        tagRepository.saveAll(
+                new ArrayList<>(
+                        List.of(
+                                new Tag(null,"testTag1",ACTIVE.name()),
+                                new Tag(null,"testTag2",ACTIVE.name()),
+                                new Tag(null,"testTag3",ACTIVE.name()))
+                )
+        );
         createOrder();
     }
 
     private void createOrder() {
-        Status active = statusRepository.findByNameIgnoreCase("active")
-                .orElseThrow();
         OrderBuilder builder = new OrderBuilder();
         if(userRepository.count() < 3 || giftRepository.count() < 3) {
             createUsers();
@@ -67,7 +73,7 @@ class OrderRepositoryTest {
             Order order = builder.setUser(user)
                     .setGift(gift)
                     .setPrice(gift.getPrice())
-                    .setStatus(active)
+                    .setStatus(ACTIVE.name())
                     .build();
             user.setOrders(new ArrayList<>(List.of(repository.save(order))));
             userRepository.save(user);
@@ -75,23 +81,19 @@ class OrderRepositoryTest {
     }
 
     private void createUsers() {
-        Status active = statusRepository.findByNameIgnoreCase("active")
-                .orElseThrow();
         roleRepository.save(new Role(0,"user"));
         Role userRole = roleRepository.findRoleByName("user").orElseThrow();
         for (int i = 1; i < 4; i++) {
             User user = userBuilder.setName("testUser" + i)
                     .setPassword("testPassword")
                     .setRoles(new ArrayList<>(List.of(userRole)))
-                    .setStatus(active)
+                    .setStatus(ACTIVE.name())
                     .build();
             userRepository.save(user);
         }
     }
 
     private void createGifts() {
-        Status active = statusRepository.findByNameIgnoreCase("active")
-                .orElseThrow();
         for (int i = 1; i < 4; i++) {
             int randomNumber1 = random.nextInt((max - min) + 1) + min;
             int randomNumber2 = random.nextInt((max - min) + 1) + min;
@@ -108,7 +110,7 @@ class OrderRepositoryTest {
                     .setPrice(new BigDecimal(i))
                     .setCreateDate(LocalDateTime.of(i,i,i,i,i))
                     .setUpdateDate(LocalDateTime.of(i+1,i+1,i+1,i+1,i+1))
-                    .setStatus(active)
+                    .setStatus(ACTIVE.name())
                     .setTagList(tags)
                     .build();
             giftRepository.save(entity);
@@ -118,36 +120,33 @@ class OrderRepositoryTest {
     @Test
     void getTop() {
         init();
-        List<User> top = repository.getTop();
-        assertTrue(isTop(top));
-    }
+        List<Order> top = repository.getTop(PageRequest.of(0,100));
 
-    private boolean isTop(List<User> top) {
-        boolean result = true;
-        int prevPrice = Integer.MAX_VALUE;
-        int price = 0;
-        for (User user : top) {
-            for (Order order : user.getOrders()) {
-                price += order.getPrice().intValue();
-            }
-            if(price > prevPrice) {
-                result = false;
-            }
-            prevPrice = price;
-            price = 0;
-        }
-        return result;
+        assertTrue(isTop(top));
     }
 
     @Test
     void setDelete() {
         init();
-        Status expected = statusRepository.findByNameIgnoreCase("deleted").orElseThrow();
         long id = repository.findAll().stream().findAny().orElseThrow().getId();
 
-        repository.setDelete(id,expected);
+        repository.setDelete(id,DELETED.name());
 
-        Status actual = repository.findById(id).orElseThrow().getStatus();
-        assertEquals(expected,actual);
+        String actual = repository.findById(id).orElseThrow().getStatus();
+        assertEquals(DELETED.name(),actual);
+    }
+    private boolean isTop(List<Order> top) {
+        boolean result = true;
+        int prevPrice = Integer.MAX_VALUE;
+        int price;
+        for (Order order : top) {
+            price = order.getPrice().intValue();
+
+            if(price > prevPrice) {
+                result = false;
+            }
+            prevPrice = price;
+        }
+        return result;
     }
 }

@@ -3,10 +3,8 @@ package com.epam.esm.util.impl;
 import com.epam.esm.builder.impl.GiftCertificateBuilder;
 import com.epam.esm.builder.impl.TagBuilder;
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.StatusDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class GiftCertificateModelMapperTest {
 
@@ -39,8 +35,8 @@ class GiftCertificateModelMapperTest {
                 0,
                 LocalDateTime.of(2000,1, 1,0,5),
                 LocalDateTime.of(1,1,1,1,1),
-                List.of(new Tag(1L,"testTag",null)),
-                null);
+                List.of(new Tag(1L,"testTag","testStatus")),
+                "testStatus");
         dto = new GiftCertificateDto(
                 1L,
                 "testGift",
@@ -49,7 +45,8 @@ class GiftCertificateModelMapperTest {
                 0,
                 LocalDateTime.of(2000,1, 1,0,5),
                 LocalDateTime.of(1,1,1,1,1),
-                List.of(new TagDto(1L,"testTag")));
+                List.of(new TagDto(1L,"testTag","testStatus")),
+                "testStatus");
         entityList = List.of(new GiftCertificate(
                 2L,
                 "testGift2",
@@ -58,8 +55,8 @@ class GiftCertificateModelMapperTest {
                 2,
                 LocalDateTime.of(2000,1, 1,0,5),
                 LocalDateTime.of(2,2,2,2,2),
-                List.of(new Tag(2L,"testTag2",null)),
-                null),
+                List.of(new Tag(2L,"testTag2","testStatus")),
+                "testStatus"),
                 new GiftCertificate(
                         3L,
                         "testGift3",
@@ -68,8 +65,8 @@ class GiftCertificateModelMapperTest {
                         3,
                         LocalDateTime.of(2000,1, 1,0,5),
                         LocalDateTime.of(3,3,3,3,3),
-                        List.of(new Tag(3L,"testTag3",null)),
-                        null),
+                        List.of(new Tag(3L,"testTag3","testStatus")),
+                        "testStatus"),
                 new GiftCertificate(
                         4L,
                         "testGift4",
@@ -78,8 +75,8 @@ class GiftCertificateModelMapperTest {
                         4,
                         LocalDateTime.of(2000,1, 1,0,5),
                         LocalDateTime.of(4,4,4,4,4),
-                        List.of(new Tag(4L,"testTag4",null)),
-                        null));
+                        List.of(new Tag(4L,"testTag4","testStatus")),
+                        "testStatus"));
         dtoList = List.of(new GiftCertificateDto(
                         2L,
                         "testGift2",
@@ -88,7 +85,8 @@ class GiftCertificateModelMapperTest {
                         2,
                         LocalDateTime.of(2000,1, 1,0,5),
                         LocalDateTime.of(2,2,2,2,2),
-                        List.of(new TagDto(2L,"testTag2"))),
+                        List.of(new TagDto(2L,"testTag2","testStatus")),
+                        "testStatus"),
                 new GiftCertificateDto(
                         3L,
                         "testGift3",
@@ -97,7 +95,8 @@ class GiftCertificateModelMapperTest {
                         3,
                         LocalDateTime.of(2000,1, 1,0,5),
                         LocalDateTime.of(3,3,3,3,3),
-                        List.of(new TagDto(3L,"testTag3"))),
+                        List.of(new TagDto(3L,"testTag3","testStatus")),
+                        "testStatus"),
                 new GiftCertificateDto(
                         4L,
                         "testGift4",
@@ -106,7 +105,10 @@ class GiftCertificateModelMapperTest {
                         4,
                         LocalDateTime.of(2000,1, 1,0,5),
                         LocalDateTime.of(4,4,4,4,4),
-                        List.of(new TagDto(4L,"testTag4"))));
+                        List.of(new TagDto(4L,"testTag4","testStatus")),
+                        "testStatus"
+                )
+        );
     }
 
     @Test

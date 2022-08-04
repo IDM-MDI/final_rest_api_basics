@@ -2,14 +2,17 @@ package com.epam.esm.controller;
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
 import com.epam.esm.config.WebApplication;
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.RoleDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.hateoas.impl.TagHateoas;
 import com.epam.esm.security.JwtUserDetailsService;
 import com.epam.esm.security.jwt.JwtTokenProvider;
 import com.epam.esm.security.jwt.JwtUser;
 import com.epam.esm.security.jwt.JwtUserFactory;
 import com.epam.esm.service.ResponseService;
-import com.epam.esm.service.impl.TagService;
+import com.epam.esm.service.page.PageTagService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,14 +26,19 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 
 @SpringBootTest(classes = WebApplication.class)
@@ -39,7 +47,7 @@ class TagControllerTest {
     @Autowired
     private TagController controller;
     @MockBean
-    private TagService service;
+    private PageTagService service;
     @MockBean
     private TagHateoas hateoas;
 
@@ -53,13 +61,13 @@ class TagControllerTest {
     @Autowired
     private ResponseService responseService;
 
-    private TagDto tag = new TagDto(1L,"test");
+    private TagDto tag = new TagDto(1L,"test",null);
     private UserDto user = new UserDto(
             1L,
             "usernameTest",
             "passwordTest",
             null,
-            new StatusDto(1L,"ACTIVE"),
+            ACTIVE.name(),
             List.of(new RoleDto(1L,"ADMIN"),new RoleDto(2L,"USER")),
             null);
     private DtoPage<TagDto> page;
@@ -83,10 +91,10 @@ class TagControllerTest {
         int size = 10;
         String sort = "id";
 
-        when(service.findAllPage(pageNumber,size,sort)).thenReturn(page);
+        when(service.findByPage(pageNumber,size,sort)).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
-        mockMvc.perform(get("/tags"))
+        mockMvc.perform(get("/api/v1/tags"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
@@ -103,10 +111,10 @@ class TagControllerTest {
 
         when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
                 .thenReturn(jwtUser);
-        when(service.saveWithDtoPage(tag)).thenReturn(page);
+        when(service.save(tag)).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
-        mockMvc.perform(post("/tags").with(csrf())
+        mockMvc.perform(post("/api/v1/tags").with(csrf())
                         .header("Authorization","Bearer " + token)
                         .contentType(halJsonUTF)
                         .content(new ObjectMapper().writeValueAsString(tag)))
@@ -126,10 +134,10 @@ class TagControllerTest {
 
         when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
                 .thenReturn(jwtUser);
-        when(service.deleteWithDtoPage(tag.getId())).thenReturn(page);
+        when(service.delete(tag.getId())).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
-        mockMvc.perform(delete("/tags/1").with(csrf())
+        mockMvc.perform(delete("/api/v1/tags/1").with(csrf())
                         .header("Authorization","Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -142,10 +150,10 @@ class TagControllerTest {
     @SneakyThrows
     @Test
     void getByIdTag() {
-        when(service.findByIdWithDtoPage(tag.getId())).thenReturn(page);
+        when(service.findById(tag.getId())).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
-        mockMvc.perform(get("/tags/1"))
+        mockMvc.perform(get("/api/v1/tags/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
@@ -157,10 +165,10 @@ class TagControllerTest {
     @SneakyThrows
     @Test
     void search() {
-        when(service.findAllByParamWithDtoPage(tag)).thenReturn(page);
+        when(service.findByParam(tag)).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
-        mockMvc.perform(get("/tags/search?id=" + tag.getId() + "&name=" + tag.getName()))
+        mockMvc.perform(get("/api/v1/tags/search?id=" + tag.getId() + "&name=" + tag.getName()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))

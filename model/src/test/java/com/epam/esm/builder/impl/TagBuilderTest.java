@@ -1,6 +1,5 @@
 package com.epam.esm.builder.impl;
 
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -30,7 +29,7 @@ class TagBuilderTest {
     @Test
     @Order(3)
     void setStatus() {
-        TagBuilder actual = builder.setStatus(new Status(1L,"testStatus"));
+        TagBuilder actual = builder.setStatus("testStatus");
         Assertions.assertEquals(builder,actual);
     }
 
@@ -38,7 +37,7 @@ class TagBuilderTest {
     @Order(4)
     void build() {
         Tag actual = builder.build();
-        Tag expected = new Tag(1L,"testTag",new Status(1L,"testStatus"));
+        Tag expected = new Tag(1L,"testTag","testStatus");
         Assertions.assertEquals(expected,actual);
     }
 

@@ -3,7 +3,6 @@ package com.epam.esm.builder.impl;
 import com.epam.esm.builder.ModelBuilder;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 
 import java.math.BigDecimal;
@@ -16,7 +15,7 @@ public class OrderBuilder implements ModelBuilder {
     private Date purchaseTime;
     private GiftCertificate gift;
     private User user;
-    private Status status;
+    private String status;
 
 
     public OrderBuilder setId(Long id) {
@@ -44,7 +43,7 @@ public class OrderBuilder implements ModelBuilder {
         return this;
     }
 
-    public OrderBuilder setStatus(Status status) {
+    public OrderBuilder setStatus(String status) {
         this.status = status;
         return this;
     }

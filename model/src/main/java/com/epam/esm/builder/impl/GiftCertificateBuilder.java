@@ -2,7 +2,6 @@ package com.epam.esm.builder.impl;
 
 import com.epam.esm.builder.ModelBuilder;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ public class GiftCertificateBuilder implements ModelBuilder {
     private Integer duration;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
-    private Status status;
+    private String status;
 
     private List<Tag> tagList;
 
@@ -29,7 +28,7 @@ public class GiftCertificateBuilder implements ModelBuilder {
         return this;
     }
 
-    public GiftCertificateBuilder setStatus(Status status) {
+    public GiftCertificateBuilder setStatus(String status) {
         this.status = status;
         return this;
     }

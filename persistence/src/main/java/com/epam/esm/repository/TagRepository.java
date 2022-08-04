@@ -1,7 +1,7 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +17,10 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     @Modifying(clearAutomatically = true)
     @Query("update Tag t set t.status = :status where t.id = :id")
-    void setDelete(@Param("id") long id, @Param("status") Status status);
+    void setDelete(@Param("id") long id, @Param("status") String status);
 
-    List<Tag> findByStatus(Status status);
+    @Query( value = "SELECT * FROM tag WHERE status = ?1",
+            countQuery = "SELECT count(*) FROM tag WHERE status = ?1",
+            nativeQuery = true)
+    List<Tag> findByStatus(String status, Pageable pageable);
 }

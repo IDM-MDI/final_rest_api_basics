@@ -1,20 +1,23 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.dto.DtoPage;
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.dto.TagDto;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.epam.esm.entity.StatusName.ACTIVE;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DtoPageBuilderTest {
 
     private static final DtoPageBuilder<TagDto> builder = new DtoPageBuilder<>();
-    private static TagDto content = new TagDto(1L,"");
+    private static TagDto content = new TagDto(1L,"",ACTIVE.name());
 
     @Test
     @Order(1)

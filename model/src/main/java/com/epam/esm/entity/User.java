@@ -35,7 +35,6 @@ public class User {
     )
     private List<Role> roles;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+    @Column(name = "status")
+    private String status;
 }

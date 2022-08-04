@@ -1,7 +1,6 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.entity.Role;
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -41,7 +40,7 @@ class UserBuilderTest {
     @Test
     @Order(4)
     void setStatus() {
-        UserBuilder actual = builder.setStatus(new Status(1L,"testStatus"));
+        UserBuilder actual = builder.setStatus("testStatus");
         Assertions.assertEquals(builder,actual);
     }
 
@@ -69,7 +68,7 @@ class UserBuilderTest {
                 "testPassword",
                 null,
                 List.of(new Role(1L,"testRole")),
-                new Status(1L,"testStatus")
+                "testStatus"
         );
         Assertions.assertEquals(expected,actual);
     }

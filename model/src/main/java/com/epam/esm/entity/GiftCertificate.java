@@ -52,7 +52,6 @@ public class GiftCertificate {
     @ToString.Exclude
     private List<Tag> tagList;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private Status status;
+    @Column(name = "status")
+    private String status;
 }
