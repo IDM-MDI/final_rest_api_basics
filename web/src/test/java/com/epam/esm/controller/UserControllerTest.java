@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
 class UserControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -44,6 +43,7 @@ class UserControllerTest {
     private PageUserService service;
     @MockBean
     private UserHateoas hateoas;
+
 
     @Autowired
     private UserController controller;

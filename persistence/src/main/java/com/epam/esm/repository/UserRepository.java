@@ -15,13 +15,14 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("update User u set u.status = :status where u.id = :id")
     void setDelete(@Param("id") long id, @Param("status") String status);
 
-
     List<User> findUsersByOrdersEmpty();
+
     @Query( value = "SELECT * FROM users WHERE status = ?1",
             countQuery = "SELECT count(*) FROM users WHERE status = ?1",
             nativeQuery = true)
     List<User> findByStatus(String status, Pageable pageable);
 
-
     Optional<User> findUserByUsername(String username);
+
+    boolean existsByUsername(String username);
 }

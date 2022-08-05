@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
@@ -98,6 +97,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long id) throws RepositoryException {
+        if(!repository.existsById(id)) {
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
+        }
         repository.setDelete(id,DELETED.name());
     }
 
@@ -113,9 +115,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public UserDto oauth(UserDto oauthUser) throws RepositoryException {
-        Optional<User> userByUsername = repository.findUserByUsername(oauthUser.getUsername());
-        if(userByUsername.isPresent()) {
-            update(mapper.toDto(userByUsername.get()));
+        if(repository.existsByUsername(oauthUser.getUsername())) {
+            User userByUsername = repository.findUserByUsername(oauthUser.getUsername()).get();
+            update(mapper.toDto(userByUsername));
         }
         else {
             save(oauthUser);

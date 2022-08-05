@@ -4,6 +4,7 @@ import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.config.PersistenceConfig;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -67,5 +68,13 @@ class UserRepositoryTest {
         init();
         String expected = "testName";
         assertEquals(expected,repository.findUserByUsername("testName").orElseThrow().getUsername());
+    }
+
+
+    @Test
+    void existsByUsername() {
+        init();
+        boolean expected = true;
+        Assertions.assertTrue(repository.existsByUsername("testName"));
     }
 }
