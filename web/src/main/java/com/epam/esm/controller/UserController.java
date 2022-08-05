@@ -37,7 +37,7 @@ public class UserController {
     public DtoPage<UserDto> getUsers(@RequestParam(defaultValue = "0") Integer page,
                                      @RequestParam(defaultValue = "10") Integer size,
                                      @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
-        DtoPage<UserDto> dtoPage = service.findByPage(page,size,sort);
+        DtoPage<UserDto> dtoPage = service.findByActiveStatus(page,size,sort);
         hateoas.setUserHateoas(dtoPage);
         return dtoPage;
     }

@@ -10,4 +10,6 @@ public interface PageService<P extends DtoPage<D>,D> {
     P findByPage(int page, int size, String sort) throws RepositoryException;
     P findById(long id) throws RepositoryException;
     P findByParam(D dto) throws RepositoryException;
+    P findByActiveStatus(int page, int size, String sort) throws RepositoryException;
+    P findByStatus(int page, int size, String sort,String statusName) throws RepositoryException;
 }

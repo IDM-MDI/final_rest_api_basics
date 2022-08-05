@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
 import static com.epam.esm.dto.ResponseTemplate.FOUND_BY_PARAM;
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.service.impl.GiftCertificateServiceImpl.GIFT_CERTIFICATE;
 
 @Service
@@ -90,6 +91,24 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.okResponse(GIFT_CERTIFICATE + FOUND_BY_PARAM))
                 .setContent(mapper.toDtoList(service.findByParam(dto)))
+                .build();
+    }
+
+    @Override
+    public DtoPage<GiftCertificateDto> findByActiveStatus(int page, int size, String sort) throws RepositoryException {
+        return findByStatus(page,size,sort,ACTIVE.name());
+    }
+
+    @Override
+    public DtoPage<GiftCertificateDto> findByStatus(int page, int size, String sort, String statusName) throws RepositoryException {
+        return new DtoPageBuilder<GiftCertificateDto>()
+                .setResponse(responseService.okResponse(
+                        GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
+                ))
+                .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,statusName)))
+                .setSize(size)
+                .setNumberOfPage(page)
+                .setSortBy(sort)
                 .build();
     }
 

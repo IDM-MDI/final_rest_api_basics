@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.service.impl.UserServiceImpl.USER;
 
 @Service
@@ -76,7 +77,8 @@ public class PageUserService implements PageService<DtoPage<UserDto>,UserDto> {
     public DtoPage<UserDto> login(AuthenticationDto dto) {
         UserDto user = service.login(dto);
         return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(USER + DELETED))
+                .setResponse(responseService.okResponse(USER + LOGGED_IN))
+                .setContent(List.of(user))
                 .build();
     }
 
@@ -84,6 +86,24 @@ public class PageUserService implements PageService<DtoPage<UserDto>,UserDto> {
         return new DtoPageBuilder<UserDto>()
                 .setResponse(responseService.okResponse(USER + FOUND_BY_PARAM))
                 .setContent(mapper.toDtoList(service.findByParam(dto)))
+                .build();
+    }
+
+    @Override
+    public DtoPage<UserDto> findByActiveStatus(int page, int size, String sort) throws RepositoryException {
+        return findByStatus(page,size,sort,ACTIVE.name());
+    }
+
+    @Override
+    public DtoPage<UserDto> findByStatus(int page, int size, String sort, String statusName) throws RepositoryException {
+        return new DtoPageBuilder<UserDto>()
+                .setResponse(responseService.okResponse(
+                        USER + PAGE + "page " + page + ", size" + size + ", sort" + sort
+                ))
+                .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,statusName)))
+                .setSize(size)
+                .setNumberOfPage(page)
+                .setSortBy(sort)
                 .build();
     }
 

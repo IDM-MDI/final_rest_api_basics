@@ -14,7 +14,6 @@ import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.service.ResponseService;
 import com.epam.esm.util.impl.GiftCertificateModelMapper;
 import com.epam.esm.util.impl.RoleModelMapper;
 import com.epam.esm.util.impl.TagModelMapper;
@@ -63,7 +62,6 @@ class OrderServiceImplTest {
     private final UserDto userDto;
     private final UserModelMapper userMapper;
     private final GiftCertificateModelMapper giftMapper;
-    private final ResponseService response;
     private final GiftCertificate giftEntity;
     private final GiftCertificateDto giftDto;
 
@@ -71,8 +69,6 @@ class OrderServiceImplTest {
         List<Role> role = List.of(new Role(1L, "user"));
         this.giftMapper = new GiftCertificateModelMapper(new TagModelMapper(new TagBuilder()),new GiftCertificateBuilder());
         this.userMapper = new UserModelMapper(new UserBuilder(),giftMapper,new RoleModelMapper());
-        this.response = new ResponseService();
-
 
         this.userEntity = new User(1L,"username","password",null,role,ACTIVE.name());
         this.userDto = userMapper.toDto(userEntity);
@@ -104,20 +100,6 @@ class OrderServiceImplTest {
                 ACTIVE.name()
         );
     }
-
-//    @SneakyThrows
-//    @Test
-//    void saveByUserWithDtoPage() {
-//        save();
-//
-//        DtoPage<OrderDto> expected = new DtoPage<>(List.of(dto),null,0,0,null);
-//
-//        when(userServiceImpl.findUserByUsername(userDto.getUsername())).thenReturn(userDto);
-//        when(mapper.toDto(giftEntity)).thenReturn(giftDto);
-//
-//        DtoPage<OrderDto> actual = service.saveByUserWithDtoPage(userDto.getUsername(), giftDto.getId());
-//        Assertions.assertEquals(expected,actual);
-//    }
 
     @SneakyThrows
     @Test

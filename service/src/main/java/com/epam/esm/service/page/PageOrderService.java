@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.service.impl.OrderServiceImpl.ORDER;
 
 @Service
@@ -49,6 +50,7 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
     public DtoPage<OrderDto> save(OrderDto dto) throws RepositoryException {
         return new DtoPageBuilder<OrderDto>()
                 .setContent(List.of(mapper(service.save(dto))))
+                .setResponse(responseService.createdResponse(ORDER + CREATED))
                 .build();
     }
 
@@ -95,6 +97,24 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
         return new DtoPageBuilder<OrderDto>()
                 .setResponse(responseService.okResponse(ORDER + FOUND_BY_PARAM))
                 .setContent(service.findByParam(dto).stream().map(this::mapper).toList())
+                .build();
+    }
+
+    @Override
+    public DtoPage<OrderDto> findByActiveStatus(int page, int size, String sort) {
+        return findByStatus(page,size,sort,ACTIVE.name());
+    }
+
+    @Override
+    public DtoPage<OrderDto> findByStatus(int page, int size, String sort, String statusName) {
+        return new DtoPageBuilder<OrderDto>()
+                .setResponse(responseService.okResponse(
+                        ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
+                ))
+                .setContent(service.findByStatus(page,size,sort,statusName).stream().map(this::mapper).toList())
+                .setSize(size)
+                .setNumberOfPage(page)
+                .setSortBy(sort)
                 .build();
     }
 

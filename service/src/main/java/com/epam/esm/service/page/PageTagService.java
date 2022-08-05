@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.service.impl.TagServiceImpl.TAG;
 
 @Service
@@ -72,6 +73,23 @@ public class PageTagService implements PageService<DtoPage<TagDto>,TagDto> {
         return new DtoPageBuilder<TagDto>()
                 .setResponse(responseService.okResponse(TAG + FOUND_BY_PARAM))
                 .setContent(mapper.toDtoList(service.findByParam(dto)))
+                .build();
+    }
+
+    @Override
+    public DtoPage<TagDto> findByActiveStatus(int page, int size, String sort) {
+        return findByStatus(page,size,sort,ACTIVE.name());
+    }
+
+    @Override
+    public DtoPage<TagDto> findByStatus(int page, int size, String sort, String statusName) {
+        return new DtoPageBuilder<TagDto>()
+                .setResponse(responseService.okResponse(
+                        TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort))
+                .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,statusName)))
+                .setSize(size)
+                .setNumberOfPage(page)
+                .setSortBy(sort)
                 .build();
     }
 

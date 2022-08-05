@@ -39,8 +39,7 @@ class TagServiceImplTest {
     private TagRepository repository = Mockito.mock(TagRepository.class);
     @Mock
     private TagModelMapper modelMapper = Mockito.mock(TagModelMapper.class);
-    @Mock
-    private ResponseService responseService = Mockito.mock(ResponseService.class);
+
 
     @InjectMocks
     private TagServiceImpl service;
@@ -57,83 +56,6 @@ class TagServiceImplTest {
         );
         this.dtoList = mapper.toDtoList(entityList);
     }
-
-//    @SneakyThrows
-//    @Test
-//    void saveWithDtoPage() {
-//        ResponseDto responseDto = response.createdResponse(TAG + CREATED);
-//        DtoPage<TagDto> expected = new DtoPage<>(List.of(dto),responseDto,0,0,null);
-//
-//        save();
-//        when(responseService.createdResponse(TAG + CREATED)).thenReturn(responseDto);
-//        when(modelMapper.toDto(entity)).thenReturn(dto);
-//
-//        DtoPage<TagDto> actual = service.saveWithDtoPage(dto);
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void deleteWithDtoPage() {
-//        long id = dto.getId();
-//        ResponseDto responseDto = response.okResponse(TAG + DELETED);
-//        DtoPage<TagDto> expected = new DtoPage<>(null,responseDto,0,0,null);
-//
-//        delete();
-//        when(responseService.okResponse(TAG + DELETED)).thenReturn(responseDto);
-//        DtoPage<TagDto> actual = service.deleteWithDtoPage(id);
-//
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @Test
-//    void findAllPage() {
-//        int page = 1;
-//        int size = 1;
-//        String sort = "id";
-//        ResponseDto responseDto = response.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort);
-//        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort);
-//
-//        findAll();
-//        when(responseService.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort))
-//                .thenReturn(responseDto);
-//        when(modelMapper.toDtoList(entityList))
-//                .thenReturn(dtoList);
-//
-//        DtoPage<TagDto> actual = service.findAllPage(page, size, sort);
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void findAllByParamWithDtoPage() {
-//        ResponseDto responseDto = response.okResponse(TAG + FOUND_BY_PARAM);
-//        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,0,0,null);
-//
-//        findByParam();
-//        when(responseService.okResponse(TAG + FOUND_BY_PARAM))
-//                .thenReturn(responseDto);
-//        when(modelMapper.toDtoList(entityList))
-//                .thenReturn(dtoList);
-//
-//        DtoPage<TagDto> actual = service.findAllByParamWithDtoPage(dto);
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void findByIdWithDtoPage() {
-//        long id = dto.getId();
-//        ResponseDto responseDto = response.okResponse(TAG + FOUND_BY_PARAM);
-//        DtoPage<TagDto> expected = new DtoPage<>(List.of(dto),responseDto,0,0,null);
-//        findById();
-//
-//        when(responseService.okResponse(TAG + FOUND_BY_ID)).thenReturn(responseDto);
-//        when(modelMapper.toDto(entity)).thenReturn(dto);
-//
-//        DtoPage<TagDto> actual = service.findByIdWithDtoPage(id);
-//        Assertions.assertEquals(expected,actual);
-//    }
 
     @SneakyThrows
     @Test

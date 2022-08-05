@@ -91,7 +91,7 @@ class TagControllerTest {
         int size = 10;
         String sort = "id";
 
-        when(service.findByPage(pageNumber,size,sort)).thenReturn(page);
+        when(service.findByActiveStatus(pageNumber,size,sort)).thenReturn(page);
         doNothing().when(hateoas).setTagHateoas(page);
 
         mockMvc.perform(get("/api/v1/tags"))

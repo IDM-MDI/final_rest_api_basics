@@ -50,7 +50,7 @@ public class GiftCertificateController {
     public DtoPage<GiftCertificateDto> getAllGiftCertificate(@RequestParam(defaultValue = "0") Integer page,
                                                           @RequestParam(defaultValue = "10") Integer size,
                                                           @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
-        DtoPage<GiftCertificateDto> dtoPage = service.findByPage(page,size,sort);
+        DtoPage<GiftCertificateDto> dtoPage = service.findByActiveStatus(page,size,sort);
         hateoas.setGiftHateoas(dtoPage);
         return dtoPage;
     }

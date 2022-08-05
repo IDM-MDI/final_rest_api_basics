@@ -40,8 +40,6 @@ class UserServiceImplTest {
     @Mock
     private UserModelMapper modelMapper = Mockito.mock(UserModelMapper.class);
     @Mock
-    private ResponseService responseService = Mockito.mock(ResponseService.class);
-    @Mock
     private OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
 
     @InjectMocks
@@ -80,73 +78,6 @@ class UserServiceImplTest {
             top.add(entity);
         }
     }
-
-//    @Test
-//    void findAllPageWithDtoPage() {
-//        int page = 1;
-//        int size = 1;
-//        String sort = "id";
-//
-//        ResponseDto responseDto = response.okResponse(USER + PAGE + "page " + page + ", size" + size + ", sort" + sort);
-//        DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort);
-//
-//        when(responseService.okResponse(USER + PAGE + "page " + page + ", size" + size + ", sort" + sort))
-//                .thenReturn(responseDto);
-//        when(repository.findAll(PageRequest.of(page,size, Sort.by(sort))))
-//                .thenReturn(new PageImpl<>(entityList));
-//        when(modelMapper.toDtoList(entityList))
-//                .thenReturn(dtoList);
-//
-//        DtoPage<UserDto> actual = service.findAllPageWithDtoPage(page, size, sort);
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void findByIdWithDtoPage() {
-//        long id = dto.getId();
-//        ResponseDto responseDto = response.okResponse(USER + FOUND_BY_ID);
-//        DtoPage<UserDto> expected = new DtoPage<>(List.of(dto),responseDto,0,0,null);
-//
-//        when(responseService.okResponse(USER + FOUND_BY_ID))
-//                .thenReturn(responseDto);
-//        when(repository.findById(id))
-//                .thenReturn(Optional.of(entity));
-//        when(modelMapper.toDto(entity))
-//                .thenReturn(dto);
-//
-//        DtoPage<UserDto> actual = service.findByIdWithDtoPage(id);
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void saveWithDtoPage() {
-//        save();
-//        ResponseDto responseDto = response.createdResponse(USER + CREATED);
-//        DtoPage<UserDto> expected = new DtoPage<>(List.of(dto),responseDto,0,0,null);
-//
-//        when(responseService.createdResponse(USER + CREATED))
-//                .thenReturn(responseDto);
-//        when(modelMapper.toDto(entity)).thenReturn(dto);
-//
-//        DtoPage<UserDto> actual = service.saveWithDtoPage(dto);
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @Test
-//    void loginWithDtoPage() {
-//        login();
-//        AuthenticationDto auth = new AuthenticationDto(dto.getUsername(),dto.getPassword());
-//        ResponseDto responseDto = response.okResponse(USER + LOGGED_IN);
-//        DtoPage<UserDto> expected = new DtoPage<>(List.of(dto),responseDto,0,0,null);
-//
-//        when(responseService.okResponse(USER + LOGGED_IN))
-//                .thenReturn(responseDto);
-//
-//        DtoPage<UserDto> actual = service.loginWithDtoPage(auth);
-//        Assertions.assertEquals(expected,actual);
-//    }
 
     @SneakyThrows
     @Test
@@ -196,33 +127,6 @@ class UserServiceImplTest {
         UserDto actual = service.oauth(dto);
         Assertions.assertEquals(dto,actual);
     }
-
-//    @SneakyThrows
-//    @Test
-//    void findByParamWithDtoPage() {
-//        findByParam();
-//        ResponseDto responseDto = response.okResponse(USER + FOUND_BY_PARAM);
-//        DtoPage<UserDto> expected = new DtoPage<>(List.of(dto),responseDto,0,0,null);
-//
-//        when(responseService.okResponse(USER + FOUND_BY_PARAM)).thenReturn(responseDto);
-//        when(modelMapper.toDtoList(List.of(entity))).thenReturn(List.of(dto));
-//
-//        DtoPage<UserDto> actual = service.findByParamWithDtoPage(dto);
-//        Assertions.assertEquals(expected,actual);
-//    }
-//
-//    @Test
-//    void findTopWithDtoPage() {
-//        ResponseDto responseDto = response.okResponse(USER + PAGE);
-//        DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,0,0,null);
-//
-//        when(responseService.okResponse(USER + PAGE)).thenReturn(responseDto);
-//        when(orderRepository.getTop()).thenReturn(top);
-//        when(modelMapper.toDtoList(top.subList(0,100))).thenReturn(dtoList);
-//
-//        DtoPage<UserDto> actual = service.findTopWithDtoPage();
-//        Assertions.assertEquals(expected,actual);
-//    }
 
     @Test
     void findUserByUsername() {

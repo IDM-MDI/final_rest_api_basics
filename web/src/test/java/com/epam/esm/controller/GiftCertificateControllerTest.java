@@ -100,7 +100,7 @@ class GiftCertificateControllerTest {
         int pageNumber = 0;
         String sort = "id";
 
-        when(service.findByPage(pageNumber,size,sort))
+        when(service.findByActiveStatus(pageNumber,size,sort))
                 .thenReturn(page);
         doNothing().when(hateoas).setGiftHateoas(page);
 

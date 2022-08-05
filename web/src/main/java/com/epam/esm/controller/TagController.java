@@ -46,7 +46,7 @@ public class TagController {
     public DtoPage<TagDto> getTags(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "10") Integer size,
                                 @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
-        DtoPage<TagDto> dtoPage = service.findByPage(page,size,sort);
+        DtoPage<TagDto> dtoPage = service.findByActiveStatus(page,size,sort);
         hateoas.setTagHateoas(dtoPage);
         return dtoPage;
     }
