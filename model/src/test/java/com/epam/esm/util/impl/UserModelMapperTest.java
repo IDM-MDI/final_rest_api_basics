@@ -107,7 +107,7 @@ class UserModelMapperTest {
 
     @Test
     void toEntityNull() {
-        User actual = mapper.toEntity(dto);
+        User actual = mapper.toEntity(null);
         Assertions.assertNull(actual);
     }
 
@@ -119,7 +119,7 @@ class UserModelMapperTest {
 
     @Test
     void toDtoNull() {
-        UserDto actual = mapper.toDto(entity);
+        UserDto actual = mapper.toDto(null);
         Assertions.assertNull(actual);
     }
 
@@ -131,7 +131,7 @@ class UserModelMapperTest {
 
     @Test
     void toEntityListNull() {
-        List<User> actual = mapper.toEntityList(dtoList);
+        List<User> actual = mapper.toEntityList(null);
         Assertions.assertNull(actual);
     }
 
@@ -143,7 +143,7 @@ class UserModelMapperTest {
 
     @Test
     void toDtoListNull() {
-        List<UserDto> actual = mapper.toDtoList(entityList);
+        List<UserDto> actual = mapper.toDtoList(null);
         Assertions.assertNull(actual);
     }
 }
