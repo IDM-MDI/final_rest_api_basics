@@ -31,7 +31,7 @@ class GiftValidatorTest {
     }
     @Test
     void isTagsNotEmpty() {
-        Assertions.assertTrue(GiftValidator.isTagsEmpty("tags"));
+        Assertions.assertFalse(GiftValidator.isTagsEmpty("tags"));
     }
 
     @Test
