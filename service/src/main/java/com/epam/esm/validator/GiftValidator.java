@@ -33,7 +33,7 @@ public class GiftValidator {
                 (entity.getDescription() == null || entity.getDescription().trim().isEmpty() || entity.getDescription().trim().isBlank());
     }
 
-    public static void uniteEntities(GiftCertificate first, GiftCertificate second) {
+    public static void uniteEntities(GiftCertificate first, GiftCertificate second) {       //TODO: REMAKE THIS METHOD
         if(first.getId() == null) {
             first.setId(second.getId());
         }

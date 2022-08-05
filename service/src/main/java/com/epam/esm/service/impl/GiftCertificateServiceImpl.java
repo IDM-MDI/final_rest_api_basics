@@ -74,7 +74,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             log.warn(REPOSITORY_NOTHING_FIND_BY_ID.toString());
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
         }
-        GiftCertificate uniteGifts = uniteGifts(dto, repository.findById(dto.getId()).get());
+        GiftCertificate uniteGifts = uniteGifts(dto, repository.findById(dto.getId()).orElse(null));
         GiftCertificate result = repository.save(uniteGifts);
         log.info("gift - {} was updated", result);
         return result;
@@ -124,8 +124,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
-    private GiftCertificate uniteGifts(GiftCertificateDto update,
-                            GiftCertificate fromDB) throws RepositoryException {
+    private GiftCertificate uniteGifts(
+                            GiftCertificateDto update,
+                            GiftCertificate fromDB) {
         GiftCertificate entity = mapper.toEntity(update);
         uniteEntities(entity,fromDB);
         if(update.getTags() != null) {

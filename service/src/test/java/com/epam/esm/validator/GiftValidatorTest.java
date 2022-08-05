@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class GiftValidatorTest {
 
     @Test
@@ -31,10 +29,24 @@ class GiftValidatorTest {
     void isTagsEmpty() {
         Assertions.assertTrue(GiftValidator.isTagsEmpty(""));
     }
+    @Test
+    void isTagsNotEmpty() {
+        Assertions.assertTrue(GiftValidator.isTagsEmpty("tags"));
+    }
 
     @Test
     void isGiftEmpty() {
         Assertions.assertTrue(GiftValidator.isGiftEmpty(new GiftCertificate()));
+    }
+    @Test
+    void isGiftNotEmpty() {
+        Assertions.assertFalse(GiftValidator.isGiftEmpty(new GiftCertificate(
+                1L,
+                "testName",
+                "testDescription",
+                new BigDecimal("0"),
+                null,null,null,null,null
+        )));
     }
 
     @Test

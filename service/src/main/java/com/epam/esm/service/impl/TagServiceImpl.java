@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.entity.StatusName;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.TagRepository;
@@ -64,7 +63,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public Tag update(TagDto dto) {
         return null;
-    }
+    }       //TODO MAKE UPDATE TO TAG
 
     @Override
     public List<Tag> findAll(int page, int size, String sort) {
@@ -93,12 +92,8 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void delete(long id) throws RepositoryException {
-        Tag tag = repository.findById(id)
-                .orElseThrow(() -> new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString()));
-        if(tag.getStatus()
-                .toUpperCase()
-                .equals(StatusName.DELETED.name())) {
-            return;
+        if(!repository.existsById(id)) {
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
         }
         repository.setDelete(id, DELETED.name());
     }

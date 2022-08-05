@@ -26,4 +26,8 @@ class TagValidatorTest {
         List<Tag> notEmptyTag = List.of(new Tag(), new Tag(), new Tag());
         Assertions.assertFalse(TagValidator.isListTagEmpty(notEmptyTag));
     }
+    @Test
+    void isListTagNotNull() {
+        Assertions.assertTrue(TagValidator.isListTagEmpty(null));
+    }
 }

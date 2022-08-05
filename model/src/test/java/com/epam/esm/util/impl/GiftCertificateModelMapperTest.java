@@ -118,9 +118,21 @@ class GiftCertificateModelMapperTest {
     }
 
     @Test
+    void toEntityNull() {
+        GiftCertificate actual = mapper.toEntity(null);
+        Assertions.assertNull(actual);
+    }
+
+    @Test
     void toDto() {
         GiftCertificateDto actual = mapper.toDto(entity);
         Assertions.assertEquals(dto,actual);
+    }
+
+    @Test
+    void toDtoNull() {
+        GiftCertificateDto actual = mapper.toDto(null);
+        Assertions.assertNull(actual);
     }
 
     @Test
@@ -130,8 +142,20 @@ class GiftCertificateModelMapperTest {
     }
 
     @Test
+    void toEntityListNull() {
+        List<GiftCertificate> actual = mapper.toEntityList(null);
+        Assertions.assertNull(actual);
+    }
+
+    @Test
     void toDtoList() {
         List<GiftCertificateDto> actual = mapper.toDtoList(entityList);
         Assertions.assertEquals(dtoList,actual);
+    }
+
+    @Test
+    void toDtoListNull() {
+        List<GiftCertificateDto> actual = mapper.toDtoList(null);
+        Assertions.assertNull(actual);
     }
 }

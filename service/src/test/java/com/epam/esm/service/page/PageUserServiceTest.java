@@ -8,6 +8,7 @@ import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.ResponseDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.Role;
+import com.epam.esm.entity.StatusName;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.service.impl.UserServiceImpl;
@@ -190,12 +191,47 @@ class PageUserServiceTest {
         Assertions.assertEquals(expected,actual);
     }
 
+    @SneakyThrows
     @Test
     void findByActiveStatus() {
+        int page = 1;
+        int size = 1;
+        String sort = "id";
+
+        ResponseDto responseDto = responseService.okResponse(USER + PAGE + "page " + page + ", size" + size + ", sort" + sort);
+        DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort);
+
+        when(responseServiceMock.okResponse(USER + PAGE + "page " + page + ", size" + size + ", sort" + sort))
+                .thenReturn(responseDto);
+        when(serviceMock.findByStatus(page,size,sort,ACTIVE.name()))
+                .thenReturn(entityList);
+        when(mapperMock.toDtoList(entityList))
+                .thenReturn(dtoList);
+
+        DtoPage<UserDto> actual = pageUserService.findByActiveStatus(page, size, sort);
+        Assertions.assertEquals(expected,actual);
     }
 
+    @SneakyThrows
     @Test
     void findByStatus() {
+        int page = 1;
+        int size = 1;
+        String sort = "id";
+        String statusName = StatusName.DELETED.name();
+
+        ResponseDto responseDto = responseService.okResponse(USER + PAGE + "page " + page + ", size" + size + ", sort" + sort);
+        DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort);
+
+        when(responseServiceMock.okResponse(USER + PAGE + "page " + page + ", size" + size + ", sort" + sort))
+                .thenReturn(responseDto);
+        when(serviceMock.findByStatus(page,size,sort,statusName))
+                .thenReturn(entityList);
+        when(mapperMock.toDtoList(entityList))
+                .thenReturn(dtoList);
+
+        DtoPage<UserDto> actual = pageUserService.findByStatus(page, size, sort,statusName);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test

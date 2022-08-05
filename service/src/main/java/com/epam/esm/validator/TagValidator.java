@@ -11,15 +11,7 @@ public class TagValidator {
     }
 
     public static boolean isListTagEmpty(List<Tag> tagList) {
-        return tagList == null || tagList.isEmpty() || !isTagInsideListNotEmpty(tagList);
-    }
-    private static boolean isTagInsideListNotEmpty(List<Tag> tagList) {
-        for (Tag tag : tagList) {
-            if(tag == null) {
-                return false;
-            }
-        }
-        return true;
+        return tagList == null || tagList.isEmpty();
     }
 }
 

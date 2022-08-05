@@ -54,8 +54,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return repository.save(createOrder(
-                                userOptional.get(),
-                                giftOptional.get()));
+                                userOptional.orElse(null),
+                                giftOptional.orElse(null)));
     }
 
     @Override

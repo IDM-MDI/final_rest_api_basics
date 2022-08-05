@@ -1,22 +1,12 @@
 package com.epam.esm.util.impl;
 
-import com.epam.esm.builder.impl.GiftCertificateBuilder;
-import com.epam.esm.builder.impl.TagBuilder;
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.RoleDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Role;
-import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RoleModelMapperTest {
 
@@ -67,9 +57,21 @@ class RoleModelMapperTest {
     }
 
     @Test
+    void toEntityNull() {
+        Role actual = mapper.toEntity(null);
+        Assertions.assertNull(actual);
+    }
+
+    @Test
     void toDto() {
         RoleDto actual = mapper.toDto(entity);
         Assertions.assertEquals(dto,actual);
+    }
+
+    @Test
+    void toDtoNull() {
+        RoleDto actual = mapper.toDto(null);
+        Assertions.assertNull(actual);
     }
 
     @Test
@@ -79,8 +81,20 @@ class RoleModelMapperTest {
     }
 
     @Test
+    void toEntityListNull() {
+        List<Role> actual = mapper.toEntityList(null);
+        Assertions.assertNull(actual);
+    }
+
+    @Test
     void toDtoList() {
         List<RoleDto> actual = mapper.toDtoList(entityList);
         Assertions.assertEquals(dtoList,actual);
+    }
+
+    @Test
+    void toDtoListNull() {
+        List<RoleDto> actual = mapper.toDtoList(null);
+        Assertions.assertNull(actual);
     }
 }

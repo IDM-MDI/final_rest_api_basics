@@ -66,9 +66,20 @@ class TagModelMapperTest {
     }
 
     @Test
+    void toEntityNull() {
+        Tag actual = mapper.toEntity(null);
+        Assertions.assertNull(actual);
+    }
+
+    @Test
     void toDto() {
         TagDto actual = mapper.toDto(entity);
         Assertions.assertEquals(dto,actual);
+    }
+    @Test
+    void toDtoNull() {
+        TagDto actual = mapper.toDto(null);
+        Assertions.assertNull(actual);
     }
 
     @Test
@@ -76,10 +87,21 @@ class TagModelMapperTest {
         List<Tag> actual = mapper.toEntityList(dtoList);
         Assertions.assertEquals(entityList,actual);
     }
+    @Test
+    void toEntityListNull() {
+        List<Tag> actual = mapper.toEntityList(null);
+        Assertions.assertNull(actual);
+    }
+
 
     @Test
     void toDtoList() {
         List<TagDto> actual = mapper.toDtoList(entityList);
         Assertions.assertEquals(dtoList,actual);
+    }
+    @Test
+    void toDtoListNull() {
+        List<TagDto> actual = mapper.toDtoList(null);
+        Assertions.assertNull(actual);
     }
 }

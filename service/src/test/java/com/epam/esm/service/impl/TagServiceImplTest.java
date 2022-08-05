@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.builder.impl.TagBuilder;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.util.impl.TagModelMapper;
@@ -125,12 +126,48 @@ class TagServiceImplTest {
 
     @SneakyThrows
     @Test
+    void findByParamShouldThrowRepositoryException() {
+        when(modelMapper.toEntity(dto)).thenReturn(entity);
+        when(repository.findAll(Example.of(entity))).thenReturn(List.of());
+        Assertions.assertThrows(RepositoryException.class,()->service.findByParam(dto));
+    }
+
+    @SneakyThrows
+    @Test
     void delete() {
         long id = dto.getId();
 
-        when(repository.findById(id)).thenReturn(Optional.of(entity));
+        when(repository.existsById(id)).thenReturn(true);
         doNothing().when(repository).setDelete(id,DELETED.name());
 
         service.delete(id);
+    }
+
+    @SneakyThrows
+    @Test
+    void deleteShouldThrowRepositoryException() {
+        long id = dto.getId();
+
+        when(repository.existsById(id)).thenReturn(false);
+        Assertions.assertThrows(RepositoryException.class,()->service.delete(id));
+    }
+
+    @Test
+    void findByStatus() {
+        int page = 1;
+        int size = 1;
+        String sort = "id";
+        String statusName = ACTIVE.name();
+
+        when(repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(sort))))
+                .thenReturn(entityList);
+
+        List<Tag> actual = service.findByStatus(page, size, sort,statusName);
+        Assertions.assertEquals(entityList,actual);
+    }
+
+    @Test
+    void update() {
+        Assertions.assertNull(service.update(dto));
     }
 }

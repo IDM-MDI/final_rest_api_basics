@@ -20,4 +20,8 @@ class ListValidatorTest {
         List<Tag> emptyTag = List.of();
         assertTrue(ListValidator.isListEmpty(emptyTag));
     }
+    @Test
+    void isListNull() {
+        assertTrue(ListValidator.isListEmpty(null));
+    }
 }
