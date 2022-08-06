@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto oauth(UserDto oauthUser) throws RepositoryException {
         if(repository.existsByUsername(oauthUser.getUsername())) {
-            User userByUsername = repository.findUserByUsername(oauthUser.getUsername()).orElse(null);
+            User userByUsername = repository.findUserByUsername(oauthUser.getUsername()).orElse(new User());
             update(mapper.toDto(userByUsername));
         }
         else {

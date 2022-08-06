@@ -1,11 +1,15 @@
 package com.epam.esm.service;
 
+import com.epam.esm.builder.impl.DtoPageBuilder;
 import com.epam.esm.config.SecurityConfig;
 import com.epam.esm.config.WebApplication;
+import com.epam.esm.dto.AuthenticationDto;
+import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.RoleDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.security.jwt.JwtTokenProvider;
-import com.epam.esm.service.impl.UserServiceImpl;
+import com.epam.esm.service.page.PageUserService;
+import com.epam.esm.util.HashGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.util.List;
 
@@ -30,7 +35,7 @@ class LoginServiceTest {
     @MockBean
     private AuthenticationManager manager;
     @MockBean
-    private UserServiceImpl service;
+    private PageUserService service;
 
     @Autowired
     private LoginService loginService;
@@ -71,16 +76,16 @@ class LoginServiceTest {
         Assertions.assertEquals(token,actual);
     }
 
-//    @Test
-//    void authenticate() {
-//        AuthenticationDto authDto = new AuthenticationDto(user.getUsername(),user.getPassword());
-//        DtoPage<UserDto> expected = new DtoPageBuilder<UserDto>()
-//                .setContent(List.of(user)).build();
-//        when(service.loginWithDtoPage(authDto)).thenReturn(expected);
-//        when(manager.authenticate(new UsernamePasswordAuthenticationToken(authDto.getUsername(), HashGenerator.generateBySHA(user.getPassword())))).thenReturn(null);
-//        createToken();
-//        DtoPage<UserDto> actual = loginService.authenticate(authDto);
-//        expected.getContent().get(0).setJwt(token);
-//        Assertions.assertEquals(expected,actual);
-//    }
+    @Test
+    void authenticate() {
+        AuthenticationDto authDto = new AuthenticationDto(user.getUsername(),user.getPassword());
+        DtoPage<UserDto> expected = new DtoPageBuilder<UserDto>()
+                .setContent(List.of(user)).build();
+        when(service.login(authDto)).thenReturn(expected);
+        when(manager.authenticate(new UsernamePasswordAuthenticationToken(authDto.getUsername(), HashGenerator.generateBySHA(user.getPassword())))).thenReturn(null);
+        createToken();
+        DtoPage<UserDto> actual = loginService.authenticate(authDto);
+        expected.getContent().get(0).setJwt(token);
+        Assertions.assertEquals(expected,actual);
+    }
 }

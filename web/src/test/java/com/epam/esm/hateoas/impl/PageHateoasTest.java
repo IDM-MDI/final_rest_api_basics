@@ -79,7 +79,7 @@ class PageHateoasTest {
                 .setNumberOfPage(1)
                 .setSortBy("sort")
                 .build();
-        userHateoas.addGiftsPage(actual);
+        userHateoas.addUsersPage(actual);
         Assertions.assertNotNull(actual.getLinks());
     }
 
@@ -103,7 +103,7 @@ class PageHateoasTest {
                 .setSortBy("sort")
                 .build();
 
-        userHateoas.addUserGetBackPage(actual);
+        userHateoas.addGiftGetBackPage(actual);
 
         expected.add(linkTo(methodOn(USER_CONTROLLER).
                 getUsers(0, 10, "id")).

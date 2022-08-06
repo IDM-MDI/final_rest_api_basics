@@ -22,10 +22,7 @@ import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.IS_ALREADY_EXIST;
 import static com.epam.esm.entity.StatusName.DELETED;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_EXCEPTION;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NULL_POINTER;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_SAVE_ERROR;
+import static com.epam.esm.exception.RepositoryExceptionCode.*;
 import static com.epam.esm.validator.GiftValidator.findEquals;
 import static com.epam.esm.validator.GiftValidator.isGiftEmpty;
 import static com.epam.esm.validator.GiftValidator.uniteEntities;
@@ -74,7 +71,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             log.warn(REPOSITORY_NOTHING_FIND_BY_ID.toString());
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
         }
-        GiftCertificate uniteGifts = uniteGifts(dto, repository.findById(dto.getId()).orElse(null));
+        GiftCertificate uniteGifts = uniteGifts(dto, repository.findById(dto.getId()).orElse(new GiftCertificate()));
         GiftCertificate result = repository.save(uniteGifts);
         log.info("gift - {} was updated", result);
         return result;
@@ -105,6 +102,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public void delete(long id) throws RepositoryException {
+        if(!repository.existsById(id)) {
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
+        }
         repository.setDelete(id, DELETED.name());
     }
 
@@ -117,7 +117,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         result = findByTagAndEntity(result,entity);
 
         if(isListEmpty(result)) {
-            throw new RepositoryException();
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_PARAM.toString());
         }
 
         return result;

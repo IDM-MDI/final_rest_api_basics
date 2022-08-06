@@ -10,8 +10,8 @@ import com.epam.esm.entity.User;
 import com.epam.esm.hateoas.impl.UserHateoas;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.service.page.PageUserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,9 @@ import static com.epam.esm.entity.StatusName.ACTIVE;
 import static org.hamcrest.Matchers.anything;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,6 +38,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
 class UserControllerTest {
+
+    private final MediaType halJson = MediaType.valueOf("application/hal+json");
+    private final MediaType halJsonUTF = MediaType.valueOf("application/hal+json;charset=UTF-8");
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -55,6 +61,7 @@ class UserControllerTest {
 
     @Autowired
     private ResponseService responseService;
+
 
     private DtoPageBuilder<UserDto> builder = new DtoPageBuilder<>();
 
@@ -102,26 +109,77 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.content[0].username", anything()))
                 .andExpect(jsonPath("$.content[0].password", anything())
                 );
-
     }
 
+    @SneakyThrows
     @Test
     void registration() {
-        Assertions.assertTrue(true);    //TODO: FINISH TEST
+        when(service.save(dto)).thenReturn(page);
+        doNothing().when(hateoas).setUserHateoas(page);
+
+        this.mockMvc.perform(post("/api/v1/users").with(csrf())
+                        .contentType(halJsonUTF)
+                        .content(new ObjectMapper().writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$.content[0].id", anything()))
+                .andExpect(jsonPath("$.content[0].username", anything()))
+                .andExpect(jsonPath("$.content[0].password", anything())
+                );
     }
 
+    @SneakyThrows
     @Test
     void getByIdUser() {
-        Assertions.assertTrue(true);    //TODO: FINISH TEST
+        when(service.findById(dto.getId())).thenReturn(page);
+        doNothing().when(hateoas).setUserHateoas(page);
+
+        this.mockMvc.perform(get("/api/v1/users/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$.content[0].id", anything()))
+                .andExpect(jsonPath("$.content[0].username", anything()))
+                .andExpect(jsonPath("$.content[0].password", anything())
+                );
     }
 
+    @SneakyThrows
     @Test
     void getTopUsers() {
-        Assertions.assertTrue(true);    //TODO: FINISH TEST
+        when(service.findTop()).thenReturn(page);
+        doNothing().when(hateoas).setUserHateoas(page);
+
+        this.mockMvc.perform(get("/api/v1/users/top"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$.content[0].id", anything()))
+                .andExpect(jsonPath("$.content[0].username", anything()))
+                .andExpect(jsonPath("$.content[0].password", anything())
+                );
     }
 
+    @SneakyThrows
     @Test
     void search() {
-        Assertions.assertTrue(true);    //TODO: FINISH TEST
+        UserDto user = new UserDto();
+        user.setId(dto.getId());
+        user.setUsername(dto.getUsername());
+
+        when(service.findByParam(user)).thenReturn(page);
+        doNothing().when(hateoas).setUserHateoas(page);
+
+        this.mockMvc.perform(get("/api/v1/users/search")
+                        .param("id",String.valueOf(dto.getId()))
+                        .param("username",dto.getUsername()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$.content[0].id", anything()))
+                .andExpect(jsonPath("$.content[0].username", anything()))
+                .andExpect(jsonPath("$.content[0].password", anything())
+                );
     }
 }
