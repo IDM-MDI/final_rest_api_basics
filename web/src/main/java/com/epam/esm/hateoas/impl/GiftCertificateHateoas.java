@@ -9,20 +9,15 @@ import com.epam.esm.hateoas.HateoasDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.epam.esm.controller.ControllerClass.GIFT_CERTIFICATE_CONTROLLER;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.epam.esm.hateoas.links.GiftCertificateLinks.*;
 
 @Component
-public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
-
+public class GiftCertificateHateoas extends HateoasDTO<GiftCertificateDto> {
     private final TagHateoas tagHateoas;
-    private final PageHateoas<GiftCertificateDto> pageHateoas;
 
     @Autowired
-    public GiftCertificateHateoas(TagHateoas tagHateoas, PageHateoas<GiftCertificateDto> pageHateoas) {
+    public GiftCertificateHateoas(TagHateoas tagHateoas) {
         this.tagHateoas = tagHateoas;
-        this.pageHateoas = pageHateoas;
     }
 
     @Override
@@ -35,40 +30,12 @@ public class GiftCertificateHateoas implements HateoasDTO<GiftCertificateDto> {
             tagHateoas.addLinks(tagDto);
         }
     }
-    private void updateLink(GiftCertificateDto dto) throws RepositoryException, ServiceException {
-        dto.add(linkTo(
-                methodOn(GIFT_CERTIFICATE_CONTROLLER)
-                        .updateGiftCertificate(dto.getId(), dto))
-                        .withRel("updateWithResponse"));
-    }
-    private void addNewLink(GiftCertificateDto dto) throws RepositoryException, ServiceException {
-        dto.add(linkTo(
-                methodOn(GIFT_CERTIFICATE_CONTROLLER)
-                        .addGiftCertificate(dto))
-                        .withRel("add"));
-    }
-    private void deleteLink(GiftCertificateDto dto) throws RepositoryException, ServiceException {
-        dto.add(linkTo(
-                methodOn(GIFT_CERTIFICATE_CONTROLLER)
-                        .deleteGiftCertificate(dto.getId()))
-                        .withRel("deleteWithResponse"));
-    }
-    private void getByLink(GiftCertificateDto dto) throws RepositoryException, ServiceException {
-        dto.add(linkTo(
-                methodOn(GIFT_CERTIFICATE_CONTROLLER)
-                        .getGiftCertificate(dto.getId()))
-                        .withSelfRel());
-    }
 
-    public void setGiftHateoas(DtoPage<GiftCertificateDto> dtoPage) throws ServiceException, RepositoryException {
-        for (GiftCertificateDto dto : dtoPage.getContent()) {
-            addLinks(dto);
-        }
-        if(dtoPage.getSize() == 0) {
-            pageHateoas.addGiftGetBackPage(dtoPage);
-        }
-        else {
-            pageHateoas.addGiftsPage(dtoPage);
+    @Override
+    protected void addPageLink(DtoPage<GiftCertificateDto> dtoPage, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException {
+        switch (dtoPage.getType()) {
+            case CERTIFICATE_ALL -> getAllLink(dtoPage, number, size, sort, direction, rel);
+            case CERTIFICATE_BY_TAG -> getCertificateByTag(dtoPage,number, size, sort, direction, rel);
         }
     }
 }

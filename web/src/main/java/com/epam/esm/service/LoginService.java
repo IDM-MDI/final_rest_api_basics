@@ -3,12 +3,16 @@ package com.epam.esm.service;
 import com.epam.esm.dto.AuthenticationDto;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.WebException;
 import com.epam.esm.security.jwt.JwtTokenProvider;
+import com.epam.esm.security.jwt.JwtUser;
 import com.epam.esm.service.page.PageUserService;
 import com.epam.esm.util.HashGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +37,16 @@ public class LoginService {
 
     public String getToken(HttpServletRequest request) {
         return provider.resolveToken(request);
+    }
+
+    public String getUsernameByContext() throws WebException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            JwtUser user = (JwtUser) authentication.getPrincipal();
+            return user.getUsername();
+        } catch (NullPointerException e) {
+            throw new WebException("User not found");
+        }
     }
 
     public String getUsername(HttpServletRequest request) {

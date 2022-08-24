@@ -23,4 +23,10 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             countQuery = "SELECT count(*) FROM tag WHERE status = ?1",
             nativeQuery = true)
     List<Tag> findByStatus(String status, Pageable pageable);
+    @Query(
+            value = "SELECT * FROM Tag ORDER BY RAND() LIMIT 1",
+            nativeQuery = true)
+    Optional<Tag> findRandomTag();
+    boolean existsByName(String name);
+
 }

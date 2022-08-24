@@ -27,11 +27,11 @@ class GiftValidatorTest {
 
     @Test
     void isTagsEmpty() {
-        Assertions.assertTrue(GiftValidator.isTagsEmpty(""));
+        Assertions.assertTrue(GiftValidator.isStringEmpty(""));
     }
     @Test
     void isTagsNotEmpty() {
-        Assertions.assertFalse(GiftValidator.isTagsEmpty("tags"));
+        Assertions.assertFalse(GiftValidator.isStringEmpty("tags"));
     }
 
     @Test

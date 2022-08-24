@@ -1,6 +1,7 @@
 package com.epam.esm.exception;
 
 public enum ExceptionCode {
+    JWT_TOKEN_IS_EXPIRED(42400,"JWT TOKEN IS EXPIRED"),
     NOT_FOUND_EXCEPTION(42401,"NOT FOUND"),
     BAD_REQUEST(42404,"BAD REQUEST"),
     BAD_PATH_ID(42424,"BAD ID PATH"),

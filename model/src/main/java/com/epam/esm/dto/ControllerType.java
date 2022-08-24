@@ -1,0 +1,28 @@
+package com.epam.esm.dto;
+
+public enum ControllerType {
+    ORDER_ADD,
+    ORDER_USER,
+    USER_ALL,
+    USER_ADD,
+    USER_DELETE,
+    USER_UPDATE,
+    USER_BY_ID,
+    USER_BY_PARAM,
+    USER_BY_TOP,
+    TAG_ALL,
+    TAG_TOP,
+    TAG_ADD,
+    TAG_DELETE,
+    TAG_UPDATE,
+    TAG_BY_ID,
+    TAG_BY_PARAM,
+    CERTIFICATE_ALL,
+    CERTIFICATE_BY_PAGE,
+    CERTIFICATE_ADD,
+    CERTIFICATE_DELETE,
+    CERTIFICATE_UPDATE,
+    CERTIFICATE_BY_ID,
+    CERTIFICATE_BY_PARAM,
+    CERTIFICATE_BY_TAG
+}

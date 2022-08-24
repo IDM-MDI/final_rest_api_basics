@@ -26,4 +26,7 @@ public interface GiftCertificateRepository extends JpaRepository<GiftCertificate
             countQuery = "SELECT count(*) FROM gift_certificate WHERE status = ?1",
             nativeQuery = true)
     List<GiftCertificate> findByStatus(String status, Pageable pageable);
+
+    List<GiftCertificate> findByTagListIn(List<Tag> tagList, Pageable pageable);
+    List<GiftCertificate> findByTagListInAndStatus(List<Tag> tagList, String status, Pageable pageable);
 }

@@ -1,6 +1,7 @@
 package com.epam.esm.service.page;
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
+import com.epam.esm.dto.ControllerType;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
@@ -39,7 +40,7 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
     }
 
     public DtoPage<OrderDto> save(String username, long id) throws RepositoryException {
-        UserDto userByUsername = userServiceImpl.findUserByUsername(username);
+        UserDto userByUsername = userServiceImpl.findUserDtoByUsername(username);
         OrderDto dto = new OrderDto();
         dto.setGiftId(id);
         dto.setUserId(userByUsername.getId());
@@ -71,16 +72,32 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
                 .build();
     }
 
-    @Override
-    public DtoPage<OrderDto> findByPage(int page, int size, String sort) {
+    public DtoPage<OrderDto> findByPage(int page, int size, String sort, String direction,String username) {
         return new DtoPageBuilder<OrderDto>()
                 .setResponse(responseService.okResponse(
                         ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
                 ))
-                .setContent(service.findAll(page,size,sort).stream().map(this::mapper).toList())
+                .setContent(service.findAll(page,size,sort,direction,username).stream().map(this::mapper).toList())
                 .setSize(size)
                 .setNumberOfPage(page)
                 .setSortBy(sort)
+                .setDirection(direction)
+                .setType(ControllerType.ORDER_USER)
+                .setHasNext(!service.findAll(page + 1,size,sort,direction,username).isEmpty())
+                .build();
+    }
+
+    @Override
+    public DtoPage<OrderDto> findByPage(int page, int size, String sort, String direction) {
+        return new DtoPageBuilder<OrderDto>()
+                .setResponse(responseService.okResponse(
+                        ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
+                ))
+                .setContent(service.findAll(page,size,sort,direction).stream().map(this::mapper).toList())
+                .setSize(size)
+                .setNumberOfPage(page)
+                .setSortBy(sort)
+                .setDirection(direction)
                 .build();
     }
 
@@ -101,20 +118,21 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
     }
 
     @Override
-    public DtoPage<OrderDto> findByActiveStatus(int page, int size, String sort) {
-        return findByStatus(page,size,sort,ACTIVE.name());
+    public DtoPage<OrderDto> findByActiveStatus(int page, int size, String sort, String direction) {
+        return findByStatus(page,size,sort,direction,ACTIVE.name());
     }
 
     @Override
-    public DtoPage<OrderDto> findByStatus(int page, int size, String sort, String statusName) {
+    public DtoPage<OrderDto> findByStatus(int page, int size, String sort, String direction, String statusName) {
         return new DtoPageBuilder<OrderDto>()
                 .setResponse(responseService.okResponse(
                         ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
                 ))
-                .setContent(service.findByStatus(page,size,sort,statusName).stream().map(this::mapper).toList())
+                .setContent(service.findByStatus(page,size,sort,direction,statusName).stream().map(this::mapper).toList())
                 .setSize(size)
                 .setNumberOfPage(page)
                 .setSortBy(sort)
+                .setDirection(direction)
                 .build();
     }
 

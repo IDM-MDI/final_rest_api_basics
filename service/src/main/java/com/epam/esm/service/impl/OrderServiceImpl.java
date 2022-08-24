@@ -5,22 +5,20 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
-import static com.epam.esm.validator.OrderValidator.isUserAndGiftEmpty;
 
 
 @Service
@@ -29,33 +27,24 @@ import static com.epam.esm.validator.OrderValidator.isUserAndGiftEmpty;
 public class OrderServiceImpl implements OrderService {
     public static final String ORDER = "Order ";
     private final OrderRepository repository;
-    private final GiftCertificateRepository giftRepository;
-    private final UserRepository userRepository;
+    private final GiftCertificateServiceImpl giftService;
+    private final UserServiceImpl userService;
 
 
     @Autowired
-    public OrderServiceImpl(OrderRepository repository,
-                            GiftCertificateRepository giftRepository,
-                            UserRepository userRepository) {
+    public OrderServiceImpl(OrderRepository repository, GiftCertificateServiceImpl giftService, UserServiceImpl userService) {
         this.repository = repository;
-        this.giftRepository = giftRepository;
-        this.userRepository = userRepository;
+        this.giftService = giftService;
+        this.userService = userService;
     }
 
 
 
     @Override
     public Order save(OrderDto dto) throws RepositoryException {
-        Optional<User> userOptional = userRepository.findById(dto.getUserId());
-        Optional<GiftCertificate> giftOptional = giftRepository.findById(dto.getGiftId());
-
-        if(isUserAndGiftEmpty(userOptional,giftOptional)) {
-            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_ID.toString());
-        }
-
-        return repository.save(createOrder(
-                                userOptional.orElse(new User()),
-                                giftOptional.orElse(new GiftCertificate())));
+        User user = userService.findById(dto.getUserId());
+        GiftCertificate gift = giftService.findById(dto.getGiftId());
+        return repository.save(createOrder(user,gift));
     }
 
     @Override
@@ -64,8 +53,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findAll(int page, int size, String sort) {
+    public List<Order> findAll(int page, int size, String sort, String direction) {
         return Collections.emptyList();
+    }
+
+    public List<Order> findAll(int page, int size, String sort, String direction,String username) {
+        User user = userService.findUserByUsername(username);
+        return repository.findOrdersByUserAndStatus(
+                user,
+                ACTIVE.name(),
+                PageRequest.of(page,size, Sort.by(
+                        Sort.Direction.valueOf(direction.toUpperCase()),
+                        sort)
+                )
+        );
     }
 
     @Override
@@ -84,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findByStatus(int page, int size, String sort, String statusName) {
+    public List<Order> findByStatus(int page, int size, String sort, String direction, String statusName) {
         return Collections.emptyList();
     }
 

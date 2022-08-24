@@ -49,6 +49,10 @@ class OrderBuilderTest {
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
+                null,
                 "testStatus"));
         Assertions.assertEquals(builder,actual);
     }
@@ -87,6 +91,10 @@ class OrderBuilderTest {
                         "testDescription",
                         new BigDecimal("0"),
                         0,
+                        null,
+                        null,
+                        null,
+                        null,
                         null,
                         null,
                         null,

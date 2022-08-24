@@ -4,12 +4,15 @@ package com.epam.esm.controller;
 import com.epam.esm.exception.ExceptionCode;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.WebException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,7 +21,9 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.validation.ConstraintViolationException;
 
-import static com.epam.esm.exception.ExceptionCode.*;
+import static com.epam.esm.exception.ExceptionCode.BAD_MEDIA_TYPE;
+import static com.epam.esm.exception.ExceptionCode.BAD_PATH_ID;
+import static com.epam.esm.exception.ExceptionCode.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -28,6 +33,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * This class need to catch exceptions
  * @return custom one.
  */
+@CrossOrigin
 @RestControllerAdvice
 @Profile("prod")
 public class ExceptionController {
@@ -98,5 +104,9 @@ public class ExceptionController {
     @ExceptionHandler(NullPointerException.class)
     public final ResponseEntity<String> handleNullPointerExceptions(ServiceException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+    @ExceptionHandler({WebException.class, ExpiredJwtException.class})
+    public final ResponseEntity<String> handleJwtTokenIsExpired(WebException exception) {
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.UNAUTHORIZED);
     }
 }

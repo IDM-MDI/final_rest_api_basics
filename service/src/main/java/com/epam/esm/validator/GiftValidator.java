@@ -2,6 +2,7 @@ package com.epam.esm.validator;
 
 import com.epam.esm.entity.GiftCertificate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,8 +23,8 @@ public class GiftValidator {
         return result;
     }
 
-    public static boolean isTagsEmpty(String tags) {
-        return tags.trim().isEmpty() || tags.isBlank();
+    public static boolean isStringEmpty(String tags) {
+        return tags == null || tags.trim().isEmpty() || tags.isBlank();
     }
 
     public static boolean isGiftEmpty(GiftCertificate entity) {
@@ -33,24 +34,21 @@ public class GiftValidator {
                 (entity.getDescription() == null || entity.getDescription().trim().isEmpty() || entity.getDescription().trim().isBlank());
     }
 
-    public static void uniteEntities(GiftCertificate first, GiftCertificate second) {       //TODO: REMAKE THIS METHOD
-        if(first.getId() == null) {
-            first.setId(second.getId());
-        }
-        if(first.getName() == null ||first.getName().trim().isEmpty()) {
-            first.setName(second.getName());
-        }
-        if(first.getDescription() == null || first.getDescription().trim().isEmpty()) {
-            first.setDescription(second.getDescription());
-        }
-        if(first.getPrice() == null) {
-            first.setPrice(second.getPrice());
-        }
-        if(first.getDuration() == null) {
-            first.setDuration(second.getDuration());
-        }
-        if(first.getTagList() == null || first.getTagList().isEmpty()) {
-            first.setTagList(second.getTagList());
-        }
+    public static GiftCertificate uniteEntities(GiftCertificate updatable, GiftCertificate fromDB) {
+        return new GiftCertificate(
+                fromDB.getId(),
+                isStringEmpty(updatable.getName())?fromDB.getName():updatable.getName(),
+                isStringEmpty(updatable.getDescription())?fromDB.getDescription():updatable.getDescription(),
+                updatable.getPrice() == null ? fromDB.getPrice() : updatable.getPrice(),
+                updatable.getDuration() == null ? fromDB.getDuration() : updatable.getDuration(),
+                fromDB.getCreateDate(),
+                LocalDateTime.now(),
+                ListValidator.isListEmpty(updatable.getTagList())? fromDB.getTagList() : updatable.getTagList(),
+                isStringEmpty(updatable.getShop())? fromDB.getShop() : updatable.getShop(),
+                updatable.getMainImage() == null? fromDB.getMainImage() : updatable.getMainImage(),
+                updatable.getSecondImage() == null? fromDB.getSecondImage() : updatable.getSecondImage(),
+                updatable.getThirdImage() == null? fromDB.getSecondImage() : updatable.getThirdImage(),
+                isStringEmpty(updatable.getStatus())? fromDB.getStatus() : updatable.getStatus()
+        );
     }
 }

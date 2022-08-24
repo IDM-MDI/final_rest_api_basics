@@ -10,12 +10,14 @@ import com.epam.esm.hateoas.impl.UserHateoas;
 import com.epam.esm.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
-@RequestMapping(value = "api/v1/")
+@RequestMapping(value = "/api/v1")
 @Profile("prod")
 public class IndexController {
 
@@ -38,8 +40,12 @@ public class IndexController {
     @PostMapping("/login")
     public DtoPage<UserDto> login(@RequestBody AuthenticationDto dto) throws ServiceException, RepositoryException {
         DtoPage<UserDto> page = loginService.authenticate(dto);
-        hateoas.setUserHateoas(page);
+        hateoas.setHateoas(page);
         return page;
     }
 
+    @GetMapping("/jwt")
+    public boolean isContextExist() {
+        return SecurityContextHolder.getContext().getAuthentication() != null;
+    }
 }

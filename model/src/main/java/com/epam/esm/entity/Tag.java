@@ -18,6 +18,9 @@ public class Tag {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @Column(name = "main_image")
+    private byte[] mainImage;
+
     @Column(name = "status")
     private String status;
 }

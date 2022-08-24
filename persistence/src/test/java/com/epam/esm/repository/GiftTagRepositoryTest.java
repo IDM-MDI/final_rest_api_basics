@@ -53,9 +53,9 @@ class GiftTagRepositoryTest {
     public void init() {
         tagRepository.saveAll(
                 List.of(
-                        new Tag(null,"testTag1",ACTIVE.name()),
-                        new Tag(null,"testTag2",ACTIVE.name()),
-                        new Tag(null,"testTag3",ACTIVE.name())
+                        new Tag(null,"testTag1",null,ACTIVE.name()),
+                        new Tag(null,"testTag2",null,ACTIVE.name()),
+                        new Tag(null,"testTag3",null,ACTIVE.name())
                 )
         );
 

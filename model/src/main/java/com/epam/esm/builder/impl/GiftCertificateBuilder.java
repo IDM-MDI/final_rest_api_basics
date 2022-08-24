@@ -21,6 +21,12 @@ public class GiftCertificateBuilder implements ModelBuilder {
     private LocalDateTime updateDate;
     private String status;
 
+    private String shop;
+
+    private byte[] mainImage;
+    private byte[] secondImage;
+    private byte[] thirdImage;
+
     private List<Tag> tagList;
 
     public GiftCertificateBuilder setDescription(String description) {
@@ -68,6 +74,26 @@ public class GiftCertificateBuilder implements ModelBuilder {
         return this;
     }
 
+    public GiftCertificateBuilder setMainImage(byte[] mainImage) {
+        this.mainImage = mainImage;
+        return this;
+    }
+
+    public GiftCertificateBuilder setSecondImage(byte[] secondImage) {
+        this.secondImage = secondImage;
+        return this;
+    }
+
+    public GiftCertificateBuilder setThirdImage(byte[] thirdImage) {
+        this.thirdImage = thirdImage;
+        return this;
+    }
+
+    public GiftCertificateBuilder setShop(String shop) {
+        this.shop = shop;
+        return this;
+    }
+
     @Override
     public GiftCertificate build() {
         GiftCertificate result = new GiftCertificate(
@@ -76,6 +102,10 @@ public class GiftCertificateBuilder implements ModelBuilder {
                 price,duration,
                 createDate, updateDate,
                 tagList == null ? new ArrayList<>() : tagList,
+                shop,
+                mainImage,
+                secondImage,
+                thirdImage,
                 status
         );
         clear();

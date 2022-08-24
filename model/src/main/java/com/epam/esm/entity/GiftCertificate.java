@@ -52,6 +52,18 @@ public class GiftCertificate {
     @ToString.Exclude
     private List<Tag> tagList;
 
+    @Column(name = "shop")
+    private String shop;
+
+    @Column(name = "main_image")
+    private byte[] mainImage;
+
+    @Column(name = "second_image")
+    private byte[] secondImage;
+
+    @Column(name = "third_image")
+    private byte[] thirdImage;
+
     @Column(name = "status")
     private String status;
 }

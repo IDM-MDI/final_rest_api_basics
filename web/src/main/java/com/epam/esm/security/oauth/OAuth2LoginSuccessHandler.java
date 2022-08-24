@@ -37,6 +37,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         user = service.oauth(user);
         user.setJwt(provider.createToken(user));
         log.info("User successfully authenticate");
-        response.sendRedirect("/login/oauth/success?token=" + user.getJwt());
+        response.sendRedirect("/api/v1/login/oauth/success?token=" + user.getJwt());
     }
 }

@@ -8,19 +8,16 @@ import com.epam.esm.hateoas.HateoasDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.epam.esm.controller.ControllerClass.USER_CONTROLLER;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.epam.esm.hateoas.links.UserLinks.getAllUser;
+import static com.epam.esm.hateoas.links.UserLinks.getByIdLink;
+import static com.epam.esm.hateoas.links.UserLinks.getTopUsers;
 
 @Component
-public class UserHateoas implements HateoasDTO<UserDto> {
-
-    private final PageHateoas<UserDto> pageHateoas;
+public class UserHateoas extends HateoasDTO<UserDto> {
     private final GiftCertificateHateoas giftHateoas;
 
     @Autowired
-    public UserHateoas(PageHateoas<UserDto> pageHateoas, GiftCertificateHateoas giftHateoas) {
-        this.pageHateoas = pageHateoas;
+    public UserHateoas(GiftCertificateHateoas giftHateoas) {
         this.giftHateoas = giftHateoas;
     }
 
@@ -36,22 +33,11 @@ public class UserHateoas implements HateoasDTO<UserDto> {
         });
     }
 
-    private void getByIdLink(UserDto dto) throws ServiceException, RepositoryException {
-        dto.add(linkTo(
-                methodOn(USER_CONTROLLER)
-                        .getByIdUser(dto.getId()))
-                        .withSelfRel());
-    }
-
-    public void setUserHateoas(DtoPage<UserDto> dtoPage) throws ServiceException, RepositoryException {
-        for (UserDto dto : dtoPage.getContent()) {
-            addLinks(dto);
-        }
-        if(dtoPage.getSize() == 0) {
-            pageHateoas.addUserGetBackPage(dtoPage);
-        }
-        else {
-            pageHateoas.addUsersPage(dtoPage);
+    @Override
+    protected void addPageLink(DtoPage<UserDto> dtoPage, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException {
+        switch (dtoPage.getType()) {
+            case USER_ALL -> getAllUser(dtoPage, number, size, sort, direction, rel);
+            case USER_BY_TOP -> getTopUsers(dtoPage,number, size, sort, direction, rel);
         }
     }
 }

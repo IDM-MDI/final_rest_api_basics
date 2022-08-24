@@ -69,15 +69,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User update(UserDto dto) {
-        UserDto userByUsername = findUserByUsername(dto.getUsername());
+        UserDto userByUsername = findUserDtoByUsername(dto.getUsername());
         User user = mapper.toEntity(userByUsername);
         user.setPassword(HashGenerator.generateHash(dto.getPassword()));
         return repository.save(user);
     }
 
     @Override
-    public List<User> findAll(int page, int size, String sort) {
-        return repository.findAll(PageRequest.of(page,size, Sort.by(sort))).toList();
+    public List<User> findAll(int page, int size, String sort, String direction) {
+        return repository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort))).toList();
     }
 
     @Override
@@ -104,11 +104,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findByStatus(int page, int size, String sort, String statusName) throws RepositoryException {
-        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(sort)));
+    public List<User> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
+        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort)));
     }
     public UserDto login(AuthenticationDto authenticationDto) {
-        UserDto user = findUserByUsername(authenticationDto.getUsername());
+        UserDto user = findUserDtoByUsername(authenticationDto.getUsername());
         log.info("User: " + user.getUsername() + " sign in");
         return user;
     }
@@ -122,14 +122,19 @@ public class UserServiceImpl implements UserService {
         else {
             save(oauthUser);
         }
-        return findUserByUsername(oauthUser.getUsername());
+        return findUserDtoByUsername(oauthUser.getUsername());
     }
 
-    public UserDto findUserByUsername(String username) {
-        return mapper.toDto(repository.findUserByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username - " + username + " not found")));
+    @Transactional
+    public User findUserByUsername(String username) {
+        return repository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username - " + username + " not found"));
     }
 
+    @Transactional
+    public UserDto findUserDtoByUsername(String username) {
+        return mapper.toDto(findUserByUsername(username));
+    }
 
     public List<User> findTop() {
         List<Order> topOrder = orderRepository.getTop(PageRequest.of(0, 100));

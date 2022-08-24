@@ -44,7 +44,7 @@ class JwtUserDetailsServiceTest {
 
     @Test
     void loadUserByUsername() {
-        when(service.findUserByUsername(user.getUsername()))
+        when(service.findUserDtoByUsername(user.getUsername()))
                 .thenReturn(user);
         UserDetails actual = userDetailsService.loadUserByUsername(user.getUsername());
         Assertions.assertEquals(jwtUser,actual);

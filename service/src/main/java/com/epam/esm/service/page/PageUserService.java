@@ -2,6 +2,7 @@ package com.epam.esm.service.page;
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
 import com.epam.esm.dto.AuthenticationDto;
+import com.epam.esm.dto.ControllerType;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
@@ -31,15 +32,18 @@ public class PageUserService implements PageService<DtoPage<UserDto>,UserDto> {
         this.mapper = mapper;
     }
 
-    public DtoPage<UserDto> findByPage(int page, int size, String sort) {
+    public DtoPage<UserDto> findByPage(int page, int size, String sort, String direction) {
         return new DtoPageBuilder<UserDto>()
                 .setResponse(responseService.okResponse(
                         USER + PAGE + "page " + page + ", size" + size + ", sort" + sort
                 ))
-                .setContent(mapper.toDtoList(service.findAll(page,size,sort)))
+                .setContent(mapper.toDtoList(service.findAll(page,size,sort,direction)))
                 .setSize(size)
                 .setNumberOfPage(page)
                 .setSortBy(sort)
+                .setDirection(direction)
+                .setHasNext(!service.findAll(page + 1,size,sort,direction).isEmpty())
+                .setType(ControllerType.USER_ALL)
                 .build();
     }
 
@@ -90,20 +94,23 @@ public class PageUserService implements PageService<DtoPage<UserDto>,UserDto> {
     }
 
     @Override
-    public DtoPage<UserDto> findByActiveStatus(int page, int size, String sort) throws RepositoryException {
-        return findByStatus(page,size,sort,ACTIVE.name());
+    public DtoPage<UserDto> findByActiveStatus(int page, int size, String sort, String direction) throws RepositoryException {
+        return findByStatus(page,size,sort,direction,ACTIVE.name());
     }
 
     @Override
-    public DtoPage<UserDto> findByStatus(int page, int size, String sort, String statusName) throws RepositoryException {
+    public DtoPage<UserDto> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
         return new DtoPageBuilder<UserDto>()
                 .setResponse(responseService.okResponse(
                         USER + PAGE + "page " + page + ", size" + size + ", sort" + sort
                 ))
-                .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,statusName)))
+                .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,direction,statusName)))
                 .setSize(size)
                 .setNumberOfPage(page)
                 .setSortBy(sort)
+                .setDirection(direction)
+                .setHasNext(!service.findByStatus(page + 1,size,sort,direction,statusName).isEmpty())
+                .setType(ControllerType.USER_ALL)
                 .build();
     }
 

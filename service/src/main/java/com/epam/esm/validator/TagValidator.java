@@ -13,5 +13,6 @@ public class TagValidator {
     public static boolean isListTagEmpty(List<Tag> tagList) {
         return tagList == null || tagList.isEmpty();
     }
+
 }
 

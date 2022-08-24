@@ -1,6 +1,7 @@
 package com.epam.esm.service.page;
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
+import com.epam.esm.dto.ControllerType;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
@@ -43,6 +44,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.createdResponse(GIFT_CERTIFICATE + CREATED))
                 .setContent(List.of(mapper.toDto(service.save(dto))))
+                .setType(ControllerType.CERTIFICATE_ADD)
                 .build();
     }
 
@@ -51,6 +53,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
         service.delete(id);
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.okResponse(GIFT_CERTIFICATE + DELETED))
+                .setType(ControllerType.CERTIFICATE_DELETE)
                 .build();
     }
 
@@ -61,19 +64,22 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.okResponse(GIFT_CERTIFICATE + UPDATED))
                 .setContent(List.of(mapper.toDto(service.update(dto))))
+                .setType(ControllerType.CERTIFICATE_UPDATE)
                 .build();
     }
 
     @Override
-    public DtoPage<GiftCertificateDto> findByPage(int page, int size, String sort) throws RepositoryException {
+    public DtoPage<GiftCertificateDto> findByPage(int page, int size, String sort, String direction) throws RepositoryException {
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.okResponse(
                         GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
                 ))
-                .setContent(mapper.toDtoList(service.findAll(page,size,sort)))
+                .setContent(mapper.toDtoList(service.findAll(page,size,sort,direction)))
                 .setSize(size)
                 .setNumberOfPage(page)
                 .setSortBy(sort)
+                .setDirection(direction)
+                .setType(ControllerType.CERTIFICATE_BY_PAGE)
                 .build();
     }
 
@@ -83,6 +89,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.okResponse(GIFT_CERTIFICATE + FOUND_BY_ID))
                 .setContent(List.of(mapper.toDto(result)))
+                .setType(ControllerType.CERTIFICATE_BY_ID)
                 .build();
     }
 
@@ -91,24 +98,29 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.okResponse(GIFT_CERTIFICATE + FOUND_BY_PARAM))
                 .setContent(mapper.toDtoList(service.findByParam(dto)))
+                .setType(ControllerType.CERTIFICATE_BY_PARAM)
                 .build();
     }
 
     @Override
-    public DtoPage<GiftCertificateDto> findByActiveStatus(int page, int size, String sort) throws RepositoryException {
-        return findByStatus(page,size,sort,ACTIVE.name());
+    public DtoPage<GiftCertificateDto> findByActiveStatus(int page, int size, String sort, String direction) throws RepositoryException {
+        return findByStatus(page,size,sort,direction,ACTIVE.name());
     }
 
     @Override
-    public DtoPage<GiftCertificateDto> findByStatus(int page, int size, String sort, String statusName) throws RepositoryException {
+    public DtoPage<GiftCertificateDto> findByStatus(int page, int size, String sort, String direction,String statusName) throws RepositoryException {
         return new DtoPageBuilder<GiftCertificateDto>()
                 .setResponse(responseService.okResponse(
                         GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
                 ))
-                .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,statusName)))
+                .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,direction,statusName)))
                 .setSize(size)
                 .setNumberOfPage(page)
                 .setSortBy(sort)
+                .setDirection(direction)
+                .setParam(statusName)
+                .setType(ControllerType.CERTIFICATE_ALL)
+                .setHasNext(!service.findByStatus(page + 1,size,sort,direction,statusName).isEmpty())
                 .build();
     }
 
@@ -116,6 +128,30 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
         dto.setTags(createTagsByString(tags));
         return findByParam(dto);
     }
+    public byte[] getImageByID(long id,String name) throws RepositoryException {
+        return service.getImageByID(id,name);
+    }
+
+    public DtoPage<GiftCertificateDto> findActiveByTag(long id, Integer page, Integer size, String sort, String direction) throws RepositoryException {
+        return findByTag(id,ACTIVE.name(),page,size,sort,direction);
+    }
+
+    public DtoPage<GiftCertificateDto> findByTag(long id, String status, Integer page, Integer size, String sort, String direction) throws RepositoryException {
+        return new DtoPageBuilder<GiftCertificateDto>()
+                .setResponse(responseService.okResponse(
+                        GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
+                ))
+                .setContent(mapper.toDtoList(service.findByTag(id,status,page,size,sort)))
+                .setSize(size)
+                .setNumberOfPage(page)
+                .setSortBy(sort)
+                .setDirection(direction)
+                .setParam(Long.toString(id))
+                .setHasNext(!service.findByTag(id,status,page + 1,size,sort).isEmpty())
+                .setType(ControllerType.CERTIFICATE_BY_TAG)
+                .build();
+    }
+
     private List<TagDto> createTagsByString(String tags) {
         List<TagDto> result = new ArrayList<>();
         Arrays.stream(tags.split(",")).toList().forEach(i-> {

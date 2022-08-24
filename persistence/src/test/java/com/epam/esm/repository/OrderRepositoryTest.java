@@ -9,6 +9,7 @@ import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,7 +20,9 @@ import org.springframework.test.context.ContextConfiguration;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
@@ -53,9 +56,9 @@ class OrderRepositoryTest {
         tagRepository.saveAll(
                 new ArrayList<>(
                         List.of(
-                                new Tag(null,"testTag1",ACTIVE.name()),
-                                new Tag(null,"testTag2",ACTIVE.name()),
-                                new Tag(null,"testTag3",ACTIVE.name()))
+                                new Tag(null,"testTag1",null,ACTIVE.name()),
+                                new Tag(null,"testTag2",null,ACTIVE.name()),
+                                new Tag(null,"testTag3",null,ACTIVE.name()))
                 )
         );
         createOrder();
@@ -122,7 +125,7 @@ class OrderRepositoryTest {
         init();
         List<Order> top = repository.getTop(PageRequest.of(0,100));
 
-        assertTrue(isTop(top));
+        assertTrue(isTopByPrice(top));
     }
 
     @Test
@@ -135,7 +138,14 @@ class OrderRepositoryTest {
         String actual = repository.findById(id).orElseThrow().getStatus();
         assertEquals(DELETED.name(),actual);
     }
-    private boolean isTop(List<Order> top) {
+    @Test
+    void getTopTagByStatus() {
+        init();
+        List<Tag> top = repository.getTopTagByStatus(ACTIVE.name(),PageRequest.of(0,3));
+        Assertions.assertTrue(isTopByTag(top));
+    }
+
+    private boolean isTopByPrice(List<Order> top) {
         boolean result = true;
         int prevPrice = Integer.MAX_VALUE;
         int price;
@@ -146,6 +156,30 @@ class OrderRepositoryTest {
                 result = false;
             }
             prevPrice = price;
+        }
+        return result;
+    }
+    private boolean isTopByTag(List<Tag> top) {
+        int max = Integer.MAX_VALUE;
+
+        boolean result = true;
+        List<Order> all = repository.findAll();
+        Map<String,Integer> count = new HashMap<>();
+        count.put("testTag1",0);
+        count.put("testTag2",0);
+        count.put("testTag3",0);
+
+        for (Order order : all) {
+            for (Tag tag : order.getGift().getTagList()) {
+                count.replace(tag.getName(),count.get(tag.getName()) + 1);
+            }
+        }
+        for (Tag tag : top) {
+            if(max < count.get(tag.getName())) {
+                result = false;
+                break;
+            }
+            max = count.get(tag.getName());
         }
         return result;
     }

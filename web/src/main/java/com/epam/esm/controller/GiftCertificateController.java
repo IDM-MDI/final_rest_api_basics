@@ -9,7 +9,9 @@ import com.epam.esm.hateoas.impl.GiftCertificateHateoas;
 import com.epam.esm.service.page.PageGiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -27,8 +30,9 @@ import javax.validation.constraints.Min;
  * Class created for catch /gits - url
  * Have CRUD and filter api
  */
+@CrossOrigin
 @RestController
-@RequestMapping(value = "api/v1/gifts")
+@RequestMapping(value = "/api/v1/gifts")
 @Validated
 @Profile("prod")
 public class GiftCertificateController {
@@ -49,9 +53,21 @@ public class GiftCertificateController {
     @GetMapping
     public DtoPage<GiftCertificateDto> getAllGiftCertificate(@RequestParam(defaultValue = "0") Integer page,
                                                           @RequestParam(defaultValue = "10") Integer size,
-                                                          @RequestParam(defaultValue = "id") String sort) throws ServiceException, RepositoryException {
-        DtoPage<GiftCertificateDto> dtoPage = service.findByActiveStatus(page,size,sort);
-        hateoas.setGiftHateoas(dtoPage);
+                                                          @RequestParam(defaultValue = "id") String sort,
+                                                          @RequestParam(defaultValue = "asc") String direction) throws ServiceException, RepositoryException {
+        DtoPage<GiftCertificateDto> dtoPage = service.findByActiveStatus(page,size,sort,direction);
+        hateoas.setHateoas(dtoPage);
+        return dtoPage;
+    }
+
+    @GetMapping("/tag/{id}")
+    public DtoPage<GiftCertificateDto> getGiftCertificatesByTag(@PathVariable @Min(1) long id,
+                                                                @RequestParam(defaultValue = "0") Integer page,
+                                                                @RequestParam(defaultValue = "10") Integer size,
+                                                                @RequestParam(defaultValue = "id") String sort,
+                                                                @RequestParam(defaultValue = "asc") String direction) throws ServiceException, RepositoryException {
+        DtoPage<GiftCertificateDto> dtoPage = service.findActiveByTag(id,page,size,sort,direction);
+        hateoas.setHateoas(dtoPage);
         return dtoPage;
     }
 
@@ -62,7 +78,7 @@ public class GiftCertificateController {
     @PostMapping
     public DtoPage<GiftCertificateDto> addGiftCertificate(@Valid @RequestBody GiftCertificateDto entity) throws RepositoryException, ServiceException {
         DtoPage<GiftCertificateDto> page = service.save(entity);
-        hateoas.setGiftHateoas(page);
+        hateoas.setHateoas(page);
         return page;
     }
 
@@ -73,7 +89,7 @@ public class GiftCertificateController {
     @DeleteMapping("/{id}")
     public DtoPage<GiftCertificateDto> deleteGiftCertificate(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException {
         DtoPage<GiftCertificateDto> page = service.delete(id);
-        hateoas.setGiftHateoas(page);
+        hateoas.setHateoas(page);
         return page;
     }
 
@@ -86,7 +102,7 @@ public class GiftCertificateController {
     public DtoPage<GiftCertificateDto> updateGiftCertificate(@PathVariable("id") @Min(1) long id,
                                              @Valid @RequestBody GiftCertificateDto entity) throws RepositoryException, ServiceException {
         DtoPage<GiftCertificateDto> page = service.update(entity, id);
-        hateoas.setGiftHateoas(page);
+        hateoas.setHateoas(page);
         return page;
     }
 
@@ -97,8 +113,16 @@ public class GiftCertificateController {
     @GetMapping("/{id}")
     public DtoPage<GiftCertificateDto> getGiftCertificate(@PathVariable("id") @Min(1) long id) throws RepositoryException, ServiceException {
         DtoPage<GiftCertificateDto> page = service.findById(id);
-        hateoas.setGiftHateoas(page);
+        hateoas.setHateoas(page);
         return page;
+    }
+
+    @GetMapping(
+            value = "/{id}/img",
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
+    public @ResponseBody byte[] getImageByID(@PathVariable("id") @Min(1) long id, @RequestParam(defaultValue = "main")String name) throws RepositoryException {
+        return service.getImageByID(id,name);
     }
 
     /**
@@ -110,7 +134,7 @@ public class GiftCertificateController {
     public DtoPage<GiftCertificateDto> search(GiftCertificateDto dto,
                                               @RequestParam(defaultValue = "") String tagList) throws ServiceException, RepositoryException {
         DtoPage<GiftCertificateDto> page = service.findByParam(dto,tagList);
-        hateoas.setGiftHateoas(page);
+        hateoas.setHateoas(page);
         return page;
     }
 }

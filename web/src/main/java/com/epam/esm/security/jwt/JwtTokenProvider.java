@@ -2,7 +2,7 @@ package com.epam.esm.security.jwt;
 
 import com.epam.esm.dto.RoleDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.exception.JwtAuthenticationException;
+import com.epam.esm.exception.WebException;
 import com.epam.esm.security.JwtUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+
+import static com.epam.esm.exception.ExceptionCode.JWT_TOKEN_IS_EXPIRED;
 
 @Component
 public class JwtTokenProvider {
@@ -74,12 +76,12 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws WebException {
          try {
              Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
              return !claims.getBody().getExpiration().before(new Date());
          } catch (JwtException | IllegalArgumentException e) {
-             throw new JwtAuthenticationException("JWT Token is expired");
+             throw new WebException(JWT_TOKEN_IS_EXPIRED.toString());
          }
     }
     private List<String> getRoleNames(List<RoleDto> roles) {

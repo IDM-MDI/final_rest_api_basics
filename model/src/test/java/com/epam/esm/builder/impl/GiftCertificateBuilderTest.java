@@ -49,7 +49,7 @@ class GiftCertificateBuilderTest {
     @Test
     @Order(5)
     void setTagList() {
-        GiftCertificateBuilder actual = builder.setTagList(List.of(new Tag(1L,"testTag","testStatus")));
+        GiftCertificateBuilder actual = builder.setTagList(List.of(new Tag(1L,"testTag",null,"testStatus")));
         Assertions.assertEquals(builder,actual);
     }
 
@@ -93,7 +93,11 @@ class GiftCertificateBuilderTest {
                 0,
                 LocalDateTime.of(2000,1, 1,0,5),
                 LocalDateTime.of(1,1,1,1,1),
-                List.of(new Tag(1L,"testTag","testStatus")),
+                List.of(new Tag(1L,"testTag",null,"testStatus")),
+                null,
+                null,
+                null,
+                null,
                 "testStatus");
         Assertions.assertEquals(expected,actual);
     }
@@ -111,6 +115,10 @@ class GiftCertificateBuilderTest {
                 null,
                 null,
                 new ArrayList<>(),
+                null,
+                null,
+                null,
+                null,
                 null);
         Assertions.assertEquals(expected,actual);
     }

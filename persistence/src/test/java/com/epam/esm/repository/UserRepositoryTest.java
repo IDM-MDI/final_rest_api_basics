@@ -1,5 +1,6 @@
 package com.epam.esm.repository;
 
+import com.epam.esm.builder.impl.GiftCertificateBuilder;
 import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.config.PersistenceConfig;
 import com.epam.esm.entity.Role;
@@ -28,8 +29,22 @@ class UserRepositoryTest {
     private UserRepository repository;
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private GiftCertificateRepository giftCertificateRepository;
+
+
     @Autowired
     private UserBuilder builder;
+
+    @Autowired
+    private GiftCertificateBuilder giftBuilder;
 
     public void init() {
         roleRepository.save(new Role(0,"user"));
@@ -77,4 +92,5 @@ class UserRepositoryTest {
         boolean expected = true;
         Assertions.assertTrue(repository.existsByUsername("testName"));
     }
+
 }

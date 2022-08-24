@@ -5,22 +5,12 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.HateoasDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.epam.esm.controller.ControllerClass.TAG_CONTROLLER;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.epam.esm.hateoas.links.TagLinks.*;
 
 @Component
-public class TagHateoas implements HateoasDTO<TagDto> {
-
-    private final PageHateoas<TagDto> pageHateoas;
-
-    @Autowired
-    public TagHateoas(PageHateoas<TagDto> pageHateoas) {
-        this.pageHateoas = pageHateoas;
-    }
+public class TagHateoas extends HateoasDTO<TagDto> {
 
     @Override
     public void addLinks(TagDto dto) throws ServiceException, RepositoryException {
@@ -29,37 +19,11 @@ public class TagHateoas implements HateoasDTO<TagDto> {
         deleteLink(dto);
     }
 
-    private void addNewLink(TagDto dto) throws RepositoryException, ServiceException {
-        dto.add(linkTo(
-                methodOn(TAG_CONTROLLER)
-                        .addTag(dto))
-                .withRel("add"));
-    }
-    private void deleteLink(TagDto dto) throws RepositoryException, ServiceException {
-        dto.add(linkTo(
-                methodOn(TAG_CONTROLLER)
-                        .deleteTag(dto.getId()))
-                        .withRel("delete"));
-    }
-    private void getByLink(TagDto dto) throws ServiceException, RepositoryException {
-        dto.add(linkTo(
-                methodOn(TAG_CONTROLLER)
-                        .getByIdTag(dto.getId()))
-                        .withSelfRel());
-    }
-
-    public void setTagHateoas(DtoPage<TagDto> dtoPage) throws ServiceException, RepositoryException {
-        if(dtoPage == null || dtoPage.getContent() == null) {
-            return;
-        }
-        for (TagDto dto : dtoPage.getContent()) {
-            addLinks(dto);
-        }
-        if(dtoPage.getSize() == 0) {
-            pageHateoas.addTagGetBackPage(dtoPage);
-        }
-        else {
-            pageHateoas.addTagsPage(dtoPage);
+    @Override
+    protected void addPageLink(DtoPage<TagDto> dtoPage, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException {
+        switch (dtoPage.getType()) {
+            case TAG_ALL -> getAllTag(dtoPage,number,size,sort, direction, rel);
+            case TAG_TOP -> getTopTags(dtoPage,number,size,rel);
         }
     }
 }

@@ -37,11 +37,11 @@ class GiftCertificateRepositoryTest {
     void setDelete() {
         init();
 
-        repository.setDelete(repository.findByName("test")
+        repository.setDelete(repository.findByName("test1")
                                             .orElseThrow()
                                             .getId(), DELETED.name());
 
-        GiftCertificate actual = repository.findByName("test")
+        GiftCertificate actual = repository.findByName("test1")
                 .orElseThrow();
 
         Assertions.assertEquals(DELETED.name(),actual.getStatus());
@@ -49,8 +49,8 @@ class GiftCertificateRepositoryTest {
 
     @Test
     void findByName() {
-        String name = "test";
         init();
+        String name = "test1";
         GiftCertificate actual = repository.findByName(name)
                 .orElseThrow();
         Assertions.assertEquals(name,actual.getName());
@@ -83,26 +83,88 @@ class GiftCertificateRepositoryTest {
         Assertions.assertEquals(ACTIVE.name(),actual.getStatus());
     }
 
+    @Test
+    void testFindByTagListIn() {
+        init();
+        Tag expectedTag = tagRepository.findByName("testTag1")
+                                    .orElseThrow();
+
+        GiftCertificate expected = builder
+                                        .setId(1L)
+                                        .setName("test1")
+                                        .setDescription("test1")
+                                        .setDuration(1)
+                                        .setPrice(new BigDecimal(1))
+                                        .setStatus(ACTIVE.name())
+                                        .setTagList(tagRepository.findAll())
+                                        .build();
+
+        GiftCertificate actual = repository.findByTagListIn(List.of(expectedTag),PageRequest.of(0,1))
+                                                 .stream()
+                                                 .findAny()
+                                                 .orElseThrow();
+        actual.setCreateDate(null);
+        actual.setUpdateDate(null);
+
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    void findByTagListInAndStatus() {
+        init();
+        Tag expectedTag = tagRepository.findByName("testTag1")
+                                       .orElseThrow();
+
+        GiftCertificate expected = builder
+                .setId(2L)
+                .setName("test2")
+                .setDescription("test2")
+                .setDuration(2)
+                .setPrice(new BigDecimal(2))
+                .setStatus(DELETED.name())
+                .setTagList(tagRepository.findAll())
+                .build();
+
+        GiftCertificate actual = repository.findByTagListInAndStatus(List.of(expectedTag), DELETED.name(), PageRequest.of(0, 3))
+                .stream()
+                .findAny()
+                .orElseThrow();
+
+        actual.setCreateDate(null);
+        actual.setUpdateDate(null);
+
+        Assertions.assertEquals(expected,actual);
+    }
+
     private void init() {
         tagRepository.saveAll(
                 List.of(
-                new Tag(null,"testTag1",ACTIVE.name()),
-                new Tag(null,"testTag2",ACTIVE.name()),
-                new Tag(null,"testTag3",ACTIVE.name())
+                new Tag(null,"testTag1",null,ACTIVE.name()),
+                new Tag(null,"testTag2",null,ACTIVE.name()),
+                new Tag(null,"testTag3",null,ACTIVE.name())
                 )
         );
-
-        GiftCertificate entity = builder
-                .setId(1L)
-                .setName("test")
-                .setDescription("test")
-                .setDuration(1)
-                .setPrice(new BigDecimal(1))
-                .setCreateDate(LocalDateTime.of(1,1,1,1,1))
-                .setUpdateDate(LocalDateTime.of(2,2,2,2,2))
-                .setStatus(ACTIVE.name())
-                .setTagList(tagRepository.findAll())
-                .build();
-        repository.save(entity);
+        repository.saveAll(List.of(builder
+                        .setId(1L)
+                        .setName("test1")
+                        .setDescription("test1")
+                        .setDuration(1)
+                        .setPrice(new BigDecimal(1))
+                        .setCreateDate(LocalDateTime.of(1, 1, 1, 1, 1))
+                        .setUpdateDate(LocalDateTime.of(2, 2, 2, 2, 2))
+                        .setStatus(ACTIVE.name())
+                        .setTagList(tagRepository.findAll())
+                        .build(),
+                builder
+                        .setId(2L)
+                        .setName("test2")
+                        .setDescription("test2")
+                        .setDuration(2)
+                        .setPrice(new BigDecimal(2))
+                        .setCreateDate(LocalDateTime.of(1, 1, 1, 1, 1))
+                        .setUpdateDate(LocalDateTime.of(2, 2, 2, 2, 2))
+                        .setStatus(DELETED.name())
+                        .setTagList(tagRepository.findAll())
+                        .build()));
     }
 }

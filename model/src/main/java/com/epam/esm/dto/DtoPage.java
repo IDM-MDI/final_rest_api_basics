@@ -14,4 +14,8 @@ public class DtoPage<T> extends RepresentationModel<DtoPage<T>> {
     private int size;
     private int numberOfPage;
     private String sortBy;
+    private String direction;
+    private boolean hasNext;
+    private String param;
+    private ControllerType type;
 }

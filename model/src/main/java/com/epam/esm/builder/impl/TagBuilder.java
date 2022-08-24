@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class TagBuilder implements ModelBuilder {
     private Long id;
     private String name;
+    private byte[] mainImage;
     private String status;
 
     public TagBuilder setId(Long id) {
@@ -20,6 +21,11 @@ public class TagBuilder implements ModelBuilder {
         return this;
     }
 
+    public TagBuilder setMainImage(byte[] mainImage) {
+        this.mainImage = mainImage;
+        return this;
+    }
+
     public TagBuilder setStatus(String status) {
         this.status = status;
         return this;
@@ -27,7 +33,7 @@ public class TagBuilder implements ModelBuilder {
 
     @Override
     public Tag build() {
-        Tag result = new Tag(id,name,status);
+        Tag result = new Tag(id,name,mainImage,status);
         clear();
         return result;
     }

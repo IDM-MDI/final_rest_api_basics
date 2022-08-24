@@ -5,4 +5,6 @@ public class ControllerClass {
     public static final Class<GiftCertificateController> GIFT_CERTIFICATE_CONTROLLER = GiftCertificateController.class;
     public static final Class<TagController> TAG_CONTROLLER = TagController.class;
     public static final Class<UserController> USER_CONTROLLER = UserController.class;
+
+    public static final Class<OrderController> ORDER_CONTROLLER = OrderController.class;
 }

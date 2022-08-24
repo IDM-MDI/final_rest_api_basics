@@ -37,7 +37,7 @@ class TagBuilderTest {
     @Order(4)
     void build() {
         Tag actual = builder.build();
-        Tag expected = new Tag(1L,"testTag","testStatus");
+        Tag expected = new Tag(1L,"testTag",null,"testStatus");
         Assertions.assertEquals(expected,actual);
     }
 
@@ -45,7 +45,7 @@ class TagBuilderTest {
     @Order(5)
     void clear() {
         Tag actual = builder.build();
-        Tag expected = new Tag(null,null,null);
+        Tag expected = new Tag(null,null,null,null);
         Assertions.assertEquals(expected,actual);
     }
 }

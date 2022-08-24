@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.IS_ALREADY_EXIST;
+import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
 import static com.epam.esm.exception.RepositoryExceptionCode.*;
 import static com.epam.esm.validator.GiftValidator.findEquals;
 import static com.epam.esm.validator.GiftValidator.isGiftEmpty;
+import static com.epam.esm.validator.GiftValidator.isStringEmpty;
 import static com.epam.esm.validator.GiftValidator.uniteEntities;
 import static com.epam.esm.validator.ListValidator.isListEmpty;
 import static com.epam.esm.validator.TagValidator.isListTagEmpty;
@@ -59,6 +61,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new RepositoryException(REPOSITORY_SAVE_ERROR.toString());
         }
         GiftCertificate entity = mapper.toEntity(dto);
+        validateGift(entity);
         entity.setTagList(tagServiceImpl.saveAllByName(dto.getTags()));
         GiftCertificate result = repository.save(entity);
         log.info("gift - {} was saved", result);
@@ -78,9 +81,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findAll(int page, int size, String sort) throws RepositoryException {
+    public List<GiftCertificate> findAll(int page, int size, String sort, String direction) throws RepositoryException {
         List<GiftCertificate> giftList = repository
-                                        .findAll(PageRequest.of(page, size, Sort.by(sort)))
+                                        .findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort)))
                                         .toList();
         if(giftList.isEmpty()) {
             log.error(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
@@ -96,8 +99,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findByStatus(int page, int size, String sort, String statusName) throws RepositoryException {
-        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(sort)));
+    public List<GiftCertificate> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
+        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort)));
     }
 
     @Override
@@ -123,12 +126,26 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return result;
     }
 
+    public byte[] getImageByID(long id,String name) throws RepositoryException {
+        GiftCertificate byId = findById(id);
+        byte[] result;
+        switch (name) {
+            case "second" -> result = byId.getSecondImage();
+            case "third" -> result = byId.getThirdImage();
+            default -> result = byId.getMainImage();
+        }
+        return result;
+    }
 
+
+    public List<GiftCertificate> findByTag(long id, String status, int page, int size, String sort) throws RepositoryException {
+        return repository.findByTagListInAndStatus(List.of(tagServiceImpl.findById(id)),status,PageRequest.of(page, size,Sort.by(sort)));
+    }
     private GiftCertificate uniteGifts(
-                            GiftCertificateDto update,
-                            GiftCertificate fromDB) {
+            GiftCertificateDto update,
+            GiftCertificate fromDB) throws RepositoryException {
         GiftCertificate entity = mapper.toEntity(update);
-        uniteEntities(entity,fromDB);
+        entity = uniteEntities(entity,fromDB);
         if(update.getTags() != null) {
             fromDB.getTagList().forEach(i-> giftTagRepository.setDeleteByGift(i.getId(), DELETED.name()));
             entity.setTagList(tagServiceImpl.saveAllByName(update.getTags()));
@@ -162,10 +179,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         return findEquals(fromDB,giftWithTag);
     }
+
     private List<GiftCertificate> findByGift(GiftCertificate desired) {
         if(isGiftEmpty(desired)) {
             return new ArrayList<>();
         }
         return repository.findAll(Example.of(desired));
+    }
+
+    private void validateGift(GiftCertificate entity) {
+        if(isStringEmpty(entity.getStatus())) {
+            entity.setStatus(ACTIVE.name());
+        }
     }
 }

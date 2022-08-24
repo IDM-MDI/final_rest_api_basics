@@ -23,38 +23,46 @@ class TagModelMapperTest {
         entity = new Tag(
                 1L,
                 "testRole1",
+                null,
                 "testStatus"
         );
         dto = new TagDto(
                 1L,
                 "testRole1",
+                null,false,
                 "testStatus"
         );
         entityList = List.of(
                 new Tag(
                         2L,
                         "testRole2",
+                        null,
                         "testStatus"),
                 new Tag(
                         3L,
                         "testRole3",
+                        null,
                         "testStatus"),
                 new Tag(
                         4L,
                         "testRole4",
+                        null,
                         "testStatus"));
         dtoList = List.of(
                 new TagDto(
                         2L,
                         "testRole2",
+                        null,false,
                         "testStatus"),
                 new TagDto(
                         3L,
                         "testRole3",
+                        null,false,
                         "testStatus"),
                 new TagDto(
                         4L,
                         "testRole4",
+                        null,false,
                         "testStatus"));
     }
 
