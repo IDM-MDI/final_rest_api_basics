@@ -48,7 +48,6 @@ public class GiftCertificate {
             joinColumns = @JoinColumn(name = "gift_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-
     @ToString.Exclude
     private List<Tag> tagList;
 

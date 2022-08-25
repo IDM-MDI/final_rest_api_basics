@@ -21,8 +21,11 @@ import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -79,40 +82,23 @@ public class DataGenerator {
 
 
     public void fillRandomData() {
-        long tagCount = tagRepository.count();
-        long giftCount = giftRepository.count();
-        long userCount = userRepository.count();
-        long orderCount = orderRepository.count();
-        String[] words = null;
-        if(tagCount == 0 || giftCount == 0 || userCount == 0) {
-            words = getWords();
-        }
-        if(userCount == 0) {
-            log.info("Starting generate random users");
-            initUsers(getFilteredUsers());
-        }
-        if(tagCount == 0) {
-            log.info("Starting generate random tags");
-            initTags(words);
-        }
-        if(giftCount == 0) {
-            log.info("Starting generate random gifts");
-            initGifts(words);
-        }
-        userCount = userRepository.count();
-        giftCount = giftRepository.count();
-        if(orderCount == 0 &&
-                userCount != 0 &&
-                giftCount != 0) {
-            log.info("Starting generate orders for user");
-            initOrders();
-        }
+        String[] words = getWords();
+
+        initUsers(getFilteredUsers());
+        initTags(words);
+        initGifts(words);
+        initOrders();
+
         log.info("All data has successfully generated");
     }
 
     private void initOrders() {
         List<User> users = userRepository.findUsersByOrdersEmpty();
+        if(users.isEmpty()) {
+            return;
+        }
 
+        log.info("Starting generate orders for user");
         users.forEach(user -> {
             List<Order> orders = new ArrayList<>();
             List<GiftCertificate> gifts = getRandomGifts();
@@ -132,6 +118,10 @@ public class DataGenerator {
 
     @SneakyThrows
     private void initUsers(List<UserDto> users) {
+        if(users.isEmpty()) {
+            return;
+        }
+
         ExecutorService service = Executors.newFixedThreadPool(5);
         for (UserDto user : users) {
             service.execute(()-> {
@@ -149,66 +139,81 @@ public class DataGenerator {
 
     @SneakyThrows
     private void initGifts(String[] words) {
+        log.info("Starting generate random gifts");
+
+        long wordCount = 10000;
+        long giftCount = giftRepository.count();
+        long count = wordCount - giftCount;
+
         long minDuration = 1;
         long maxDuration = 100;
         long minPrice = 1000;
         long maxPrice = 100000000;
 
-        ExecutorService service = Executors.newFixedThreadPool(10);
-        List<String> giftWords = Collections.synchronizedList(RandomHandler.getCountWords(words,10000)
+        if(count <= 1) {
+            return;
+        }
+
+        ExecutorService service = Executors.newFixedThreadPool(5);
+        List<String> giftWords = Collections.synchronizedList(RandomHandler.getCountWords(words, (int) count)
                 .stream()
                 .toList());
-        Set<GiftCertificate> gifts = new HashSet<>();
         for (String i : giftWords) {
             service.execute(() -> {
-                GiftCertificate gift = GIFT_CERTIFICATE_BUILDER
-                        .setName(i)
-                        .setPrice(new BigDecimal(RandomHandler.getRandomNumber(minPrice, maxPrice)))
-                        .setDuration((int) RandomHandler.getRandomNumber(minDuration, maxDuration))
-                        .setDescription(getRandomDescription(words))
-                        .setShop(getRandomAddress())
-                        .setMainImage(getRandomImage())
-                        .setSecondImage(getRandomImage())
-                        .setThirdImage(getRandomImage())
-                        .setStatus(ACTIVE.name())
-                        .build();
-                gifts.add(gift);
+                try {
+                    GiftCertificate gift = GIFT_CERTIFICATE_BUILDER
+                            .setName(i)
+                            .setPrice(new BigDecimal(RandomHandler.getRandomNumber(minPrice, maxPrice)))
+                            .setDuration((int) RandomHandler.getRandomNumber(minDuration, maxDuration))
+                            .setDescription(getRandomDescription(words))
+                            .setShop(getRandomAddress())
+                            .setMainImage(getRandomImage())
+                            .setSecondImage(getRandomImage())
+                            .setThirdImage(getRandomImage())
+                            .setStatus(ACTIVE.name())
+                            .setTagList(getRandomTags())
+                            .build();
+                    giftRepository.save(gift);
+                } catch (DataIntegrityViolationException e) {
+                    System.out.println(e.getMessage());
+                }
             });
         }
         service.shutdown();
         service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-
-        gifts.removeIf(giftCertificate -> giftCertificate.getName() == null || giftCertificate.getName().isBlank());
-        List<GiftCertificate> result = gifts.stream().toList();
-        for (int i = 0; i < result.size(); i++) {
-            result.get(i).setTagList(getRandomTags());
-        }
-        giftRepository.saveAll(gifts);
     }
 
     @SneakyThrows
     private void initTags(String[] words) {
+        long wordCount = 1000;
+        long tagCount = tagRepository.count();
+        long count = wordCount - tagCount;
+        if(count <= 1) {
+            return;
+        }
+
+        log.info("Starting generate random tags");
         List<String> tagsWord = Collections.synchronizedList(RandomHandler
-                .getCountWords(words, 1000)
+                .getCountWords(words, (int) count)
                 .stream()
                 .toList());
-        Set<Tag> tags = new HashSet<>();
         ExecutorService service = Executors.newFixedThreadPool(5);
         tagsWord.forEach(i -> {
             service.execute(() -> {
-                Tag tag = TAG_BUILDER
-                        .setName(i)
-                        .setStatus(ACTIVE.name())
-                        .setMainImage(getRandomImage())
-                        .build();
-                tags.add(tag);
+                try {
+                    Tag tag = TAG_BUILDER
+                            .setName(i)
+                            .setStatus(ACTIVE.name())
+                            .setMainImage(getRandomImage())
+                            .build();
+                    tagRepository.save(tag);
+                } catch (DataIntegrityViolationException e) {
+                    System.out.println(e.getMessage());
+                }
             });
         });
         service.shutdown();
         service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-
-        tags.removeIf(tag -> tag.getName() == null || tag.getName().isBlank());
-        tagRepository.saveAll(tags);
     }
 
     @SneakyThrows
@@ -224,6 +229,12 @@ public class DataGenerator {
     }
     @SneakyThrows
     private List<UserDto> getFilteredUsers() {
+        long userCount = userRepository.count();
+        long wordCount = 1000;
+        if(wordCount - userCount < 1) {
+            return new ArrayList<>();
+        }
+        log.info("Starting generate random users");
         List<UserDto> randomUsers = getRandomUsers();
         writeUsersPrincipalToFile(randomUsers);
         return randomUsers;
@@ -302,7 +313,7 @@ public class DataGenerator {
         List<RoleDto> roleListAdmin = List.of(admin, user);
         List<RoleDto> roleListUser = List.of(user);
         ExecutorService service = Executors.newFixedThreadPool(4);
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000 - tagRepository.count(); i++) {
             int j = i;
             service.execute(()-> {
                 UserDto randomUser = getRandomUser();
