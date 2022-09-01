@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -177,7 +178,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private List<GiftCertificate> findByTagAndEntity(List<GiftCertificate> fromDB,GiftCertificate desired) {
-        if(isListTagEmpty(desired.getTagList()) && isListEmpty(fromDB)) {
+        if(isListTagEmpty(desired.getTagList()) || isListEmpty(fromDB)) {
             return fromDB;
         }
 
@@ -197,7 +198,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if(isGiftEmpty(desired)) {
             return new ArrayList<>();
         }
-        return repository.findAll(Example.of(desired));
+        ExampleMatcher matcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        return repository.findAll(Example.of(desired,matcher));
     }
 
     private void validateGift(GiftCertificate entity) {

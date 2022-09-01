@@ -12,6 +12,7 @@ import com.epam.esm.validator.SortValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -98,7 +99,11 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> findByParam(TagDto dto) throws RepositoryException {
-        List<Tag> tags = repository.findAll(Example.of(mapper.toEntity(dto)));
+        ExampleMatcher matcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        List<Tag> tags = repository.findAll(Example.of(mapper.toEntity(dto),matcher));
         if(tags.isEmpty()) {
             throw new RepositoryException(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
         }

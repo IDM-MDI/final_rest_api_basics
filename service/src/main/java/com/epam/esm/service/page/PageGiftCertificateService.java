@@ -16,12 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
-import static com.epam.esm.dto.ResponseTemplate.FOUND_BY_PARAM;
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.service.impl.GiftCertificateServiceImpl.GIFT_CERTIFICATE;
 
@@ -153,12 +151,14 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
     }
 
     private List<TagDto> createTagsByString(String tags) {
-        List<TagDto> result = new ArrayList<>();
-        Arrays.stream(tags.split(",")).toList().forEach(i-> {
-            TagDto tag = new TagDto();
-            tag.setName(i.trim());
-            result.add(tag);
-        });
-        return result;
+        return !tags.isBlank() ? Arrays.stream(tags.split(","))
+                .map((tagName) -> {
+                    TagDto tag = new TagDto();
+                    tag.setName(tagName);
+                    return tag;
+                })
+                .toList()
+                :
+                null;
     }
 }
