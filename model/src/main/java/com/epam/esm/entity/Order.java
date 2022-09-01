@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "user_orders")
+@Table(name = "`user_orders`")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString

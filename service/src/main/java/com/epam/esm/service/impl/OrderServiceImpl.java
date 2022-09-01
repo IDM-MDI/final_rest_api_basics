@@ -53,6 +53,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public long getCount() {
+        return repository.count();
+    }
+
+    @Override
     public List<Order> findAll(int page, int size, String sort, String direction) {
         return Collections.emptyList();
     }
@@ -94,6 +99,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setGift(gift);
         order.setPrice(gift.getPrice());
+        order.setStatus("ACTIVE");
         return order;
     }
 

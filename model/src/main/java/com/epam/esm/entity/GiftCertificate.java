@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "gift_certificate")
+@Table(name = "`gift_certificate`")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString

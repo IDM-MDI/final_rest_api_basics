@@ -11,7 +11,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.RoleRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.UserRepository;
@@ -24,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
 import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,10 +35,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -61,21 +56,21 @@ public class DataGenerator {
     private final TagRepository tagRepository;
     private final RoleRepository roleRepository;
     private final GiftCertificateRepository giftRepository;
-    private final UserServiceImpl userServiceImpl;
-    private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final RoleModelMapper roleMapper;
+    private final UserServiceImpl userServiceImpl;
 
     @Autowired
     public DataGenerator(TagRepository tagRepository,
-                         RoleRepository roleRepository, GiftCertificateRepository giftRepository,
+                         RoleRepository roleRepository,
+                         GiftCertificateRepository giftRepository,
                          UserRepository userRepository,
-                         OrderRepository orderRepository, UserServiceImpl userServiceImpl, RoleModelMapper roleMapper) {
+                         UserServiceImpl userServiceImpl,
+                         RoleModelMapper roleMapper) {
         this.tagRepository = tagRepository;
         this.roleRepository = roleRepository;
         this.giftRepository = giftRepository;
         this.userServiceImpl = userServiceImpl;
-        this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.roleMapper = roleMapper;
     }
@@ -150,7 +145,7 @@ public class DataGenerator {
         long minPrice = 1000;
         long maxPrice = 100000000;
 
-        if(count <= 1) {
+        if(count <= 1000) {
             return;
         }
 
@@ -175,7 +170,7 @@ public class DataGenerator {
                             .build();
                     giftRepository.save(gift);
                 } catch (DataIntegrityViolationException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getRootCause().getMessage());
                 }
             });
         }
@@ -188,7 +183,7 @@ public class DataGenerator {
         long wordCount = 1000;
         long tagCount = tagRepository.count();
         long count = wordCount - tagCount;
-        if(count <= 1) {
+        if(count <= 100) {
             return;
         }
 
@@ -231,7 +226,7 @@ public class DataGenerator {
     private List<UserDto> getFilteredUsers() {
         long userCount = userRepository.count();
         long wordCount = 1000;
-        if(wordCount - userCount < 1) {
+        if(wordCount - userCount < 10) {
             return new ArrayList<>();
         }
         log.info("Starting generate random users");

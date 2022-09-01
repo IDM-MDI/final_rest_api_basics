@@ -1,6 +1,7 @@
 package com.epam.esm.hateoas.impl;
 
 import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
@@ -24,13 +25,11 @@ public class UserHateoas extends HateoasDTO<UserDto> {
     @Override
     public void addLinks(UserDto dto) throws ServiceException, RepositoryException {
         getByIdLink(dto);
-        dto.getOrders().forEach(i-> {
-            try {
-                giftHateoas.addLinks(i.getGift());
-            } catch (ServiceException | RepositoryException e) {
-                throw new RuntimeException(e);
+        if(dto.getOrders() != null) {
+            for (OrderDto order : dto.getOrders()) {
+                giftHateoas.addLinks(order.getGift());
             }
-        });
+        }
     }
 
     @Override

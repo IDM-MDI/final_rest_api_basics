@@ -29,6 +29,7 @@ import static com.epam.esm.validator.GiftValidator.isGiftEmpty;
 import static com.epam.esm.validator.GiftValidator.isStringEmpty;
 import static com.epam.esm.validator.GiftValidator.uniteEntities;
 import static com.epam.esm.validator.ListValidator.isListEmpty;
+import static com.epam.esm.validator.SortValidator.getValidSort;
 import static com.epam.esm.validator.TagValidator.isListTagEmpty;
 
 
@@ -81,9 +82,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    public long getCount() {
+        return repository.count();
+    }
+
+    @Override
     public List<GiftCertificate> findAll(int page, int size, String sort, String direction) throws RepositoryException {
         List<GiftCertificate> giftList = repository
-                                        .findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort)))
+                                        .findAll(PageRequest.of(page, size, getValidSort(sort,direction)))
                                         .toList();
         if(giftList.isEmpty()) {
             log.error(REPOSITORY_NOTHING_FIND_EXCEPTION.toString());
@@ -100,7 +106,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
-        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort)));
+        return repository.findGiftCertificatesByStatus(
+                statusName,
+                PageRequest.of(
+                        page,
+                        size,
+                        getValidSort(sort,direction)
+                )
+        );
     }
 
     @Override

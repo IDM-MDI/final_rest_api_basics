@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tag")
+@Table(name = "`tag`")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString

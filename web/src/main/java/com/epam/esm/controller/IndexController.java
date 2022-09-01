@@ -8,10 +8,16 @@ import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.hateoas.impl.UserHateoas;
 import com.epam.esm.service.LoginService;
+import com.epam.esm.validator.JwtValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -45,7 +51,7 @@ public class IndexController {
     }
 
     @GetMapping("/jwt")
-    public boolean isContextExist() {
-        return SecurityContextHolder.getContext().getAuthentication() != null;
+    public boolean jwtUserGuard(@RequestParam String username) {
+        return JwtValidator.isJwtUserValid(username);
     }
 }

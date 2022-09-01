@@ -19,10 +19,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     @Query("update Tag t set t.status = :status where t.id = :id")
     void setDelete(@Param("id") long id, @Param("status") String status);
 
-    @Query( value = "SELECT * FROM tag WHERE status = ?1",
-            countQuery = "SELECT count(*) FROM tag WHERE status = ?1",
-            nativeQuery = true)
-    List<Tag> findByStatus(String status, Pageable pageable);
+    List<Tag> findTagsByStatus(String status, Pageable pageable);
     @Query(
             value = "SELECT * FROM Tag ORDER BY RAND() LIMIT 1",
             nativeQuery = true)

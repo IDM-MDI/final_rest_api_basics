@@ -76,7 +76,7 @@ class GiftCertificateRepositoryTest {
     @Test
     void findByStatus() {
         init();
-        GiftCertificate actual = repository.findByStatus(ACTIVE.name(),PageRequest.of(0, 1))
+        GiftCertificate actual = repository.findGiftCertificatesByStatus(ACTIVE.name(),PageRequest.of(0, 1))
                                             .stream()
                                             .findAny()
                                             .orElseThrow();

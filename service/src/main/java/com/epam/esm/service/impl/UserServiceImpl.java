@@ -14,12 +14,12 @@ import com.epam.esm.service.UserService;
 import com.epam.esm.util.HashGenerator;
 import com.epam.esm.util.impl.RoleModelMapper;
 import com.epam.esm.util.impl.UserModelMapper;
+import com.epam.esm.validator.SortValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -76,8 +76,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public long getCount() {
+        return repository.count();
+    }
+
+    @Override
     public List<User> findAll(int page, int size, String sort, String direction) {
-        return repository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort))).toList();
+        return repository.findAll(PageRequest.of(page,size, SortValidator.getValidSort(sort,direction))).toList();
     }
 
     @Override
@@ -105,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
-        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort)));
+        return repository.findByStatus(statusName,PageRequest.of(page, size, SortValidator.getValidSort(sort,direction)));
     }
     public UserDto login(AuthenticationDto authenticationDto) {
         UserDto user = findUserDtoByUsername(authenticationDto.getUsername());

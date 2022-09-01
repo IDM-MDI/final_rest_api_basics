@@ -8,11 +8,11 @@ import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.impl.TagModelMapper;
+import com.epam.esm.validator.SortValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -47,7 +47,8 @@ public class TagServiceImpl implements TagService {
     public List<Tag> saveAllByName(List<TagDto> dtos) throws RepositoryException {
         List<Tag> validTags = new ArrayList<>();
         for (TagDto dto : dtos) {
-            validTags.add(save(dto));
+            validTags.add(repository.findByName(dto.getName())
+                    .orElse(save(dto)));
         }
         return validTags;
     }
@@ -80,8 +81,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public long getCount() {
+        return repository.count();
+    }
+
+    @Override
     public List<Tag> findAll(int page, int size, String sort, String direction) {
-        return repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort))).toList();
+        return repository.findAll(PageRequest.of(page, size, SortValidator.getValidSort(sort,direction))).toList();
     }
 
     @Override
@@ -101,7 +107,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> findByStatus(int page, int size, String sort, String direction, String statusName) {
-        return repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(direction.toUpperCase()),sort)));
+        return repository.findTagsByStatus(statusName,PageRequest.of(page, size, SortValidator.getValidSort(sort,direction)));
     }
 
     @Override

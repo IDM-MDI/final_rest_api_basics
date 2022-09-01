@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -76,7 +77,8 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public boolean validateToken(String token) throws WebException {
+    @SneakyThrows
+    public boolean validateToken(String token) {
          try {
              Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
              return !claims.getBody().getExpiration().before(new Date());

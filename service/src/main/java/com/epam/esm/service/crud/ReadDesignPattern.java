@@ -5,6 +5,7 @@ import com.epam.esm.exception.RepositoryException;
 import java.util.List;
 
 public interface ReadDesignPattern<E,D> {
+    long getCount();
     List<E> findAll(int page, int size, String sort, String direction) throws RepositoryException;
     E findById(long id) throws RepositoryException;
     List<E> findByParam(D dto) throws RepositoryException;
