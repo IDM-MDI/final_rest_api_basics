@@ -55,6 +55,8 @@ public class DataGenerator {
         if(userCount == 0) {
             initUsers(getUsernames(words));
         }
+        giftCount = giftRepository.count();
+        userCount = userRepository.count();
         if(orderCount == 0 &&
                 userCount != 0 &&
                 giftCount != 0) {
