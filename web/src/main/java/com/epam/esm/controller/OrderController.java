@@ -12,13 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 @CrossOrigin
@@ -53,6 +57,20 @@ public class OrderController {
     @PostMapping("/{id}")
     public DtoPage<OrderDto> addOrder(@PathVariable @Min(1) long id) throws RepositoryException, ServiceException, WebException {
         DtoPage<OrderDto> dtoPage = service.save(loginService.getUsernameByContext(), id);
+        hateoas.setHateoas(dtoPage);
+        return dtoPage;
+    }
+
+    @PatchMapping("/{id}")
+    public DtoPage<OrderDto> updateOrder(@PathVariable @Min(1) long id,@Valid @RequestBody OrderDto entity) throws WebException, ServiceException, RepositoryException {
+        DtoPage<OrderDto> dtoPage = service.update(loginService.getUsernameByContext(),entity,id);
+        hateoas.setHateoas(dtoPage);
+        return dtoPage;
+    }
+
+    @DeleteMapping("/{id}")
+    public DtoPage<OrderDto> updateOrder(@PathVariable @Min(1) long id) throws WebException, ServiceException, RepositoryException {
+        DtoPage<OrderDto> dtoPage = service.delete(loginService.getUsernameByContext(),id);
         hateoas.setHateoas(dtoPage);
         return dtoPage;
     }

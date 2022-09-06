@@ -7,6 +7,7 @@ import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.Order;
 import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.PageService;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.service.impl.OrderServiceImpl;
@@ -56,11 +57,26 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
     }
 
     @Override
-    public DtoPage<OrderDto> update(OrderDto dto, long id) throws RepositoryException {
+    public DtoPage<OrderDto> update(OrderDto dto, long id) throws RepositoryException, ServiceException {
         dto.setId(id);
         return new DtoPageBuilder<OrderDto>()
                 .setResponse(responseService.createdResponse(ORDER + UPDATED))
                 .setContent(List.of(mapper(service.update(dto))))
+                .build();
+    }
+
+    public DtoPage<OrderDto> update(String username, OrderDto dto, long id) throws ServiceException, RepositoryException {
+        dto.setId(id);
+        return new DtoPageBuilder<OrderDto>()
+                .setResponse(responseService.createdResponse(ORDER + UPDATED))
+                .setContent(List.of(mapper(service.update(dto,username))))
+                .build();
+    }
+
+    public DtoPage<OrderDto> delete(String username, long id) throws RepositoryException, ServiceException {
+        service.delete(id,username);
+        return new DtoPageBuilder<OrderDto>()
+                .setResponse(responseService.okResponse(ORDER + DELETED))
                 .build();
     }
 
