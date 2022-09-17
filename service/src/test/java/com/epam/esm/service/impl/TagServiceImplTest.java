@@ -4,6 +4,7 @@ import com.epam.esm.builder.impl.TagBuilder;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.util.impl.TagModelMapper;
@@ -15,16 +16,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
+import static com.epam.esm.validator.SortValidator.getValidSort;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +38,8 @@ class TagServiceImplTest {
     @Mock
     private TagRepository repository = Mockito.mock(TagRepository.class);
     @Mock
+    private OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
+    @Mock
     private TagModelMapper modelMapper = Mockito.mock(TagModelMapper.class);
 
 
@@ -48,12 +49,12 @@ class TagServiceImplTest {
     TagServiceImplTest() {
         this.response= new ResponseService();
         mapper = new TagModelMapper(new TagBuilder());
-        this.entity = new Tag(1L,"testTag1",ACTIVE.name());
+        this.entity = new Tag(1L,"testTag1",null,ACTIVE.name());
         this.dto = mapper.toDto(entity);
         this.entityList = List.of(
                 entity,
-                new Tag(2L,"testTag2",ACTIVE.name()),
-                new Tag(3L,"testTag3",ACTIVE.name())
+                new Tag(2L,"testTag2",null,ACTIVE.name()),
+                new Tag(3L,"testTag3",null,ACTIVE.name())
         );
         this.dtoList = mapper.toDtoList(entityList);
     }
@@ -82,9 +83,10 @@ class TagServiceImplTest {
         Assertions.assertEquals(entityList,actual);
     }
 
+    @SneakyThrows
     @Test
     void save() {
-        when(repository.findByName(dto.getName())).thenReturn(Optional.empty());
+        when(repository.existsByName(dto.getName())).thenReturn(false);
         when(modelMapper.toEntity(dto)).thenReturn(entity);
         when(repository.save(entity)).thenReturn(entity);
 
@@ -93,14 +95,22 @@ class TagServiceImplTest {
     }
 
     @Test
+    void saveShouldThrowRepositoryException() {
+        when(repository.existsByName(dto.getName())).thenReturn(true);
+        Assertions.assertThrows(RepositoryException.class,() -> service.save(dto));
+    }
+
+    @Test
     void findAll() {
         int page = 1;
         int size = 1;
         String sort = "id";
+        String direction = "asc";
+
         when(repository.findAll(PageRequest.of(page, size, Sort.by(sort))))
                 .thenReturn(new PageImpl<>(entityList));
 
-        List<Tag> actual = service.findAll(page, size, sort);
+        List<Tag> actual = service.findAll(page, size, sort,direction);
         Assertions.assertEquals(entityList,actual);
     }
 
@@ -117,8 +127,12 @@ class TagServiceImplTest {
     @SneakyThrows
     @Test
     void findByParam() {
+        ExampleMatcher matcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
         when(modelMapper.toEntity(dto)).thenReturn(entity);
-        when(repository.findAll(Example.of(entity))).thenReturn(entityList);
+        when(repository.findAll(Example.of(entity,matcher))).thenReturn(entityList);
 
         List<Tag> actual = service.findByParam(dto);
         Assertions.assertEquals(entityList,actual);
@@ -127,8 +141,12 @@ class TagServiceImplTest {
     @SneakyThrows
     @Test
     void findByParamShouldThrowRepositoryException() {
+        ExampleMatcher matcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
         when(modelMapper.toEntity(dto)).thenReturn(entity);
-        when(repository.findAll(Example.of(entity))).thenReturn(List.of());
+        when(repository.findAll(Example.of(entity,matcher))).thenReturn(List.of());
         Assertions.assertThrows(RepositoryException.class,()->service.findByParam(dto));
     }
 
@@ -149,25 +167,45 @@ class TagServiceImplTest {
         long id = dto.getId();
 
         when(repository.existsById(id)).thenReturn(false);
-        Assertions.assertThrows(RepositoryException.class,()->service.delete(id));
+        Assertions.assertThrows(RepositoryException.class, () -> service.delete(id));
     }
 
     @Test
     void findByStatus() {
-        int page = 1;
+        int page = 0;
         int size = 1;
         String sort = "id";
+        String direction = "asc";
         String statusName = ACTIVE.name();
 
-        when(repository.findByStatus(statusName,PageRequest.of(page, size, Sort.by(sort))))
+        when(repository.findTagsByStatus(statusName,PageRequest.of(page, size, getValidSort(sort,direction))))
                 .thenReturn(entityList);
 
-        List<Tag> actual = service.findByStatus(page, size, sort,statusName);
+        List<Tag> actual = service.findByStatus(page, size, sort,direction,statusName);
         Assertions.assertEquals(entityList,actual);
     }
 
+    @SneakyThrows
     @Test
     void update() {
-        Assertions.assertNull(service.update(dto));
+        TagDto expectedDto = new TagDto(1L,"update",null,false,ACTIVE.name());
+        Tag expected = new Tag(1L,"update",null,ACTIVE.name());
+
+        when(modelMapper.toEntity(expectedDto)).thenReturn(expected);
+        when(repository.findById(expected.getId())).thenReturn(Optional.of(entity));
+        when(repository.existsByName(expected.getName())).thenReturn(false);
+        when(repository.save(expected)).thenReturn(expected);
+        Tag actual = service.update(expectedDto);
+        Assertions.assertEquals(expected,actual);
+    }
+    @Test
+    void updateShouldThrowRepositoryException() {
+        TagDto expectedDto = new TagDto(1L,"update",null,false,ACTIVE.name());
+        Tag expected = new Tag(1L,"update",null,ACTIVE.name());
+
+        when(modelMapper.toEntity(expectedDto)).thenReturn(expected);
+        when(repository.findById(expected.getId())).thenReturn(Optional.of(entity));
+        when(repository.existsByName(expected.getName())).thenReturn(true);
+        Assertions.assertThrows(RepositoryException.class, () -> service.update(expectedDto));
     }
 }

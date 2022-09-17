@@ -25,6 +25,7 @@ import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_
 import static com.epam.esm.exception.ServiceExceptionCode.SERVICE_BAD_ORDER_USER;
 import static com.epam.esm.exception.ServiceExceptionCode.SERVICE_BAD_STATUS;
 import static com.epam.esm.validator.GiftValidator.isStringEmpty;
+import static com.epam.esm.validator.SortValidator.getValidSort;
 
 
 @Service
@@ -95,7 +96,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll(int page, int size, String sort, String direction) {
-        return Collections.emptyList();
+        return repository.findAll(PageRequest.of(page,size,getValidSort(sort,direction)))
+                .toList();
     }
 
     public List<Order> findAll(int page, int size, String sort, String direction,String username) {

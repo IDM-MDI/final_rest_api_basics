@@ -4,11 +4,7 @@ import com.epam.esm.builder.impl.GiftCertificateBuilder;
 import com.epam.esm.builder.impl.OrderBuilder;
 import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.config.PersistenceConfig;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Role;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
@@ -123,8 +115,7 @@ class OrderRepositoryTest {
     @Test
     void getTop() {
         init();
-        List<Order> top = repository.getTop(PageRequest.of(0,100));
-
+        List<Order> top = repository.getTop(PageRequest.of(0,3));
         assertTrue(isTopByPrice(top));
     }
 
@@ -145,6 +136,25 @@ class OrderRepositoryTest {
         Assertions.assertTrue(isTopByTag(top));
     }
 
+    @Test
+    void findOrdersByUserAndStatus() {
+        init();
+        User user = userRepository.findUserByUsername("testUser1").orElseThrow();
+        String status = "ACTIVE";
+        List<Order> orders = repository.findOrdersByUserAndStatus(user,status,PageRequest.of(0,2));
+        Assertions.assertTrue(isOrdersByStatus(orders,status));
+    }
+
+    private boolean isOrdersByStatus(List<Order> orders,String status) {
+        for (Order order : orders) {
+            if(!order.getStatus().equals(status)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     private boolean isTopByPrice(List<Order> top) {
         boolean result = true;
         int prevPrice = Integer.MAX_VALUE;
@@ -159,6 +169,7 @@ class OrderRepositoryTest {
         }
         return result;
     }
+
     private boolean isTopByTag(List<Tag> top) {
         int max = Integer.MAX_VALUE;
 

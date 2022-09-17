@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.builder.impl.GiftCertificateBuilder;
+import com.epam.esm.builder.impl.OrderBuilder;
 import com.epam.esm.builder.impl.TagBuilder;
 import com.epam.esm.builder.impl.UserBuilder;
 import com.epam.esm.dto.GiftCertificateDto;
@@ -11,6 +12,7 @@ import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
@@ -26,6 +28,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,10 +38,10 @@ import java.util.Optional;
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
 import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
+import static com.epam.esm.exception.ServiceExceptionCode.SERVICE_BAD_STATUS;
+import static com.epam.esm.validator.SortValidator.getValidSort;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -49,7 +53,9 @@ class OrderServiceImplTest {
     @Mock
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
     @Mock
-    private UserServiceImpl userServiceImpl = Mockito.mock(UserServiceImpl.class);
+    private UserServiceImpl userService = Mockito.mock(UserServiceImpl.class);
+    @Mock
+    private GiftCertificateServiceImpl giftService = Mockito.mock(GiftCertificateServiceImpl.class);
     @Mock
     private GiftCertificateModelMapper mapper = Mockito.mock(GiftCertificateModelMapper.class);
 
@@ -80,7 +86,14 @@ class OrderServiceImplTest {
                 "test",
                 new BigDecimal("0"),
                 1,
-                null,null,null,ACTIVE.name()
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                ACTIVE.name()
         );
         giftDto = giftMapper.toDto(giftEntity);
         dto = new OrderDto(
@@ -105,38 +118,92 @@ class OrderServiceImplTest {
     @SneakyThrows
     @Test
     void save() {
-        when(userRepository.findById(dto.getUserId()))
-                .thenReturn(Optional.of(userEntity));
-        when(giftRepository.findById(dto.getGiftId()))
-                .thenReturn(Optional.of(giftEntity));
+        when(userService.findById(dto.getUserId()))
+                .thenReturn(userEntity);
+        when(giftService.findById(dto.getGiftId()))
+                .thenReturn(giftEntity);
         when(repository.save(any())).thenReturn(entity);
 
         Order actual = service.save(dto);
         Assertions.assertEquals(entity,actual);
     }
 
+    @SneakyThrows
     @Test
-    void saveShouldThrowException() {
-        when(userRepository.findById(dto.getUserId()))
-                .thenReturn(Optional.empty());
-        when(giftRepository.findById(dto.getGiftId()))
-                .thenReturn(Optional.empty());
-        Assertions.assertThrows(RepositoryException.class,() -> service.save(dto), REPOSITORY_NOTHING_FIND_BY_ID.toString());
+    void update() {
+        Order expected = new OrderBuilder()
+                .setId(entity.getId())
+                .setGift(entity.getGift())
+                .setUser(entity.getUser())
+                .setPrice(entity.getPrice())
+                .setStatus(DELETED.name())
+                .setPurchaseTime(entity.getPurchaseTime()).build();
+        OrderDto updatedDto = new OrderDto(
+                expected.getId(),
+                expected.getPrice(),
+                expected.getPurchaseTime(),
+                giftMapper.toDto(expected.getGift()),
+                expected.getGift().getId(),
+                expected.getUser().getId(),
+                expected.getStatus()
+        );
+        long id = expected.getId();
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
+        when(repository.save(entity)).thenReturn(expected);
+        Order actual = service.update(updatedDto);
+        Assertions.assertEquals(expected,actual);
     }
 
     @Test
-    void update() {
-        Assertions.assertNull(service.update(new OrderDto()));
+    void updateShouldThrowServiceException() {
+        Order expected = new OrderBuilder()
+                .setId(entity.getId())
+                .setGift(entity.getGift())
+                .setUser(entity.getUser())
+                .setPrice(entity.getPrice())
+                .setStatus(DELETED.name())
+                .setPurchaseTime(entity.getPurchaseTime()).build();
+        OrderDto updatedDto = new OrderDto(
+                expected.getId(),
+                expected.getPrice(),
+                expected.getPurchaseTime(),
+                giftMapper.toDto(expected.getGift()),
+                expected.getGift().getId(),
+                expected.getUser().getId(),
+                null
+        );
+        long id = expected.getId();
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
+        Assertions.assertThrows(ServiceException.class,() -> service.update(updatedDto), SERVICE_BAD_STATUS.toString());
     }
 
     @Test
     void findAll() {
-        Assertions.assertTrue(service.findAll(0,0,"").isEmpty());
+        int page = 0;
+        int size = 1;
+        String sort = "id";
+        String direction = "asc";
+        when(repository.findAll(PageRequest.of(page,size,getValidSort(sort,direction))))
+                .thenReturn(new PageImpl<>(List.of(entity)));
+        List<Order> actual = service.findAll(page, size, sort, direction);
+        Assertions.assertEquals(actual.size(), size);
     }
 
+    @SneakyThrows
     @Test
     void findById() {
-        Assertions.assertNull(service.findById(1));
+        long id = entity.getId();
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
+        Order actual = service.findById(id);
+        Assertions.assertEquals(entity,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void findByIdShouldThrowRepositoryException() {
+        long id = entity.getId();
+        when(repository.findById(id)).thenReturn(Optional.empty());
+        Assertions.assertThrows(RepositoryException.class,() -> service.findById(id),REPOSITORY_NOTHING_FIND_BY_ID.toString());
     }
 
     @Test
@@ -155,6 +222,6 @@ class OrderServiceImplTest {
 
     @Test
     void findByStatus() {
-        Assertions.assertTrue(service.findByStatus(1,1,"id",DELETED.name()).isEmpty());
+        Assertions.assertTrue(service.findByStatus(1,1,"id","asc",DELETED.name()).isEmpty());
     }
 }

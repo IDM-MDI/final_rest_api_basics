@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
-        return repository.findByStatus(statusName,PageRequest.of(page, size, SortValidator.getValidSort(sort,direction)));
+        return repository.findUsersByStatus(statusName,PageRequest.of(page, size, SortValidator.getValidSort(sort,direction)));
     }
     public UserDto login(AuthenticationDto authenticationDto) {
         UserDto user = findUserDtoByUsername(authenticationDto.getUsername());

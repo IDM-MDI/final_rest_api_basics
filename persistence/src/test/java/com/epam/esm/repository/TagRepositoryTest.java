@@ -14,6 +14,7 @@ import java.util.List;
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest()
 @ContextConfiguration(classes= PersistenceConfig.class)
@@ -56,12 +57,24 @@ class TagRepositoryTest {
     void findByStatus() {
         init();
         assertEquals(
-                tagRepository.findByStatus(ACTIVE.name(), PageRequest.of(0, 1))
+                tagRepository.findTagsByStatus(ACTIVE.name(), PageRequest.of(0, 1))
                                 .stream()
                                 .findAny()
                                 .orElseThrow()
                                 .getStatus(),
                 ACTIVE.name()
         );
+    }
+
+    @Test
+    void existsByName() {
+        init();
+        assertTrue(tagRepository.existsByName("testTag1"));
+    }
+
+    @Test
+    void findRandomTag() {
+        init();
+        assertTrue(tagRepository.findRandomTag(PageRequest.of(0, 1)).stream().findFirst().isPresent());
     }
 }

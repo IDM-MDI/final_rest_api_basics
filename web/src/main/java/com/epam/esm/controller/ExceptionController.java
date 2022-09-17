@@ -21,9 +21,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.validation.ConstraintViolationException;
 
-import static com.epam.esm.exception.ExceptionCode.BAD_MEDIA_TYPE;
-import static com.epam.esm.exception.ExceptionCode.BAD_PATH_ID;
-import static com.epam.esm.exception.ExceptionCode.METHOD_NOT_ALLOWED;
+import static com.epam.esm.exception.ExceptionCode.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 

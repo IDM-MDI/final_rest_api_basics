@@ -1,6 +1,9 @@
 package com.epam.esm.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import java.io.Serializable;

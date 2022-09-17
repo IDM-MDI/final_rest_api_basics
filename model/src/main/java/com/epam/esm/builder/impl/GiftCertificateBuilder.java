@@ -122,6 +122,10 @@ public class GiftCertificateBuilder implements ModelBuilder {
         createDate = null;
         updateDate = null;
         tagList = null;
+        mainImage = null;
+        secondImage = null;
+        thirdImage = null;
+        shop = null;
         status = null;
     }
 }

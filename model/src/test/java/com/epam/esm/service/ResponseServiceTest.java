@@ -4,8 +4,6 @@ import com.epam.esm.dto.ResponseDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ResponseServiceTest {
     private static final ResponseService service = new ResponseService();
 

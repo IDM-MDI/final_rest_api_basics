@@ -11,15 +11,14 @@ class TagValidatorTest {
 
     @Test
     void isTagEqualsToDB() {
-        Tag tagFromDB = new Tag(1L,"tag",null);
-        Tag tag = new Tag(2L,"tag",null);
+        Tag tagFromDB = new Tag(1L,"tag",null,null);
+        Tag tag = new Tag(2L,"tag",null,null);
         Assertions.assertTrue(TagValidator.isTagEqualsToDB(tagFromDB,tag));
     }
 
     @Test
     void isListTagEmpty() {
-        List<Tag> emptyTag = new ArrayList<>();
-        Assertions.assertTrue(TagValidator.isListTagEmpty(emptyTag));
+        Assertions.assertTrue(TagValidator.isListTagEmpty(new ArrayList<>()));
     }
     @Test
     void isListTagNotEmpty() {

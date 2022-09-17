@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -31,18 +32,15 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
+@ActiveProfiles({"test","prod"})
 class TagControllerTest {
     @Autowired
     private TagController controller;
@@ -61,7 +59,7 @@ class TagControllerTest {
     @Autowired
     private ResponseService responseService;
 
-    private TagDto tag = new TagDto(1L,"test",null);
+    private TagDto tag = new TagDto(1L,"test",null,false,ACTIVE.name());
     private UserDto user = new UserDto(
             1L,
             "usernameTest",
@@ -90,9 +88,10 @@ class TagControllerTest {
         int pageNumber = 0;
         int size = 10;
         String sort = "id";
+        String direction = "asc";
 
-        when(service.findByActiveStatus(pageNumber,size,sort)).thenReturn(page);
-        doNothing().when(hateoas).setTagHateoas(page);
+        when(service.findByActiveStatus(pageNumber,size,sort,direction)).thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         mockMvc.perform(get("/api/v1/tags"))
                 .andDo(print())
@@ -112,7 +111,7 @@ class TagControllerTest {
         when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
                 .thenReturn(jwtUser);
         when(service.save(tag)).thenReturn(page);
-        doNothing().when(hateoas).setTagHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         mockMvc.perform(post("/api/v1/tags").with(csrf())
                         .header("Authorization","Bearer " + token)
@@ -135,7 +134,7 @@ class TagControllerTest {
         when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
                 .thenReturn(jwtUser);
         when(service.delete(tag.getId())).thenReturn(page);
-        doNothing().when(hateoas).setTagHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         mockMvc.perform(delete("/api/v1/tags/1").with(csrf())
                         .header("Authorization","Bearer " + token))
@@ -151,7 +150,7 @@ class TagControllerTest {
     @Test
     void getByIdTag() {
         when(service.findById(tag.getId())).thenReturn(page);
-        doNothing().when(hateoas).setTagHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         mockMvc.perform(get("/api/v1/tags/1"))
                 .andDo(print())
@@ -166,9 +165,11 @@ class TagControllerTest {
     @Test
     void search() {
         when(service.findByParam(tag)).thenReturn(page);
-        doNothing().when(hateoas).setTagHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
-        mockMvc.perform(get("/api/v1/tags/search?id=" + tag.getId() + "&name=" + tag.getName()))
+        mockMvc.perform(get("/api/v1/tags/search?id=" + tag.getId() +
+                        "&name=" + tag.getName() +
+                        "&status=" + tag.getStatus()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))

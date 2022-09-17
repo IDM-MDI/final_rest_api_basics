@@ -84,13 +84,12 @@ class GiftCertificateRepositoryTest {
     }
 
     @Test
-    void testFindByTagListIn() {
+    void findByTagListInPageable() {
         init();
         Tag expectedTag = tagRepository.findByName("testTag1")
                                     .orElseThrow();
 
         GiftCertificate expected = builder
-                                        .setId(1L)
                                         .setName("test1")
                                         .setDescription("test1")
                                         .setDuration(1)
@@ -103,10 +102,7 @@ class GiftCertificateRepositoryTest {
                                                  .stream()
                                                  .findAny()
                                                  .orElseThrow();
-        actual.setCreateDate(null);
-        actual.setUpdateDate(null);
-
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected.getName(), actual.getName());
     }
 
     @Test
@@ -133,7 +129,7 @@ class GiftCertificateRepositoryTest {
         actual.setCreateDate(null);
         actual.setUpdateDate(null);
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected.getName(),actual.getName());
     }
 
     private void init() {

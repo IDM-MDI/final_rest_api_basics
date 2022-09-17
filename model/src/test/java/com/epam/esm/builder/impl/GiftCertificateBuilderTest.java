@@ -2,11 +2,7 @@ package com.epam.esm.builder.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -83,6 +79,34 @@ class GiftCertificateBuilderTest {
 
     @Test
     @Order(10)
+    void setMainImage() {
+        GiftCertificateBuilder actual = builder.setMainImage(new byte[]{1,1,1,1,1});
+        Assertions.assertEquals(builder,actual);
+    }
+
+    @Test
+    @Order(11)
+    void setSecondImage() {
+        GiftCertificateBuilder actual = builder.setSecondImage(new byte[]{2,2,2,2,2});
+        Assertions.assertEquals(builder,actual);
+    }
+
+    @Test
+    @Order(12)
+    void setThirdImage() {
+        GiftCertificateBuilder actual = builder.setThirdImage(new byte[]{3,3,3,3,3});
+        Assertions.assertEquals(builder,actual);
+    }
+
+    @Test
+    @Order(13)
+    void setShop() {
+        GiftCertificateBuilder actual = builder.setShop("test shop");
+        Assertions.assertEquals(builder,actual);
+    }
+
+    @Test
+    @Order(14)
     void build() {
         GiftCertificate actual = builder.build();
         GiftCertificate expected = new GiftCertificate(
@@ -94,16 +118,16 @@ class GiftCertificateBuilderTest {
                 LocalDateTime.of(2000,1, 1,0,5),
                 LocalDateTime.of(1,1,1,1,1),
                 List.of(new Tag(1L,"testTag",null,"testStatus")),
-                null,
-                null,
-                null,
-                null,
+                "test shop",
+                new byte[]{1,1,1,1,1},
+                new byte[]{2,2,2,2,2},
+                new byte[]{3,3,3,3,3},
                 "testStatus");
         Assertions.assertEquals(expected,actual);
     }
 
     @Test
-    @Order(11)
+    @Order(15)
     void clear() {
         GiftCertificate actual = builder.build();
         GiftCertificate expected = new GiftCertificate(

@@ -17,10 +17,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     List<User> findUsersByOrdersEmpty();
 
-    @Query( value = "SELECT * FROM users WHERE status = ?1",
-            countQuery = "SELECT count(*) FROM users WHERE status = ?1",
-            nativeQuery = true)
-    List<User> findByStatus(String status, Pageable pageable);
+    List<User> findUsersByStatus(String status, Pageable pageable);
 
     Optional<User> findUserByUsername(String username);
 

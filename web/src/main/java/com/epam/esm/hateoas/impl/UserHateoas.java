@@ -9,9 +9,7 @@ import com.epam.esm.hateoas.HateoasDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.epam.esm.hateoas.links.UserLinks.getAllUser;
-import static com.epam.esm.hateoas.links.UserLinks.getByIdLink;
-import static com.epam.esm.hateoas.links.UserLinks.getTopUsers;
+import static com.epam.esm.hateoas.links.UserLinks.*;
 
 @Component
 public class UserHateoas extends HateoasDTO<UserDto> {

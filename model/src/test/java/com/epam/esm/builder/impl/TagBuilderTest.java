@@ -1,11 +1,7 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.entity.Tag;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TagBuilderTest {
@@ -35,14 +31,21 @@ class TagBuilderTest {
 
     @Test
     @Order(4)
-    void build() {
-        Tag actual = builder.build();
-        Tag expected = new Tag(1L,"testTag",null,"testStatus");
-        Assertions.assertEquals(expected,actual);
+    void setMainImage() {
+        TagBuilder actual = builder.setMainImage(new byte[]{1,1,1,1});
+        Assertions.assertEquals(builder,actual);
     }
 
     @Test
     @Order(5)
+    void build() {
+        Tag actual = builder.build();
+        Tag expected = new Tag(1L,"testTag",new byte[]{1,1,1,1},"testStatus");
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    @Order(6)
     void clear() {
         Tag actual = builder.build();
         Tag expected = new Tag(null,null,null,null);

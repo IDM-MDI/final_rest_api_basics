@@ -1,8 +1,10 @@
 package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -18,7 +20,7 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Length(min = 2,max = 42)
     private String username;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JsonIgnore
+//    @JsonIgnore
     private String password;
     private List<OrderDto> orders;
     private String status;

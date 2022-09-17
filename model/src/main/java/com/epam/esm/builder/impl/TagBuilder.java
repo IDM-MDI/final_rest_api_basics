@@ -42,6 +42,7 @@ public class TagBuilder implements ModelBuilder {
     public void clear() {
         id = null;
         name = null;
+        mainImage = null;
         status = null;
     }
 }

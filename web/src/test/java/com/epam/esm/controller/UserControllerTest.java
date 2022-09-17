@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -31,12 +32,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
+@ActiveProfiles({"test","prod"})
 class UserControllerTest {
 
     private final MediaType halJson = MediaType.valueOf("application/hal+json");
@@ -68,7 +68,7 @@ class UserControllerTest {
     private UserDto dto = new UserDto(
             1L,
             "usernameTest",
-            "passwordTest",
+            null,
             null,
             ACTIVE.name(),
             List.of(new RoleDto(1L,"ADMIN"),new RoleDto(2L,"USER")),
@@ -97,17 +97,17 @@ class UserControllerTest {
         int pageNumber = 0;
         int size = 10;
         String sort = "id";
+        String direction = "asc";
 
-        when(service.findByActiveStatus(pageNumber,size,sort)).thenReturn(page);
-        doNothing().when(hateoas).setUserHateoas(page);
+        when(service.findByActiveStatus(pageNumber,size,sort,direction)).thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         this.mockMvc.perform(get("/api/v1/users"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.content[0].id", anything()))
-                .andExpect(jsonPath("$.content[0].username", anything()))
-                .andExpect(jsonPath("$.content[0].password", anything())
+                .andExpect(jsonPath("$.content[0].username", anything())
                 );
     }
 
@@ -115,17 +115,16 @@ class UserControllerTest {
     @Test
     void registration() {
         when(service.save(dto)).thenReturn(page);
-        doNothing().when(hateoas).setUserHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         this.mockMvc.perform(post("/api/v1/users").with(csrf())
-                        .contentType(halJsonUTF)
+                        .contentType(halJson)
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.content[0].id", anything()))
-                .andExpect(jsonPath("$.content[0].username", anything()))
-                .andExpect(jsonPath("$.content[0].password", anything())
+                .andExpect(jsonPath("$.content[0].username", anything())
                 );
     }
 
@@ -133,15 +132,14 @@ class UserControllerTest {
     @Test
     void getByIdUser() {
         when(service.findById(dto.getId())).thenReturn(page);
-        doNothing().when(hateoas).setUserHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         this.mockMvc.perform(get("/api/v1/users/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.content[0].id", anything()))
-                .andExpect(jsonPath("$.content[0].username", anything()))
-                .andExpect(jsonPath("$.content[0].password", anything())
+                .andExpect(jsonPath("$.content[0].username", anything())
                 );
     }
 
@@ -149,15 +147,14 @@ class UserControllerTest {
     @Test
     void getTopUsers() {
         when(service.findTop()).thenReturn(page);
-        doNothing().when(hateoas).setUserHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         this.mockMvc.perform(get("/api/v1/users/top"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.content[0].id", anything()))
-                .andExpect(jsonPath("$.content[0].username", anything()))
-                .andExpect(jsonPath("$.content[0].password", anything())
+                .andExpect(jsonPath("$.content[0].username", anything())
                 );
     }
 
@@ -169,7 +166,7 @@ class UserControllerTest {
         user.setUsername(dto.getUsername());
 
         when(service.findByParam(user)).thenReturn(page);
-        doNothing().when(hateoas).setUserHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         this.mockMvc.perform(get("/api/v1/users/search")
                         .param("id",String.valueOf(dto.getId()))
@@ -178,8 +175,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.content[0].id", anything()))
-                .andExpect(jsonPath("$.content[0].username", anything()))
-                .andExpect(jsonPath("$.content[0].password", anything())
+                .andExpect(jsonPath("$.content[0].username", anything())
                 );
     }
 }

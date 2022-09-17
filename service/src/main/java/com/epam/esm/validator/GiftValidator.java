@@ -2,7 +2,6 @@ package com.epam.esm.validator;
 
 import com.epam.esm.entity.GiftCertificate;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +41,7 @@ public class GiftValidator {
                 updatable.getPrice() == null ? fromDB.getPrice() : updatable.getPrice(),
                 updatable.getDuration() == null ? fromDB.getDuration() : updatable.getDuration(),
                 fromDB.getCreateDate(),
-                LocalDateTime.now(),
+                fromDB.getUpdateDate(),
                 ListValidator.isListEmpty(updatable.getTagList())? fromDB.getTagList() : updatable.getTagList(),
                 isStringEmpty(updatable.getShop())? fromDB.getShop() : updatable.getShop(),
                 updatable.getMainImage() == null? fromDB.getMainImage() : updatable.getMainImage(),

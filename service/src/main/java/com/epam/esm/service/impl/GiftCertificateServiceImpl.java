@@ -25,10 +25,7 @@ import static com.epam.esm.dto.ResponseTemplate.IS_ALREADY_EXIST;
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
 import static com.epam.esm.exception.RepositoryExceptionCode.*;
-import static com.epam.esm.validator.GiftValidator.findEquals;
-import static com.epam.esm.validator.GiftValidator.isGiftEmpty;
-import static com.epam.esm.validator.GiftValidator.isStringEmpty;
-import static com.epam.esm.validator.GiftValidator.uniteEntities;
+import static com.epam.esm.validator.GiftValidator.*;
 import static com.epam.esm.validator.ListValidator.isListEmpty;
 import static com.epam.esm.validator.SortValidator.getValidSort;
 import static com.epam.esm.validator.TagValidator.isListTagEmpty;
@@ -127,17 +124,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> findByParam(GiftCertificateDto dto) throws RepositoryException {
-        List<GiftCertificate> result;
         GiftCertificate entity = mapper.toEntity(dto);
-
-        result = findByGift(entity);
-        result = findByTagAndEntity(result,entity);
-
-        if(isListEmpty(result)) {
-            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_PARAM.toString());
-        }
-
-        return result;
+        return findByTagAndEntity(findByGift(entity),entity);
     }
 
     public byte[] getImageByID(long id,String name) throws RepositoryException {
@@ -177,9 +165,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return repository.findByName(dto.getName()).isPresent();
     }
 
-    private List<GiftCertificate> findByTagAndEntity(List<GiftCertificate> fromDB,GiftCertificate desired) {
-        if(isListTagEmpty(desired.getTagList()) || isListEmpty(fromDB)) {
-            return fromDB;
+    private List<GiftCertificate> findByTagAndEntity(List<GiftCertificate> fromDB,GiftCertificate desired) throws RepositoryException {
+        if(isListTagEmpty(desired.getTagList()) && isListEmpty(fromDB)) {
+            throw new RepositoryException(REPOSITORY_NOTHING_FIND_BY_PARAM.toString());
         }
 
         GiftCertificateDto desiredDto = mapper.toDto(desired);

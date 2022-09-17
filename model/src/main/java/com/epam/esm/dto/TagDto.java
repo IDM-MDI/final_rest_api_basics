@@ -1,7 +1,10 @@
 package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.hateoas.RepresentationModel;

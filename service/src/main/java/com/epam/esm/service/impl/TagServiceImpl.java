@@ -22,9 +22,7 @@ import java.util.List;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_EXCEPTION;
-import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_WRONG_NAME;
+import static com.epam.esm.exception.RepositoryExceptionCode.*;
 import static com.epam.esm.validator.GiftValidator.isStringEmpty;
 
 @Service

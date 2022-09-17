@@ -21,6 +21,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
@@ -253,8 +254,10 @@ public class DataGenerator {
         List<Tag> tags = new ArrayList<>();
         long randomCount = RandomHandler.getRandomNumber(min,max);
         for (int j = 0; j < randomCount; j++) {
-            Optional<Tag> tagOptional = tagRepository.findRandomTag();
-            tagOptional.ifPresent(tags::add);
+            tagRepository.findRandomTag(PageRequest.of(0,1))
+                    .stream()
+                    .findFirst()
+                    .ifPresent(tags::add);
         }
         return tags;
     }
@@ -299,6 +302,7 @@ public class DataGenerator {
     }
     @SneakyThrows
     private List<UserDto> getRandomUsers() {
+        long tagCount = tagRepository.count();
         List<UserDto> result = new ArrayList<>();
 
         RoleDto admin = roleMapper.toDto(roleRepository.findRoleByName("ADMIN")
@@ -307,8 +311,10 @@ public class DataGenerator {
                 .orElseThrow());
         List<RoleDto> roleListAdmin = List.of(admin, user);
         List<RoleDto> roleListUser = List.of(user);
+
         ExecutorService service = Executors.newFixedThreadPool(4);
-        for (int i = 0; i < 1000 - tagRepository.count(); i++) {
+
+        for (int i = 0; i < 1000 - tagCount; i++) {
             int j = i;
             service.execute(()-> {
                 UserDto randomUser = getRandomUser();

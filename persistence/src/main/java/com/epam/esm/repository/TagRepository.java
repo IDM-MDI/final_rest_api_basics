@@ -21,9 +21,8 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     List<Tag> findTagsByStatus(String status, Pageable pageable);
     @Query(
-            value = "SELECT * FROM Tag ORDER BY RAND() LIMIT 1",
-            nativeQuery = true)
-    Optional<Tag> findRandomTag();
+            value = "SELECT t FROM Tag t ORDER BY function('RAND')")
+    List<Tag> findRandomTag(Pageable pageable);
     boolean existsByName(String name);
 
 }

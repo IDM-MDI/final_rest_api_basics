@@ -1,7 +1,9 @@
 package com.epam.esm.builder.impl;
 
 import com.epam.esm.builder.ModelBuilder;
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Role;
+import com.epam.esm.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

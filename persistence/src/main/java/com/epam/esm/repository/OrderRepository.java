@@ -13,12 +13,11 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query(value = "SELECT o.* " +
-            "FROM user_orders o " +
-            "JOIN users u on o.user_id = u.id " +
+    @Query(value = "SELECT o " +
+            "FROM Order o " +
+            "JOIN User u on o.user = u " +
             "GROUP BY u.id " +
-            "ORDER BY SUM(o.price) DESC",
-            nativeQuery = true)
+            "ORDER BY SUM(o.price) DESC")
     List<Order> getTop(Pageable pageable);
     @Query(value = "" +
             "SELECT t FROM Order o " +

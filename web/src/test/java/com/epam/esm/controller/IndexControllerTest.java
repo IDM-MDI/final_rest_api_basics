@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
+@ActiveProfiles({"test","prod"})
 class IndexControllerTest {
     @MockBean
     private LoginService loginService;
@@ -78,7 +80,7 @@ class IndexControllerTest {
         AuthenticationDto authentication = new AuthenticationDto("usernameTest","passwordTest");
 
         when(loginService.authenticate(authentication)).thenReturn(page);
-        doNothing().when(hateoas).setUserHateoas(page);
+        doNothing().when(hateoas).setHateoas(page);
 
         this.mockMvc.perform(post("/api/v1/login").with(csrf())
                         .contentType(halJsonUTF)
@@ -87,8 +89,7 @@ class IndexControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$.content[0].id",is(1)))
-                .andExpect(jsonPath("$.content[0].username",is(user.getUsername())))
-                .andExpect(jsonPath("$.content[0].password",is(user.getPassword()))
+                .andExpect(jsonPath("$.content[0].username",is(user.getUsername()))
                 );
     }
 }

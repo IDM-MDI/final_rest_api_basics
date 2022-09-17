@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {WebApplication.class, SecurityConfig.class})
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles({"test","prod"})
 class LoginServiceTest {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 

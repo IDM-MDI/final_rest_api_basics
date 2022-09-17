@@ -74,7 +74,7 @@ class UserRepositoryTest {
     @Test
     void findByStatus() {
         init();
-        User user = repository.findByStatus(ACTIVE.name(),PageRequest.of(0, 1)).stream().findAny().orElseThrow();
+        User user = repository.findUsersByStatus(ACTIVE.name(),PageRequest.of(0, 1)).stream().findAny().orElseThrow();
         assertEquals(ACTIVE.name(),user.getStatus());
     }
 
@@ -89,7 +89,6 @@ class UserRepositoryTest {
     @Test
     void existsByUsername() {
         init();
-        boolean expected = true;
         Assertions.assertTrue(repository.existsByUsername("testName"));
     }
 
