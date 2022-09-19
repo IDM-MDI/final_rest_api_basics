@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
@@ -26,7 +27,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PageTagServiceTest {
-
+    private static final int PAGE = 0;
+    private static final int SIZE = 0;
+    private static final String SORT = "ID";
+    private static final String DIRECTION = "asc";
     @Mock
     private ResponseService responseServiceMock = Mockito.mock(ResponseService.class);
     @Mock
@@ -104,21 +108,19 @@ class PageTagServiceTest {
 
     @Test
     void findByPage() {
-        int page = 1;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.TAG_ALL);
 
-        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction));
-        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null,ControllerType.TAG_ALL);
-
-        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
+        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
-        when(serviceMock.findAll(page,size,sort,direction)).thenReturn(entityList);
+        when(serviceMock.findAll(PAGE,SIZE,SORT,DIRECTION))
+                .thenReturn(entityList);
+        when(serviceMock.findAll(PAGE + 1,SIZE,SORT,DIRECTION))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
-        DtoPage<TagDto> actual = pageTagService.findByPage(page, size, sort, direction);
+        DtoPage<TagDto> actual = pageTagService.findByPage(PAGE, SIZE, SORT, DIRECTION);
         Assertions.assertEquals(expected,actual);
     }
 
@@ -140,42 +142,40 @@ class PageTagServiceTest {
 
     @Test
     void findByActiveStatus() {
-        int page = 1;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
+        String statusName = ACTIVE.name();
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.TAG_ALL);
 
-        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction));
-        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null,ControllerType.TAG_ALL);
-
-        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
+        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
-        when(serviceMock.findByStatus(page,size,sort, direction,ACTIVE.name())).thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE,SIZE,SORT, DIRECTION,statusName))
+                .thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE + 1,SIZE,SORT, DIRECTION,statusName))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
-        DtoPage<TagDto> actual = pageTagService.findByActiveStatus(page, size, sort, direction);
+        DtoPage<TagDto> actual = pageTagService.findByActiveStatus(PAGE, SIZE, SORT, DIRECTION);
         Assertions.assertEquals(expected,actual);
     }
 
     @Test
     void findUsersByStatus() {
-        int page = 1;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
         String statusName = DELETED.name();
 
-        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction));
-        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null, ControllerType.TAG_ALL);
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null, ControllerType.TAG_ALL);
 
-        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
+        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
-        when(serviceMock.findByStatus(page,size,sort,direction,statusName)).thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE,SIZE,SORT,DIRECTION,statusName))
+                .thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE + 1,SIZE,SORT,DIRECTION,statusName))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
-        DtoPage<TagDto> actual = pageTagService.findByStatus(page, size, sort, direction, statusName);
+        DtoPage<TagDto> actual = pageTagService.findByStatus(PAGE, SIZE, SORT, DIRECTION, statusName);
         Assertions.assertEquals(expected,actual);
     }
 
@@ -192,5 +192,20 @@ class PageTagServiceTest {
 
         DtoPage<TagDto> actual = pageTagService.findById(id);
         Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void getImageByID() {
+        long id = dto.getId();
+        byte[] expected = new byte[]{1, 1, 1, 1};
+
+        when(serviceMock.getImageByID(id)).thenReturn(expected);
+        byte[] actual = pageTagService.getImageByID(id);
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    void findTop() { //TODO: FINISH TEST
     }
 }

@@ -90,6 +90,8 @@ class PageUserServiceTest {
                 .thenReturn(responseDto);
         when(serviceMock.findAll(PAGE,SIZE,SORT,DIRECTION))
                 .thenReturn(entityList);
+        when(serviceMock.findAll(PAGE + 1,SIZE,SORT,DIRECTION))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
@@ -190,10 +192,6 @@ class PageUserServiceTest {
     @SneakyThrows
     @Test
     void findByActiveStatus() {
-        int PAGE = 1;
-        int SIZE = 1;
-        String SORT = "id";
-
         ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION));
         DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.USER_ALL);
 
@@ -201,6 +199,8 @@ class PageUserServiceTest {
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(PAGE,SIZE,SORT,DIRECTION,ACTIVE.name()))
                 .thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE + 1,SIZE,SORT,DIRECTION,ACTIVE.name()))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
@@ -211,9 +211,6 @@ class PageUserServiceTest {
     @SneakyThrows
     @Test
     void findUsersByStatus() {
-        int PAGE = 1;
-        int SIZE = 1;
-        String SORT = "id";
         String statusName = StatusName.DELETED.name();
 
         ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION));
@@ -223,6 +220,8 @@ class PageUserServiceTest {
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(PAGE,SIZE,SORT,DIRECTION,statusName))
                 .thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE + 1,SIZE,SORT,DIRECTION,statusName))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 

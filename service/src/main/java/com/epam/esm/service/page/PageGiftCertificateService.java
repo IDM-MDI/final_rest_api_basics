@@ -76,6 +76,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
                 .setSortBy(sort)
                 .setDirection(direction)
                 .setType(ControllerType.CERTIFICATE_BY_PAGE)
+                .setHasNext(!service.findAll(page + 1,size,sort,direction).isEmpty())
                 .build();
     }
 
@@ -146,7 +147,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
 
     private List<TagDto> createTagsByString(String tags) {
         return !tags.isBlank() ? Arrays.stream(tags.split(","))
-                .map((tagName) -> {
+                .map(tagName -> {
                     TagDto tag = new TagDto();
                     tag.setName(tagName);
                     return tag;

@@ -224,4 +224,12 @@ class OrderServiceImplTest {
     void findByStatus() {
         Assertions.assertTrue(service.findByStatus(1,1,"id","asc",DELETED.name()).isEmpty());
     }
+
+    @Test
+    void getCount() {
+        long expected = 1;
+        when(repository.count()).thenReturn(expected);
+        long actual = service.getCount();
+        Assertions.assertEquals(expected,actual);
+    }
 }

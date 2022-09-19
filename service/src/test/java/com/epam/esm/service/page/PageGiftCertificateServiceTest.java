@@ -2,7 +2,11 @@ package com.epam.esm.service.page;
 
 import com.epam.esm.builder.impl.GiftCertificateBuilder;
 import com.epam.esm.builder.impl.TagBuilder;
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.ControllerType;
+import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.ResponseDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.StatusName;
 import com.epam.esm.service.ResponseService;
@@ -19,17 +23,23 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.service.impl.GiftCertificateServiceImpl.GIFT_CERTIFICATE;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PageGiftCertificateServiceTest {
+
+    private static final int PAGE = 0;
+    private static final int SIZE = 0;
+    private static final String SORT = "ID";
+    private static final String DIRECTION = "asc";
+
     @Mock
     private GiftCertificateServiceImpl serviceMock;
     @Mock
@@ -136,7 +146,7 @@ class PageGiftCertificateServiceTest {
         ResponseDto responseDto = response.createdResponse(GIFT_CERTIFICATE + CREATED);
         DtoPage<GiftCertificateDto> expected = new DtoPage<>(List.of(dto),responseDto,0,0,null,null,false,null, ControllerType.CERTIFICATE_ADD);
 
-        when(responseServiceMock.createdResponse(anyString()))
+        when(responseServiceMock.createdResponse(GIFT_CERTIFICATE + CREATED))
                 .thenReturn(responseDto);
         when(serviceMock.save(dto)).thenReturn(entity);
         when(mapperMock.toDto(entity))
@@ -151,7 +161,7 @@ class PageGiftCertificateServiceTest {
     void delete() {
         ResponseDto responseDto = response.okResponse(GIFT_CERTIFICATE + DELETED);
         DtoPage<GiftCertificateDto> expected = new DtoPage<>(null,responseDto,0,0,null,null,false,null,ControllerType.CERTIFICATE_DELETE);
-        when(responseServiceMock.okResponse(anyString()))
+        when(responseServiceMock.okResponse(GIFT_CERTIFICATE + DELETED))
                 .thenReturn(responseDto);
         doNothing()
                 .when(serviceMock)
@@ -181,21 +191,19 @@ class PageGiftCertificateServiceTest {
     @SneakyThrows
     @Test
     void findByPage() {
-        int page = 1;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
-        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction));
-        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null,ControllerType.CERTIFICATE_BY_PAGE);
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.CERTIFICATE_BY_PAGE);
 
-        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
-        when(serviceMock.findAll(page, size, sort, direction))
+        when(serviceMock.findAll(PAGE, SIZE, SORT, DIRECTION))
                 .thenReturn(entityList);
+        when(serviceMock.findAll(PAGE + 1, SIZE, SORT, DIRECTION))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
-        DtoPage<GiftCertificateDto> actual = service.findByPage(page, size, sort, direction);
+        DtoPage<GiftCertificateDto> actual = service.findByPage(PAGE, SIZE, SORT, DIRECTION);
         Assertions.assertEquals(expected,actual);
     }
 
@@ -250,45 +258,41 @@ class PageGiftCertificateServiceTest {
     @SneakyThrows
     @Test
     void findByActiveStatus() {
-        int page = 1;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
+        String statusName = ACTIVE.name();
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,ACTIVE.name(),ControllerType.CERTIFICATE_ALL);
 
-        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction));
-        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,ACTIVE.name(),ControllerType.CERTIFICATE_ALL);
-
-        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
-        when(serviceMock.findByStatus(page, size, sort, direction, ACTIVE.name()))
+        when(serviceMock.findByStatus(PAGE, SIZE, SORT, DIRECTION, statusName))
                 .thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE + 1, SIZE, SORT, DIRECTION, statusName))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
-        DtoPage<GiftCertificateDto> actual = service.findByActiveStatus(page, size, sort, direction);
+        DtoPage<GiftCertificateDto> actual = service.findByActiveStatus(PAGE, SIZE, SORT, DIRECTION);
         Assertions.assertEquals(expected,actual);
     }
 
     @SneakyThrows
     @Test
     void findUsersByStatus() {
-        int page = 1;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
         String statusName = StatusName.DELETED.name();
 
-        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction));
-        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort, direction,false,statusName,ControllerType.CERTIFICATE_ALL);
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT, DIRECTION,false,statusName,ControllerType.CERTIFICATE_ALL);
 
-        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
-        when(serviceMock.findByStatus(page, size, sort, direction,statusName))
+        when(serviceMock.findByStatus(PAGE, SIZE, SORT, DIRECTION,statusName))
                 .thenReturn(entityList);
+        when(serviceMock.findByStatus(PAGE + 1, SIZE, SORT, DIRECTION,statusName))
+                .thenReturn(new ArrayList<>());
         when(mapperMock.toDtoList(entityList))
                 .thenReturn(dtoList);
 
-        DtoPage<GiftCertificateDto> actual = service.findByStatus(page, size, sort, direction,statusName);
+        DtoPage<GiftCertificateDto> actual = service.findByStatus(PAGE, SIZE, SORT, DIRECTION,statusName);
         Assertions.assertEquals(expected,actual);
     }
 
@@ -305,5 +309,25 @@ class PageGiftCertificateServiceTest {
 
         DtoPage<GiftCertificateDto> actual = service.findByParam(dto);
         Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void getImageByID() {
+        long id = dto.getId();
+        String name = "someName";
+        byte[] expected = new byte[]{1, 1, 1, 1};
+
+        when(serviceMock.getImageByID(id,name)).thenReturn(expected);
+        byte[] actual = service.getImageByID(id,name);
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    void findActiveByTag() {
+    }
+
+    @Test
+    void findByTag() {
     }
 }

@@ -278,4 +278,12 @@ class UserServiceImplTest {
         List<User> actual = service.findByStatus(page, size, sort, direction, statusName);
         Assertions.assertEquals(entityList, actual);
     }
+
+    @Test
+    void getCount() {
+        long expected = 1;
+        when(repository.count()).thenReturn(expected);
+        long actual = service.getCount();
+        Assertions.assertEquals(expected,actual);
+    }
 }

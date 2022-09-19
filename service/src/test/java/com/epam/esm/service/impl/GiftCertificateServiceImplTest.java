@@ -309,4 +309,12 @@ class GiftCertificateServiceImplTest {
         when(mapperMock.toEntity(dto)).thenReturn(emptyGift);
         Assertions.assertThrows(RepositoryException.class,()->service.findByParam(dto));
     }
+
+    @Test
+    void getCount() {
+        long expected = 1;
+        when(repositoryMock.count()).thenReturn(expected);
+        long actual = service.getCount();
+        Assertions.assertEquals(expected,actual);
+    }
 }

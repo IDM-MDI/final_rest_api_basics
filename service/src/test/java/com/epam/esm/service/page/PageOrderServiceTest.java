@@ -35,6 +35,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PageOrderServiceTest {
+    private static final int PAGE = 0;
+    private static final int SIZE = 0;
+    private static final String SORT = "ID";
+    private static final String DIRECTION = "asc";
     @Mock
     private OrderServiceImpl serviceMock = Mockito.mock(OrderServiceImpl.class);
     @Mock
@@ -167,21 +171,16 @@ class PageOrderServiceTest {
 
     @Test
     void findByPage() {
-        int page = 0;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
-
-        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction));
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION));
         DtoPage<OrderDto> expected = new DtoPage<>(
-                List.of(dto),responseDto,size,page,sort,direction,false,null,null
+                List.of(dto),responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,null
         );
 
-        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction))).thenReturn(responseDto);
-        when(serviceMock.findAll(page,size,sort,direction)).thenReturn(List.of(entity));
+        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION))).thenReturn(responseDto);
+        when(serviceMock.findAll(PAGE,SIZE,SORT,DIRECTION)).thenReturn(List.of(entity));
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 
-        DtoPage<OrderDto> actual = pageOrderService.findByPage(page,size,sort,direction);
+        DtoPage<OrderDto> actual = pageOrderService.findByPage(PAGE,SIZE,SORT,DIRECTION);
         Assertions.assertEquals(expected,actual);
     }
 
@@ -218,43 +217,32 @@ class PageOrderServiceTest {
 
     @Test
     void findByActiveStatus() {
-        int page = 0;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
-        ResponseDto responseDto = responseService.okResponse(
-                ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-        );
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION));
         DtoPage<OrderDto> expected = new DtoPage<>(
-                List.of(dto),responseDto,size,page,sort,direction,false,null,null
+                List.of(dto),responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,null
         );
 
-        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction)))
+        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
-        when(serviceMock.findByStatus(page,size,sort,direction,ACTIVE.name())).thenReturn(List.of(entity));
+        when(serviceMock.findByStatus(PAGE,SIZE,SORT,DIRECTION,ACTIVE.name())).thenReturn(List.of(entity));
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 
-        DtoPage<OrderDto> actual = pageOrderService.findByActiveStatus(page,size,sort,direction);
+        DtoPage<OrderDto> actual = pageOrderService.findByActiveStatus(PAGE,SIZE,SORT,DIRECTION);
         Assertions.assertEquals(expected,actual);
     }
 
     @Test
     void findUsersByStatus() {
-        int page = 0;
-        int size = 1;
-        String sort = "id";
-        String direction = "asc";
-
-        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction));
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION));
         DtoPage<OrderDto> expected = new DtoPage<>(
-                List.of(dto),responseDto,size,page,sort,direction,false,null,null
+                List.of(dto),responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,null
         );
 
-        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction))).thenReturn(responseDto);
-        when(serviceMock.findByStatus(page,size,sort,direction,ACTIVE.name())).thenReturn(List.of(entity));
+        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION))).thenReturn(responseDto);
+        when(serviceMock.findByStatus(PAGE,SIZE,SORT,DIRECTION,ACTIVE.name())).thenReturn(List.of(entity));
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 
-        DtoPage<OrderDto> actual = pageOrderService.findByStatus(page,size,sort,direction,ACTIVE.name());
+        DtoPage<OrderDto> actual = pageOrderService.findByStatus(PAGE,SIZE,SORT,DIRECTION,ACTIVE.name());
         Assertions.assertEquals(expected,actual);
     }
 }

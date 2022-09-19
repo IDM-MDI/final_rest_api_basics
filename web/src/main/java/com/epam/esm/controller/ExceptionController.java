@@ -31,7 +31,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * This class need to catch exceptions
  * @return custom one.
  */
-@CrossOrigin
+@CrossOrigin()
 @RestControllerAdvice
 @Profile("prod")
 public class ExceptionController {

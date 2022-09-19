@@ -208,4 +208,11 @@ class TagServiceImplTest {
         when(repository.existsByName(expected.getName())).thenReturn(true);
         Assertions.assertThrows(RepositoryException.class, () -> service.update(expectedDto));
     }
+    @Test
+    void getCount() {
+        long expected = 1;
+        when(repository.count()).thenReturn(expected);
+        long actual = service.getCount();
+        Assertions.assertEquals(expected,actual);
+    }
 }
