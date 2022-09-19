@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order update(OrderDto dto, String username) throws RepositoryException, ServiceException {
         User user = userService.findUserByUsername(username);
-        if(!(dto.getUserId() == user.getId())) {
+        if(dto.getUserId() != user.getId()) {
             throw new ServiceException(SERVICE_BAD_ORDER_USER.toString());
         }
         return update(dto);

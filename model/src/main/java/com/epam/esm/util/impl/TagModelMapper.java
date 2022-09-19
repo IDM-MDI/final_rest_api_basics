@@ -7,8 +7,11 @@ import com.epam.esm.util.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
 import java.util.List;
+
+import static com.epam.esm.validator.ImageValidator.getByteFromImage;
+import static com.epam.esm.validator.ImageValidator.getStringFromImage;
+import static com.epam.esm.validator.ImageValidator.isBytesNull;
 
 @Component
 public class TagModelMapper implements ModelMapper<Tag, TagDto> {
@@ -23,7 +26,7 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
     public Tag toEntity(TagDto dto) {
         return dto == null ? null : builder.setId(dto.getId())
                                            .setName(dto.getName())
-                                           .setMainImage(dto.getMainImage() != null? Base64.getDecoder().decode(dto.getMainImage()) : null)
+                                           .setMainImage(getByteFromImage(dto.getMainImage()))
                                            .setStatus(dto.getStatus())
                                            .build();
     }
@@ -33,8 +36,8 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
         return entity == null ? null : new TagDto(
                 entity.getId(),
                 entity.getName(),
-                entity.getMainImage() != null? Base64.getEncoder().encodeToString(entity.getMainImage()) : null,
-                entity.getMainImage() != null,
+                getStringFromImage(entity.getMainImage()),
+                isBytesNull(entity.getMainImage()),
                 entity.getStatus());
     }
 

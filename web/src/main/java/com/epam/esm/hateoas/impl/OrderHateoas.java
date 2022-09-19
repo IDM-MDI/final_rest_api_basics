@@ -1,5 +1,6 @@
 package com.epam.esm.hateoas.impl;
 
+import com.epam.esm.dto.ControllerType;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.exception.RepositoryException;
@@ -27,8 +28,8 @@ public class OrderHateoas extends HateoasDTO<OrderDto> {
     @SneakyThrows
     @Override
     protected void addPageLink(DtoPage<OrderDto> dtoPage, int number, int size, String sort, String direction, String rel) {
-        switch (dtoPage.getType()) {
-            case ORDER_USER -> OrderLinks.getOrdersByUser(dtoPage,number,size,sort,direction,rel);
+        if (dtoPage.getType() == ControllerType.ORDER_USER) {
+            OrderLinks.getOrdersByUser(dtoPage, number, size, sort, direction, rel);
         }
     }
 }

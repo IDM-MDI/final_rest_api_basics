@@ -9,6 +9,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.DataGeneratorException;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.RoleRepository;
@@ -43,10 +44,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
+import static com.epam.esm.exception.ServiceExceptionCode.SERVICE_DATA_GENERATOR;
 
 @Component
 @Slf4j
 public class DataGenerator {
+    private static final String FILE_WRITE_PATH = "D:\\Project\\users.txt";
     private static final String URI_OF_VOCABULARY = "http://www-personal.umich.edu/~jlawler/wordlist";
     private static final String URI_OF_ADDRESS_API = "https://random-data-api.com/api/v2/addresses";
     private static final String URI_OF_USER_API = "https://random-data-api.com/api/v2/users";
@@ -124,7 +127,8 @@ public class DataGenerator {
                 try {
                     userServiceImpl.save(user);
                 } catch (RepositoryException e) {
-                    throw new RuntimeException("ERROR WHILE CREATING RANDOM USERS");
+                    log.error("ERROR WHILE CREATING RANDOM USERS");
+                    throw new DataGeneratorException(SERVICE_DATA_GENERATOR.toString());
                 }
             });
         }
@@ -171,7 +175,7 @@ public class DataGenerator {
                             .build();
                     giftRepository.save(gift);
                 } catch (DataIntegrityViolationException e) {
-                    System.out.println(e.getRootCause().getMessage());
+                    log.error(e.getMessage());
                 }
             });
         }
@@ -194,20 +198,18 @@ public class DataGenerator {
                 .stream()
                 .toList());
         ExecutorService service = Executors.newFixedThreadPool(5);
-        tagsWord.forEach(i -> {
-            service.execute(() -> {
-                try {
-                    Tag tag = TAG_BUILDER
-                            .setName(i)
-                            .setStatus(ACTIVE.name())
-                            .setMainImage(getRandomImage())
-                            .build();
-                    tagRepository.save(tag);
-                } catch (DataIntegrityViolationException e) {
-                    System.out.println(e.getMessage());
-                }
-            });
-        });
+        tagsWord.forEach(i -> service.execute(() -> {
+            try {
+                Tag tag = TAG_BUILDER
+                        .setName(i)
+                        .setStatus(ACTIVE.name())
+                        .setMainImage(getRandomImage())
+                        .build();
+                tagRepository.save(tag);
+            } catch (DataIntegrityViolationException e) {
+                log.error(e.getMessage());
+            }
+        }));
         service.shutdown();
         service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
@@ -276,20 +278,13 @@ public class DataGenerator {
         return gifts;
     }
     private byte[] getRandomImage() {
-        try {
-            URL url = new URL(URI_OF_RANDOM_IMG);
+        try(InputStream stream = new URL(URI_OF_RANDOM_IMG).openStream()) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            byte[] chunk = new byte[4096];
+            int bytesRead;
 
-            try {
-                byte[] chunk = new byte[4096];
-                int bytesRead;
-                InputStream stream = url.openStream();
-
-                while ((bytesRead = stream.read(chunk)) > 0) {
-                    outputStream.write(chunk, 0, bytesRead);
-                }
-            } catch (IOException e) {
-                return null;
+            while ((bytesRead = stream.read(chunk)) > 0) {
+                outputStream.write(chunk, 0, bytesRead);
             }
             return outputStream.toByteArray();
         } catch (IOException ex) {
@@ -329,11 +324,11 @@ public class DataGenerator {
 
     @SneakyThrows
     private void writeUsersPrincipalToFile(List<UserDto> users) {
-        String path = "D:\\Project\\users.txt";
-        try(FileWriter myWriter = new FileWriter(path)) {
+        try(FileWriter myWriter = new FileWriter(FILE_WRITE_PATH)) {
             for (UserDto user : users) {
+                String admin = user.getRoles().size() == 2 ? "YES" : "NO";
                 myWriter.write("username : " + user.getUsername() +
-                        " password: " + user.getPassword() + " ADMIN: " + (user.getRoles().size() == 2?"YES": "NO") + "\n");
+                        " password: " + user.getPassword() + " ADMIN: " + admin + "\n");
             }
         }
     }

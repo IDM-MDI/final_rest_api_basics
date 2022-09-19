@@ -3,6 +3,7 @@ package com.epam.esm.security.jwt;
 import com.epam.esm.config.WebApplication;
 import com.epam.esm.dto.RoleDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.WebException;
 import com.epam.esm.security.JwtUserDetailsService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -73,9 +74,19 @@ class JwtTokenProviderTest {
         Assertions.assertEquals(token,actualToken);
     }
 
+    @Test
+    void resolveTokenShouldNull() {
+        Assertions.assertNull(provider.resolveToken(request));
+    }
+
     @SneakyThrows
     @Test
     void validateToken() {
         Assertions.assertTrue(provider.validateToken(provider.createToken(user)));
+    }
+
+    @Test
+    void validateTokenShouldThrowWebException() {
+        Assertions.assertThrows(WebException.class, () -> provider.validateToken(""));
     }
 }

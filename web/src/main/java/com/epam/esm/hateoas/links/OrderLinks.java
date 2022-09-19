@@ -11,7 +11,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class OrderLinks {
-
+    private OrderLinks() {}
     public static void getOrdersByUser(DtoPage<OrderDto> dto, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException, WebException {
         dto.add(linkTo(
                 methodOn(ORDER_CONTROLLER)

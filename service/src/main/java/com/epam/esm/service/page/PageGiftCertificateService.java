@@ -69,9 +69,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
     @Override
     public DtoPage<GiftCertificateDto> findByPage(int page, int size, String sort, String direction) throws RepositoryException {
         return new DtoPageBuilder<GiftCertificateDto>()
-                .setResponse(responseService.okResponse(
-                        GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
                 .setContent(mapper.toDtoList(service.findAll(page,size,sort,direction)))
                 .setSize(size)
                 .setNumberOfPage(page)
@@ -108,9 +106,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
     @Override
     public DtoPage<GiftCertificateDto> findByStatus(int page, int size, String sort, String direction,String statusName) throws RepositoryException {
         return new DtoPageBuilder<GiftCertificateDto>()
-                .setResponse(responseService.okResponse(
-                        GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
                 .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,direction,statusName)))
                 .setSize(size)
                 .setNumberOfPage(page)
@@ -136,9 +132,7 @@ public class PageGiftCertificateService implements PageService<DtoPage<GiftCerti
 
     public DtoPage<GiftCertificateDto> findByTag(long id, String status, Integer page, Integer size, String sort, String direction) throws RepositoryException {
         return new DtoPageBuilder<GiftCertificateDto>()
-                .setResponse(responseService.okResponse(
-                        GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
                 .setContent(mapper.toDtoList(service.findByTag(id,status,page,size,sort)))
                 .setSize(size)
                 .setNumberOfPage(page)

@@ -24,8 +24,6 @@ public class UrlJsonParser {
         } catch (IOException e) {
             return null;
         }
-         //May be an array, may be an object.
-//        String zipcode = rootobj.get("zip_code").getAsString(); //just grab the zipcode
     }
 
     public static String readStringFromJson(JsonObject object,String name) {

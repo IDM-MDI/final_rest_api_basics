@@ -1,5 +1,6 @@
 package com.epam.esm.hateoas.impl;
 
+import com.epam.esm.dto.ControllerType;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
@@ -33,9 +34,11 @@ public class GiftCertificateHateoas extends HateoasDTO<GiftCertificateDto> {
 
     @Override
     protected void addPageLink(DtoPage<GiftCertificateDto> dtoPage, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException {
-        switch (dtoPage.getType()) {
-            case CERTIFICATE_ALL -> getAllLink(dtoPage, number, size, sort, direction, rel);
-            case CERTIFICATE_BY_TAG -> getCertificateByTag(dtoPage,number, size, sort, direction, rel);
+        if (dtoPage.getType() == ControllerType.CERTIFICATE_ALL) {
+            getAllLink(dtoPage, number, size, sort, direction, rel);
+        }
+        else if (dtoPage.getType() == ControllerType.CERTIFICATE_BY_TAG) {
+            getCertificateByTag(dtoPage, number, size, sort, direction, rel);
         }
     }
 }

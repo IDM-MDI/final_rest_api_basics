@@ -10,6 +10,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class GiftCertificateLinks {
+    private GiftCertificateLinks() {}
     public static void updateLink(GiftCertificateDto dto) throws RepositoryException, ServiceException {
         dto.add(linkTo(
                 methodOn(GIFT_CERTIFICATE_CONTROLLER)

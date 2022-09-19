@@ -12,4 +12,12 @@ public class ResponseTemplate {
     public static final String FOUND_BY_PARAM = "found by param";
     public static final String PAGE = "page: ";
     public static final String LOGGED_IN = "logged in";
+
+    public static String pageResponseTemplate(String entityName, int page, int size, String sort, String direction) {
+        return entityName + PAGE +
+                "page - " + page +
+                ", size - " + size +
+                ", sort -" + sort +
+                ", direction - " + direction;
+    }
 }

@@ -34,9 +34,7 @@ public class PageUserService implements PageService<DtoPage<UserDto>,UserDto> {
 
     public DtoPage<UserDto> findByPage(int page, int size, String sort, String direction) {
         return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(
-                        USER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(USER,page,size,sort,direction)))
                 .setContent(mapper.toDtoList(service.findAll(page,size,sort,direction)))
                 .setSize(size)
                 .setNumberOfPage(page)
@@ -101,9 +99,7 @@ public class PageUserService implements PageService<DtoPage<UserDto>,UserDto> {
     @Override
     public DtoPage<UserDto> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
         return new DtoPageBuilder<UserDto>()
-                .setResponse(responseService.okResponse(
-                        USER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(USER,page,size,sort,direction)))
                 .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,direction,statusName)))
                 .setSize(size)
                 .setNumberOfPage(page)

@@ -62,8 +62,7 @@ public class PageTagService implements PageService<DtoPage<TagDto>,TagDto> {
     @Override
     public DtoPage<TagDto> findByPage(int page, int size, String sort, String direction) {
         return builder
-                .setResponse(responseService.okResponse(
-                        TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort))
+                .setResponse(responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
                 .setContent(mapper.toDtoList(service.findAll(page,size,sort,direction)))
                 .setSize(size)
                 .setNumberOfPage(page)
@@ -89,8 +88,7 @@ public class PageTagService implements PageService<DtoPage<TagDto>,TagDto> {
     @Override
     public DtoPage<TagDto> findByStatus(int page, int size, String sort, String direction, String statusName) {
         return builder
-                .setResponse(responseService.okResponse(
-                        TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort))
+                .setResponse(responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
                 .setContent(mapper.toDtoList(service.findByStatus(page,size,sort,direction,statusName)))
                 .setSize(size)
                 .setNumberOfPage(page)

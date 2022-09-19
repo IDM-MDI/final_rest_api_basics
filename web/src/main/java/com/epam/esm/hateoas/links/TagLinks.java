@@ -10,7 +10,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class TagLinks {
-
+    private TagLinks() {}
     public static void addNewLink(TagDto dto) throws RepositoryException, ServiceException {
         dto.add(linkTo(
                 methodOn(TAG_CONTROLLER)

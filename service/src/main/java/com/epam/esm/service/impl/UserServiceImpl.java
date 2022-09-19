@@ -112,6 +112,7 @@ public class UserServiceImpl implements UserService {
     public List<User> findByStatus(int page, int size, String sort, String direction, String statusName) throws RepositoryException {
         return repository.findUsersByStatus(statusName,PageRequest.of(page, size, SortValidator.getValidSort(sort,direction)));
     }
+    @Transactional
     public UserDto login(AuthenticationDto authenticationDto) {
         UserDto user = findUserDtoByUsername(authenticationDto.getUsername());
         log.info("User: " + user.getUsername() + " sign in");

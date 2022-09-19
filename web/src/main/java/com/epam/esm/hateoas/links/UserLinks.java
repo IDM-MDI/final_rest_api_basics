@@ -10,6 +10,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class UserLinks {
+    private UserLinks() {}
     public static void getAllUser(DtoPage<UserDto> dtoPage, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException {
         dtoPage.add(linkTo(methodOn(USER_CONTROLLER).
                 getUsers(number, size, sort, direction)).
@@ -23,7 +24,7 @@ public class UserLinks {
                 .withSelfRel());
     }
 
-    public static void getTopUsers(DtoPage<UserDto> dtoPage, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException {
+    public static void getTopUsers(DtoPage<UserDto> dtoPage, String rel) throws ServiceException, RepositoryException {
         dtoPage.add(linkTo(
                 methodOn(USER_CONTROLLER)
                         .getTopUsers())

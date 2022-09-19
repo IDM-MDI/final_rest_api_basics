@@ -90,9 +90,7 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
 
     public DtoPage<OrderDto> findByPage(int page, int size, String sort, String direction,String username) {
         return new DtoPageBuilder<OrderDto>()
-                .setResponse(responseService.okResponse(
-                        ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction)))
                 .setContent(service.findAll(page,size,sort,direction,username).stream().map(this::mapper).toList())
                 .setSize(size)
                 .setNumberOfPage(page)
@@ -106,9 +104,7 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
     @Override
     public DtoPage<OrderDto> findByPage(int page, int size, String sort, String direction) {
         return new DtoPageBuilder<OrderDto>()
-                .setResponse(responseService.okResponse(
-                        ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction)))
                 .setContent(service.findAll(page,size,sort,direction).stream().map(this::mapper).toList())
                 .setSize(size)
                 .setNumberOfPage(page)
@@ -141,9 +137,7 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
     @Override
     public DtoPage<OrderDto> findByStatus(int page, int size, String sort, String direction, String statusName) {
         return new DtoPageBuilder<OrderDto>()
-                .setResponse(responseService.okResponse(
-                        ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-                ))
+                .setResponse(responseService.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction)))
                 .setContent(service.findByStatus(page,size,sort,direction,statusName).stream().map(this::mapper).toList())
                 .setSize(size)
                 .setNumberOfPage(page)

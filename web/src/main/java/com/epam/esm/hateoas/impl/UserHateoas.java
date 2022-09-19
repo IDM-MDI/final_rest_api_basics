@@ -1,5 +1,6 @@
 package com.epam.esm.hateoas.impl;
 
+import com.epam.esm.dto.ControllerType;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
@@ -32,9 +33,11 @@ public class UserHateoas extends HateoasDTO<UserDto> {
 
     @Override
     protected void addPageLink(DtoPage<UserDto> dtoPage, int number, int size, String sort, String direction, String rel) throws ServiceException, RepositoryException {
-        switch (dtoPage.getType()) {
-            case USER_ALL -> getAllUser(dtoPage, number, size, sort, direction, rel);
-            case USER_BY_TOP -> getTopUsers(dtoPage,number, size, sort, direction, rel);
+        if (dtoPage.getType() == ControllerType.USER_ALL) {
+            getAllUser(dtoPage, number, size, sort, direction, rel);
+        }
+        else if (dtoPage.getType() == ControllerType.USER_BY_TOP) {
+            getTopUsers(dtoPage, rel);
         }
     }
 }
