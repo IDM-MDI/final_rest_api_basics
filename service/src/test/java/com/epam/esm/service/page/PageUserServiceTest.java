@@ -83,10 +83,10 @@ class PageUserServiceTest {
 
     @Test
     void findByPage() {
-        ResponseDto responseDto = responseService.okResponse(USER + ResponseTemplate.PAGE + "page " + PAGE + ", size" + SIZE + ", sort" + SORT);
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION));
         DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.USER_ALL);
 
-        when(responseServiceMock.okResponse(USER + ResponseTemplate.PAGE + "page " + PAGE + ", size" + SIZE + ", sort" + SORT))
+        when(responseServiceMock.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
         when(serviceMock.findAll(PAGE,SIZE,SORT,DIRECTION))
                 .thenReturn(entityList);
@@ -194,10 +194,10 @@ class PageUserServiceTest {
         int SIZE = 1;
         String SORT = "id";
 
-        ResponseDto responseDto = responseService.okResponse(USER + ResponseTemplate.PAGE + "page " + PAGE + ", size" + SIZE + ", sort" + SORT);
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION));
         DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.USER_ALL);
 
-        when(responseServiceMock.okResponse(USER + ResponseTemplate.PAGE + "page " + PAGE + ", size" + SIZE + ", sort" + SORT))
+        when(responseServiceMock.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(PAGE,SIZE,SORT,DIRECTION,ACTIVE.name()))
                 .thenReturn(entityList);
@@ -216,10 +216,10 @@ class PageUserServiceTest {
         String SORT = "id";
         String statusName = StatusName.DELETED.name();
 
-        ResponseDto responseDto = responseService.okResponse(USER + ResponseTemplate.PAGE + "page " + PAGE + ", size" + SIZE + ", sort" + SORT);
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION));
         DtoPage<UserDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.USER_ALL);
 
-        when(responseServiceMock.okResponse(USER + ResponseTemplate.PAGE + "page " + PAGE + ", size" + SIZE + ", sort" + SORT))
+        when(responseServiceMock.okResponse(pageResponseTemplate(USER,PAGE,SIZE,SORT,DIRECTION)))
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(PAGE,SIZE,SORT,DIRECTION,statusName))
                 .thenReturn(entityList);

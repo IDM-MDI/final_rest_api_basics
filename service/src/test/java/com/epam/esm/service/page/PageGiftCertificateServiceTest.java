@@ -185,10 +185,10 @@ class PageGiftCertificateServiceTest {
         int size = 1;
         String sort = "id";
         String direction = "asc";
-        ResponseDto responseDto = response.okResponse(GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort);
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction));
         DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null,ControllerType.CERTIFICATE_BY_PAGE);
 
-        when(responseServiceMock.okResponse(anyString()))
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
                 .thenReturn(responseDto);
         when(serviceMock.findAll(page, size, sort, direction))
                 .thenReturn(entityList);
@@ -255,10 +255,10 @@ class PageGiftCertificateServiceTest {
         String sort = "id";
         String direction = "asc";
 
-        ResponseDto responseDto = response.okResponse(GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort);
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction));
         DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,ACTIVE.name(),ControllerType.CERTIFICATE_ALL);
 
-        when(responseServiceMock.okResponse(anyString()))
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(page, size, sort, direction, ACTIVE.name()))
                 .thenReturn(entityList);
@@ -278,10 +278,10 @@ class PageGiftCertificateServiceTest {
         String direction = "asc";
         String statusName = StatusName.DELETED.name();
 
-        ResponseDto responseDto = response.okResponse(GIFT_CERTIFICATE + PAGE + "page - " + page + ", size - " + size + ", sort -" + sort);
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction));
         DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort, direction,false,statusName,ControllerType.CERTIFICATE_ALL);
 
-        when(responseServiceMock.okResponse(anyString()))
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,page,size,sort,direction)))
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(page, size, sort, direction,statusName))
                 .thenReturn(entityList);

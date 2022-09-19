@@ -11,7 +11,7 @@ import java.util.List;
 
 import static com.epam.esm.validator.ImageValidator.getByteFromImage;
 import static com.epam.esm.validator.ImageValidator.getStringFromImage;
-import static com.epam.esm.validator.ImageValidator.isBytesNull;
+import static com.epam.esm.validator.ImageValidator.isBytesNotNull;
 
 @Component
 public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, GiftCertificateDto> {
@@ -60,9 +60,9 @@ public class GiftCertificateModelMapper implements ModelMapper<GiftCertificate, 
         result.setMainImage(getStringFromImage(entity.getMainImage()));
         result.setMainImage(getStringFromImage(entity.getSecondImage()));
         result.setMainImage(getStringFromImage(entity.getThirdImage()));
-        result.setHaveMainImage(isBytesNull(entity.getMainImage()));
-        result.setHaveSecondImage(isBytesNull(entity.getSecondImage()));
-        result.setHaveThirdImage(isBytesNull(entity.getThirdImage()));
+        result.setHaveMainImage(isBytesNotNull(entity.getMainImage()));
+        result.setHaveSecondImage(isBytesNotNull(entity.getSecondImage()));
+        result.setHaveThirdImage(isBytesNotNull(entity.getThirdImage()));
         result.setStatus(entity.getStatus());
         return result;
     }

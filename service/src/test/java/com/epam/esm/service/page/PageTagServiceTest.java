@@ -109,10 +109,10 @@ class PageTagServiceTest {
         String sort = "id";
         String direction = "asc";
 
-        ResponseDto responseDto = responseService.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort);
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction));
         DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null,ControllerType.TAG_ALL);
 
-        when(responseServiceMock.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort))
+        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
                 .thenReturn(responseDto);
         when(serviceMock.findAll(page,size,sort,direction)).thenReturn(entityList);
         when(mapperMock.toDtoList(entityList))
@@ -145,10 +145,10 @@ class PageTagServiceTest {
         String sort = "id";
         String direction = "asc";
 
-        ResponseDto responseDto = responseService.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort);
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction));
         DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null,ControllerType.TAG_ALL);
 
-        when(responseServiceMock.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort))
+        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(page,size,sort, direction,ACTIVE.name())).thenReturn(entityList);
         when(mapperMock.toDtoList(entityList))
@@ -166,10 +166,10 @@ class PageTagServiceTest {
         String direction = "asc";
         String statusName = DELETED.name();
 
-        ResponseDto responseDto = responseService.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort);
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(TAG,page,size,sort,direction));
         DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,size,page,sort,direction,false,null, ControllerType.TAG_ALL);
 
-        when(responseServiceMock.okResponse(TAG + PAGE + "page " + page + ", size " + size + ", sort " + sort))
+        when(responseServiceMock.okResponse(pageResponseTemplate(TAG,page,size,sort,direction)))
                 .thenReturn(responseDto);
         when(serviceMock.findByStatus(page,size,sort,direction,statusName)).thenReturn(entityList);
         when(mapperMock.toDtoList(entityList))

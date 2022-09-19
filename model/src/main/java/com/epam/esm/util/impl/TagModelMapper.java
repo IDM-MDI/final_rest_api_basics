@@ -11,7 +11,7 @@ import java.util.List;
 
 import static com.epam.esm.validator.ImageValidator.getByteFromImage;
 import static com.epam.esm.validator.ImageValidator.getStringFromImage;
-import static com.epam.esm.validator.ImageValidator.isBytesNull;
+import static com.epam.esm.validator.ImageValidator.isBytesNotNull;
 
 @Component
 public class TagModelMapper implements ModelMapper<Tag, TagDto> {
@@ -37,7 +37,7 @@ public class TagModelMapper implements ModelMapper<Tag, TagDto> {
                 entity.getId(),
                 entity.getName(),
                 getStringFromImage(entity.getMainImage()),
-                isBytesNull(entity.getMainImage()),
+                isBytesNotNull(entity.getMainImage()),
                 entity.getStatus());
     }
 

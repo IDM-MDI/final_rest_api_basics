@@ -172,14 +172,12 @@ class PageOrderServiceTest {
         String sort = "id";
         String direction = "asc";
 
-        ResponseDto responseDto = responseService.okResponse(
-                ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-        );
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction));
         DtoPage<OrderDto> expected = new DtoPage<>(
                 List.of(dto),responseDto,size,page,sort,direction,false,null,null
         );
 
-        when(responseServiceMock.okResponse(ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort)).thenReturn(responseDto);
+        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction))).thenReturn(responseDto);
         when(serviceMock.findAll(page,size,sort,direction)).thenReturn(List.of(entity));
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 
@@ -231,7 +229,8 @@ class PageOrderServiceTest {
                 List.of(dto),responseDto,size,page,sort,direction,false,null,null
         );
 
-        when(responseServiceMock.okResponse(ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort)).thenReturn(responseDto);
+        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction)))
+                .thenReturn(responseDto);
         when(serviceMock.findByStatus(page,size,sort,direction,ACTIVE.name())).thenReturn(List.of(entity));
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 
@@ -246,14 +245,12 @@ class PageOrderServiceTest {
         String sort = "id";
         String direction = "asc";
 
-        ResponseDto responseDto = responseService.okResponse(
-                ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort
-        );
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction));
         DtoPage<OrderDto> expected = new DtoPage<>(
                 List.of(dto),responseDto,size,page,sort,direction,false,null,null
         );
 
-        when(responseServiceMock.okResponse(ORDER + PAGE + "page " + page + ", size" + size + ", sort" + sort)).thenReturn(responseDto);
+        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,page,size,sort,direction))).thenReturn(responseDto);
         when(serviceMock.findByStatus(page,size,sort,direction,ACTIVE.name())).thenReturn(List.of(entity));
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 

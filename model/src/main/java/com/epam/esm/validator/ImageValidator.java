@@ -13,13 +13,13 @@ public class ImageValidator {
     }
 
     public static String getStringFromImage(byte[] image) {
-        if(isBytesNull(image)) {
+        if(!isBytesNotNull(image)) {
             return null;
         }
         return Base64.getEncoder().encodeToString(image);
     }
 
-    public static boolean isBytesNull(byte[] image) {
-        return image == null || image.length <= 0;
+    public static boolean isBytesNotNull(byte[] image) {
+        return image != null && image.length > 0;
     }
 }
