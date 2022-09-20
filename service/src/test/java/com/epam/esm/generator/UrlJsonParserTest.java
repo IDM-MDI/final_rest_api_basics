@@ -2,9 +2,7 @@ package com.epam.esm.generator;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class UrlJsonParserTest {
+class UrlJsonParserTest {   //TODO: FINISH TEST
 
     @Test
     void readJsonFromUrl() {

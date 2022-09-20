@@ -21,7 +21,7 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test","prod"})
 class GiftCertificateHateoasTest {
-    private static final int PAGE = 0;
+    private static final int PAGE = 1;
     private static final int SIZE = 0;
     private static final String SORT = "ID";
     private static final String DIRECTION = "asc";
@@ -93,7 +93,7 @@ class GiftCertificateHateoasTest {
                 PAGE,
                 SORT,
                 DIRECTION,
-                false,
+                true,
                 null,
                 ControllerType.CERTIFICATE_ALL
         );
@@ -111,8 +111,8 @@ class GiftCertificateHateoasTest {
                 PAGE,
                 SORT,
                 DIRECTION,
-                false,
-                null,
+                true,
+                "1",
                 ControllerType.CERTIFICATE_BY_TAG
         );
         hateoas.setHateoas(expected);

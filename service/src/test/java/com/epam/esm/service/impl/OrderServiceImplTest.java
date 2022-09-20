@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -230,6 +231,106 @@ class OrderServiceImplTest {
         long expected = 1;
         when(repository.count()).thenReturn(expected);
         long actual = service.getCount();
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void updateWithUsername() {
+        Order expected = new OrderBuilder()
+                .setId(entity.getId())
+                .setGift(entity.getGift())
+                .setUser(entity.getUser())
+                .setPrice(entity.getPrice())
+                .setStatus(DELETED.name())
+                .setPurchaseTime(entity.getPurchaseTime()).build();
+        OrderDto updatedDto = new OrderDto(
+                expected.getId(),
+                expected.getPrice(),
+                expected.getPurchaseTime(),
+                giftMapper.toDto(expected.getGift()),
+                expected.getGift().getId(),
+                expected.getUser().getId(),
+                expected.getStatus()
+        );
+        long id = expected.getId();
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
+        when(repository.save(entity)).thenReturn(expected);
+        when(userService.findUserByUsername(userEntity.getUsername()))
+                .thenReturn(userEntity);
+        Order actual = service.update(updatedDto,userEntity.getUsername());
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void updateWithUsernameShouldThrowServiceException() {
+        Order expected = new OrderBuilder()
+                .setId(entity.getId())
+                .setGift(entity.getGift())
+                .setUser(entity.getUser())
+                .setPrice(entity.getPrice())
+                .setStatus(DELETED.name())
+                .setPurchaseTime(entity.getPurchaseTime()).build();
+        OrderDto updatedDto = new OrderDto(
+                expected.getId(),
+                expected.getPrice(),
+                expected.getPurchaseTime(),
+                giftMapper.toDto(expected.getGift()),
+                expected.getGift().getId(),
+                expected.getUser().getId() + 1,
+                expected.getStatus()
+        );
+        long id = expected.getId();
+        when(userService.findUserByUsername(userEntity.getUsername()))
+                .thenReturn(userEntity);
+        Assertions.assertThrows(ServiceException.class, () -> service.update(updatedDto,userEntity.getUsername()));
+    }
+
+    @SneakyThrows
+    @Test
+    void deleteWithUsername() {
+        long id = 1;
+        when(userService.findUserByUsername(userEntity.getUsername()))
+                .thenReturn(userEntity);
+        when(repository.findById(id))
+                .thenReturn(Optional.of(entity));
+        doNothing().when(repository)
+                .setDelete(id,DELETED.name());
+        service.delete(id,userEntity.getUsername());
+        verify(repository).setDelete(id,DELETED.name());
+    }
+
+    @SneakyThrows
+    @Test
+    void deleteWithUsernameShouldThrowServiceException() {
+        long id = 1;
+        when(userService.findUserByUsername(userEntity.getUsername()))
+                .thenReturn(new User());
+        when(repository.findById(id))
+                .thenReturn(Optional.of(entity));
+        Assertions.assertThrows(ServiceException.class, () -> service.delete(id,userEntity.getUsername()));
+    }
+
+    @Test
+    void findAllWithUsername() {
+        int page = 0;
+        int size = 1;
+        String sort = "id";
+        String direction = "asc";
+        List<Order> expected = List.of(entity);
+
+        when(userService.findUserByUsername(userEntity.getUsername()))
+                .thenReturn(userEntity);
+        when(repository.findOrdersByUserAndStatus(
+                userEntity,
+                ACTIVE.name(),
+                PageRequest.of(page,size, Sort.by(
+                        Sort.Direction.valueOf(direction.toUpperCase()),
+                        sort)
+                ))).thenReturn(expected);
+
+        List<Order> actual = service.findAll(page, size, sort, direction, userEntity.getUsername());
         Assertions.assertEquals(expected,actual);
     }
 }

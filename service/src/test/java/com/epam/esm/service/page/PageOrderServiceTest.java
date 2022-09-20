@@ -25,6 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.esm.dto.ResponseTemplate.*;
@@ -178,6 +179,7 @@ class PageOrderServiceTest {
 
         when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION))).thenReturn(responseDto);
         when(serviceMock.findAll(PAGE,SIZE,SORT,DIRECTION)).thenReturn(List.of(entity));
+        when(serviceMock.findAll(PAGE + 1,SIZE,SORT,DIRECTION)).thenReturn(new ArrayList<>());
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 
         DtoPage<OrderDto> actual = pageOrderService.findByPage(PAGE,SIZE,SORT,DIRECTION);
@@ -243,6 +245,57 @@ class PageOrderServiceTest {
         when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
 
         DtoPage<OrderDto> actual = pageOrderService.findByStatus(PAGE,SIZE,SORT,DIRECTION,ACTIVE.name());
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void updateWithUsername() {
+        String username = userEntity.getUsername();
+
+        ResponseDto responseDto = responseService.createdResponse(ORDER + UPDATED);
+        DtoPage<OrderDto> expected = new DtoPage<>(
+                List.of(dto),responseDto,0,0,null,null,false,null,null
+        );
+
+        when(responseServiceMock.createdResponse(ORDER + UPDATED)).thenReturn(responseDto);
+        when(serviceMock.update(dto,username)).thenReturn(entity);
+        when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
+
+        DtoPage<OrderDto> actual = pageOrderService.update(username,dto,dto.getId());
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void deleteWithUsername() {
+        String username = userEntity.getUsername();
+        ResponseDto responseDto = responseService.okResponse(ORDER + DELETED);
+        DtoPage<OrderDto> expected = new DtoPage<>(
+                null,responseDto,0,0,null,null,false,null,null
+        );
+
+        when(responseServiceMock.okResponse(ORDER + DELETED)).thenReturn(responseDto);
+        doNothing().when(serviceMock).delete(dto.getId(),username);
+
+        DtoPage<OrderDto> actual = pageOrderService.delete(username,dto.getId());
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    void findByPageWithUsername() {
+        String username = userEntity.getUsername();
+        ResponseDto responseDto = responseService.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<OrderDto> expected = new DtoPage<>(
+                List.of(dto),responseDto,SIZE,PAGE,SORT,DIRECTION,false,null,ControllerType.ORDER_USER
+        );
+
+        when(responseServiceMock.okResponse(pageResponseTemplate(ORDER,PAGE,SIZE,SORT,DIRECTION))).thenReturn(responseDto);
+        when(serviceMock.findAll(PAGE,SIZE,SORT,DIRECTION, username)).thenReturn(List.of(entity));
+        when(serviceMock.findAll(PAGE + 1,SIZE,SORT,DIRECTION, username)).thenReturn(new ArrayList<>());
+        when(giftMapperMock.toDto(entity.getGift())).thenReturn(giftDto);
+
+        DtoPage<OrderDto> actual = pageOrderService.findByPage(PAGE,SIZE,SORT,DIRECTION, username);
         Assertions.assertEquals(expected,actual);
     }
 }

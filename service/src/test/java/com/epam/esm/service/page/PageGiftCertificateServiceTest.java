@@ -323,11 +323,47 @@ class PageGiftCertificateServiceTest {
         Assertions.assertEquals(expected,actual);
     }
 
+    @SneakyThrows
     @Test
     void findActiveByTag() {
+        long id = entity.getId();
+        String statusName = ACTIVE.name();
+
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT, DIRECTION,false,Long.toString(id),ControllerType.CERTIFICATE_BY_TAG);
+
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION)))
+                .thenReturn(responseDto);
+        when(serviceMock.findByTag(id,statusName, PAGE, SIZE, SORT))
+                .thenReturn(entityList);
+        when(serviceMock.findByTag(id,statusName, PAGE + 1, SIZE, SORT))
+                .thenReturn(new ArrayList<>());
+        when(mapperMock.toDtoList(entityList))
+                .thenReturn(dtoList);
+
+        DtoPage<GiftCertificateDto> actual = service.findActiveByTag(id, PAGE, SIZE, SORT, DIRECTION);
+        Assertions.assertEquals(expected,actual);
     }
 
+    @SneakyThrows
     @Test
     void findByTag() {
+        long id = entity.getId();
+        String statusName = StatusName.DELETED.name();
+
+        ResponseDto responseDto = response.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION));
+        DtoPage<GiftCertificateDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,SORT, DIRECTION,false,Long.toString(id),ControllerType.CERTIFICATE_BY_TAG);
+
+        when(responseServiceMock.okResponse(pageResponseTemplate(GIFT_CERTIFICATE,PAGE,SIZE,SORT,DIRECTION)))
+                .thenReturn(responseDto);
+        when(serviceMock.findByTag(id,statusName, PAGE, SIZE, SORT))
+                .thenReturn(entityList);
+        when(serviceMock.findByTag(id,statusName, PAGE + 1, SIZE, SORT))
+                .thenReturn(new ArrayList<>());
+        when(mapperMock.toDtoList(entityList))
+                .thenReturn(dtoList);
+
+        DtoPage<GiftCertificateDto> actual = service.findByTag(id, statusName, PAGE, SIZE, SORT, DIRECTION);
+        Assertions.assertEquals(expected,actual);
     }
 }

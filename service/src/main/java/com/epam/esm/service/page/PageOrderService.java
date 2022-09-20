@@ -110,6 +110,7 @@ public class PageOrderService implements PageService<DtoPage<OrderDto>,OrderDto>
                 .setNumberOfPage(page)
                 .setSortBy(sort)
                 .setDirection(direction)
+                .setHasNext(!service.findAll(page + 1,size,sort,direction).isEmpty())
                 .build();
     }
 

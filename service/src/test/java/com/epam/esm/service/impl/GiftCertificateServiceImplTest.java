@@ -5,6 +5,7 @@ import com.epam.esm.builder.impl.TagBuilder;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.GiftTagRepository;
@@ -23,18 +24,24 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
-import static com.epam.esm.exception.RepositoryExceptionCode.*;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NOTHING_FIND_BY_ID;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_NULL_POINTER;
+import static com.epam.esm.exception.RepositoryExceptionCode.REPOSITORY_SAVE_ERROR;
 import static com.epam.esm.validator.SortValidator.getValidSort;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
@@ -316,5 +323,66 @@ class GiftCertificateServiceImplTest {
         when(repositoryMock.count()).thenReturn(expected);
         long actual = service.getCount();
         Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void getImageByIDMain() {
+        GiftCertificate expectedEntity = new GiftCertificate();
+        expectedEntity.setMainImage(new byte[]{1,1,1,1});
+        String imageName = "main";
+        long id = dto.getId();
+
+        when(repositoryMock.findById(id)).thenReturn(Optional.of(expectedEntity));
+
+        byte[] actual = service.getImageByID(id,imageName);
+        Assertions.assertEquals(Arrays.toString(expectedEntity.getMainImage()),Arrays.toString(actual));
+    }
+
+    @SneakyThrows
+    @Test
+    void getImageByIDSecond() {
+        GiftCertificate expectedEntity = new GiftCertificate();
+        expectedEntity.setSecondImage(new byte[]{2,2,2,2});
+        String imageName = "second";
+        long id = dto.getId();
+
+        when(repositoryMock.findById(id)).thenReturn(Optional.of(expectedEntity));
+
+        byte[] actual = service.getImageByID(id,imageName);
+        Assertions.assertEquals(Arrays.toString(expectedEntity.getSecondImage()),Arrays.toString(actual));
+    }
+    @SneakyThrows
+    @Test
+    void getImageByIDMainThird() {
+        GiftCertificate expectedEntity = new GiftCertificate();
+        expectedEntity.setThirdImage(new byte[]{3,3,3,3});
+        String imageName = "third";
+        long id = dto.getId();
+
+        when(repositoryMock.findById(id)).thenReturn(Optional.of(expectedEntity));
+
+        byte[] actual = service.getImageByID(id,imageName);
+        Assertions.assertEquals(Arrays.toString(expectedEntity.getThirdImage()),Arrays.toString(actual));
+    }
+
+
+    @SneakyThrows
+    @Test
+    void findByTag() {
+        int page = 0;
+        int size = 1;
+        String sort = "id";
+        String statusName = ACTIVE.name();
+
+        Tag tag = entity.getTagList().stream().findFirst().orElseThrow();
+
+        when(tagServiceImplMock.findById(tag.getId()))
+                .thenReturn(tag);
+        when(repositoryMock.findByTagListInAndStatus(List.of(tag),statusName,PageRequest.of(page, size, Sort.by(sort))))
+                .thenReturn(entityList);
+
+        List<GiftCertificate> actual = service.findByTag(tag.getId(), statusName, page, size, sort);
+        Assertions.assertEquals(entityList,actual);
     }
 }
