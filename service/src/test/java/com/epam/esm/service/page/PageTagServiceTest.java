@@ -1,7 +1,11 @@
 package com.epam.esm.service.page;
 
 import com.epam.esm.builder.impl.TagBuilder;
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.ControllerType;
+import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.ResponseDto;
+import com.epam.esm.dto.ResponseTemplate;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.service.impl.TagServiceImpl;
@@ -18,7 +22,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epam.esm.dto.ResponseTemplate.*;
+import static com.epam.esm.dto.ResponseTemplate.FOUND_BY_ID;
+import static com.epam.esm.dto.ResponseTemplate.FOUND_BY_PARAM;
+import static com.epam.esm.dto.ResponseTemplate.pageResponseTemplate;
 import static com.epam.esm.entity.StatusName.ACTIVE;
 import static com.epam.esm.entity.StatusName.DELETED;
 import static com.epam.esm.service.impl.TagServiceImpl.TAG;
@@ -206,6 +212,24 @@ class PageTagServiceTest {
     }
 
     @Test
-    void findTop() { //TODO: FINISH TEST
+    void findTop() {
+        ResponseDto responseDto = responseService.okResponse(
+                TAG + ResponseTemplate.PAGE + "page " + PAGE + ", size " + SIZE
+        );
+        DtoPage<TagDto> expected = new DtoPage<>(dtoList,responseDto,SIZE,PAGE,null,null,false,null, ControllerType.TAG_TOP);
+
+        when(responseServiceMock.okResponse(
+                TAG + ResponseTemplate.PAGE + "page " + PAGE + ", size " + SIZE
+        ))
+                .thenReturn(responseDto);
+        when(serviceMock.findTop(PAGE,SIZE))
+                .thenReturn(entityList);
+        when(serviceMock.findTop(PAGE + 1,SIZE))
+                .thenReturn(new ArrayList<>());
+        when(mapperMock.toDtoList(entityList))
+                .thenReturn(dtoList);
+
+        DtoPage<TagDto> actual = pageTagService.findTop(PAGE, SIZE);
+        Assertions.assertEquals(expected,actual);
     }
 }

@@ -7,12 +7,16 @@ import com.epam.esm.dto.AuthenticationDto;
 import com.epam.esm.dto.DtoPage;
 import com.epam.esm.dto.RoleDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.WebException;
 import com.epam.esm.security.jwt.JwtTokenProvider;
+import com.epam.esm.security.jwt.JwtUserFactory;
 import com.epam.esm.service.page.PageUserService;
 import com.epam.esm.util.HashGenerator;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,10 +24,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {WebApplication.class, SecurityConfig.class})
@@ -89,5 +96,22 @@ class LoginServiceTest {
         DtoPage<UserDto> actual = loginService.authenticate(authDto);
         expected.getContent().get(0).setJwt(token);
         Assertions.assertEquals(expected,actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void getUsernameByContext() {
+        String expected = "test";
+        SecurityContextImpl context = new SecurityContextImpl(new UsernamePasswordAuthenticationToken(JwtUserFactory.create(user),null));
+        try(MockedStatic<SecurityContextHolder> securityContext = mockStatic(SecurityContextHolder.class)) {
+            when(SecurityContextHolder.getContext()).thenReturn(context);
+            String actual = loginService.getUsernameByContext();
+            Assertions.assertEquals(expected,actual);
+        }
+    }
+    @SneakyThrows
+    @Test
+    void getUsernameByContextShouldTrowWebException() {
+        Assertions.assertThrows(WebException.class,() -> loginService.getUsernameByContext());
     }
 }

@@ -92,4 +92,8 @@ class IndexControllerTest {
                 .andExpect(jsonPath("$.content[0].username",is(user.getUsername()))
                 );
     }
+
+    @Test
+    void jwtUserGuard() { //TODO: FINISH TEST
+    }
 }

@@ -124,4 +124,16 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.content[0].userId",is(Integer.valueOf(Long.toString(dto.getUserId())))))
                 .andExpect(jsonPath("$.response.code",is(200)));
     }
+
+    @Test
+    void getOrders() { //TODO: FINISH TEST
+    }
+
+    @Test
+    void updateOrder() { //TODO: FINISH TEST
+    }
+
+    @Test
+    void deleteOrder() { //TODO: FINISH TEST
+    }
 }

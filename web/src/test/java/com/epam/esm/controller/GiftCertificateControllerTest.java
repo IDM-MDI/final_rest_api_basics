@@ -220,4 +220,12 @@ class GiftCertificateControllerTest {
                 .andExpect(jsonPath("$.content[0].name",is(certificate.getName())))
                 .andExpect(jsonPath("$.response.code",is(200)));
     }
+
+    @Test
+    void getGiftCertificatesByTag() { //TODO: FINISH TEST
+    }
+
+    @Test
+    void getImageByID() { //TODO: FINISH TEST
+    }
 }

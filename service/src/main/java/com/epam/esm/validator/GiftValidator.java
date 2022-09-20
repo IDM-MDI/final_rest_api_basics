@@ -23,7 +23,7 @@ public class GiftValidator {
     }
 
     public static boolean isStringEmpty(String tags) {
-        return tags == null || tags.trim().isEmpty() || tags.isBlank();
+        return tags == null  || tags.isBlank();
     }
 
     public static boolean isGiftEmpty(GiftCertificate entity) {
@@ -46,7 +46,7 @@ public class GiftValidator {
                 isStringEmpty(updatable.getShop())? fromDB.getShop() : updatable.getShop(),
                 updatable.getMainImage() == null? fromDB.getMainImage() : updatable.getMainImage(),
                 updatable.getSecondImage() == null? fromDB.getSecondImage() : updatable.getSecondImage(),
-                updatable.getThirdImage() == null? fromDB.getSecondImage() : updatable.getThirdImage(),
+                updatable.getThirdImage() == null? fromDB.getThirdImage() : updatable.getThirdImage(),
                 isStringEmpty(updatable.getStatus())? fromDB.getStatus() : updatable.getStatus()
         );
     }

@@ -215,4 +215,26 @@ class TagServiceImplTest {
         long actual = service.getCount();
         Assertions.assertEquals(expected,actual);
     }
+
+    @SneakyThrows
+    @Test
+    void getImageByID() {
+        long id = dto.getId();
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
+
+        byte[] actual = service.getImageByID(id);
+        Assertions.assertEquals(entity.getMainImage(),actual);
+    }
+
+    @Test
+    void findTop() {
+        int page = 0;
+        int size = 1;
+
+        when(orderRepository.getTopTagByStatus(ACTIVE.name(),PageRequest.of(page,size)))
+                .thenReturn(entityList);
+
+        List<Tag> actual = service.findTop(page, size);
+        Assertions.assertEquals(entityList,actual);
+    }
 }

@@ -60,7 +60,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public DtoPage<OrderDto> updateOrder(@PathVariable @Min(1) long id) throws WebException, ServiceException, RepositoryException {
+    public DtoPage<OrderDto> deleteOrder(@PathVariable @Min(1) long id) throws WebException, ServiceException, RepositoryException {
         DtoPage<OrderDto> dtoPage = service.delete(loginService.getUsernameByContext(),id);
         hateoas.setHateoas(dtoPage);
         return dtoPage;

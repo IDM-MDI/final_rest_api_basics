@@ -177,4 +177,16 @@ class TagControllerTest {
                 .andExpect(jsonPath("$.content[0].name",is(tag.getName())))
                 .andExpect(jsonPath("$.response.code",is(200)));
     }
+
+    @Test
+    void getTopTags() { //TODO: FINISH TEST
+    }
+
+    @Test
+    void updateTag() { //TODO: FINISH TEST
+    }
+
+    @Test
+    void getImageByID() { //TODO: FINISH TEST
+    }
 }
