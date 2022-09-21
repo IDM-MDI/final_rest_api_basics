@@ -12,7 +12,6 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.impl.UserServiceImpl;
 import com.epam.esm.util.impl.RoleModelMapper;
-import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -137,14 +136,7 @@ class DataGeneratorTest {
         HttpClient client = mock(HttpClient.class);
 
         Role admin = new Role(1L,"ADMIN");
-        Role user = new Role(2L,"USER");
         RoleDto adminDto = new RoleDto(1L,"ADMIN");
-        RoleDto userDto = new RoleDto(2L,"USER");
-
-
-        JsonObject userObject = new JsonObject();
-        userObject.addProperty("username","testUsername");
-        userObject.addProperty("password","testPassword");
 
         Set<String> words = new HashSet<>(List.of("word1","word2","word3"));
 
