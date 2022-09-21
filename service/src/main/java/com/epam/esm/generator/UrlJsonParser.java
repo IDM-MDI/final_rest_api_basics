@@ -13,7 +13,7 @@ import java.net.URLConnection;
 
 
 public class UrlJsonParser {
-
+    private UrlJsonParser() {}
     public static JsonObject readJsonFromUrl(String url) {
         try {
             URL con = new URL(url);

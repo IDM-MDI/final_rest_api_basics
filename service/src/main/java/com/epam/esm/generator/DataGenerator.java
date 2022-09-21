@@ -297,7 +297,7 @@ public class DataGenerator {
     }
     @SneakyThrows
     private List<UserDto> getRandomUsers() {
-        long tagCount = tagRepository.count();
+        long tagCount = userRepository.count();
         List<UserDto> result = new ArrayList<>();
 
         RoleDto admin = roleMapper.toDto(roleRepository.findRoleByName("ADMIN")
