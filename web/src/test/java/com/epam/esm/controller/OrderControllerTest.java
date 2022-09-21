@@ -2,7 +2,13 @@ package com.epam.esm.controller;
 
 import com.epam.esm.builder.impl.DtoPageBuilder;
 import com.epam.esm.config.WebApplication;
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.ControllerType;
+import com.epam.esm.dto.DtoPage;
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.RoleDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.hateoas.impl.OrderHateoas;
 import com.epam.esm.security.JwtUserDetailsService;
 import com.epam.esm.security.jwt.JwtTokenProvider;
@@ -11,6 +17,7 @@ import com.epam.esm.security.jwt.JwtUserFactory;
 import com.epam.esm.service.LoginService;
 import com.epam.esm.service.ResponseService;
 import com.epam.esm.service.page.PageOrderService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +36,14 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = WebApplication.class)
 @AutoConfigureMockMvc
@@ -125,15 +137,90 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void getOrders() { //TODO: FINISH TEST
+    void getOrders() {
+        int pageNumber = 0;
+        int size = 10;
+        String sort = "id";
+        String direction = "asc";
+
+        String token = provider.createToken(user);
+        JwtUser jwtUser = JwtUserFactory.create(user);
+        DtoPage<OrderDto> page = new DtoPage<>(
+                List.of(dto),
+                responseService.okResponse("ok"),
+                size,pageNumber,sort,direction,false,null,ControllerType.ORDER_USER
+        );
+
+        when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
+                .thenReturn(jwtUser);
+        when(loginService.getUsernameByContext()).thenReturn(user.getUsername());
+        when(service.findByPage(pageNumber,size,sort,direction,user.getUsername()))
+                .thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
+
+        mockMvc.perform(get("/api/v1/order").with(csrf())
+                        .header("Authorization","Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$.content[0].id",is(Integer.valueOf(Long.toString(dto.getId())))))
+                .andExpect(jsonPath("$.content[0].price",is(dto.getPrice().intValue())))
+                .andExpect(jsonPath("$.content[0].giftId",is(Integer.valueOf(Long.toString(dto.getGiftId())))))
+                .andExpect(jsonPath("$.content[0].userId",is(Integer.valueOf(Long.toString(dto.getUserId())))))
+                .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void updateOrder() { //TODO: FINISH TEST
+    void updateOrder() {
+        long id = 1;
+        String token = provider.createToken(user);
+        JwtUser jwtUser = JwtUserFactory.create(user);
+
+        when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
+                .thenReturn(jwtUser);
+        when(loginService.getUsernameByContext()).thenReturn(user.getUsername());
+        when(service.update(user.getUsername(),dto,id)).thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
+
+        mockMvc.perform(patch("/api/v1/order/1").with(csrf())
+                        .contentType(halJsonUTF)
+                        .content(new ObjectMapper().writeValueAsString(dto))
+                        .header("Authorization","Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$.content[0].id",is(Integer.valueOf(Long.toString(dto.getId())))))
+                .andExpect(jsonPath("$.content[0].price",is(dto.getPrice().intValue())))
+                .andExpect(jsonPath("$.content[0].giftId",is(Integer.valueOf(Long.toString(dto.getGiftId())))))
+                .andExpect(jsonPath("$.content[0].userId",is(Integer.valueOf(Long.toString(dto.getUserId())))))
+                .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void deleteOrder() { //TODO: FINISH TEST
+    void deleteOrder() {
+        long id = 1;
+        String token = provider.createToken(user);
+        JwtUser jwtUser = JwtUserFactory.create(user);
+
+        when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
+                .thenReturn(jwtUser);
+        when(loginService.getUsernameByContext()).thenReturn(user.getUsername());
+        when(service.delete(user.getUsername(),id)).thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
+
+        mockMvc.perform(delete("/api/v1/order/1").with(csrf())
+                        .header("Authorization","Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$.content[0].id",is(Integer.valueOf(Long.toString(dto.getId())))))
+                .andExpect(jsonPath("$.content[0].price",is(dto.getPrice().intValue())))
+                .andExpect(jsonPath("$.content[0].giftId",is(Integer.valueOf(Long.toString(dto.getGiftId())))))
+                .andExpect(jsonPath("$.content[0].userId",is(Integer.valueOf(Long.toString(dto.getUserId())))))
+                .andExpect(jsonPath("$.response.code",is(200)));
     }
 }

@@ -221,11 +221,40 @@ class GiftCertificateControllerTest {
                 .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void getGiftCertificatesByTag() { //TODO: FINISH TEST
+    void getGiftCertificatesByTag() {
+        long id = 1;
+        int size = 10;
+        int pageNumber = 0;
+        String sort = "id";
+        String direction = "asc";
+
+        when(service.findActiveByTag(id,pageNumber,size,sort,direction))
+                .thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
+
+        mockMvc.perform(get("/api/v1/gifts/tag/" + id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$.content[0].id",is(certificate.getId().intValue())))
+                .andExpect(jsonPath("$.content[0].name",is(certificate.getName())))
+                .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void getImageByID() { //TODO: FINISH TEST
+    void getImageByID() {
+        long id = 1;
+        String name = "main";
+        byte[] image = new byte[]{1,1,1,1,1};
+
+        when(service.getImageByID(id,name)).thenReturn(image);
+
+        mockMvc.perform(get("/api/v1/gifts/" + id + "/img"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG));
     }
 }

@@ -106,30 +106,6 @@ class DataGeneratorTest {
 
     @InjectMocks
     private DataGenerator generator;
-
-//    @SneakyThrows
-//    @Test
-//    void fillRandomData() {       TODO: FINISH TEST
-//        Set<String> words = Set.of("tag","gift","five","press");
-//
-//        when(tagRepository.count()).thenReturn(0L);
-//        doReturn(0L).doReturn(5L).when(giftRepository).count();
-//        doReturn(0L).doReturn(5L).when(userRepository).count();
-//        when(orderRepository.count()).thenReturn(0L);
-//
-//        try(MockedStatic<RandomHandler> randomHandler = mockStatic(RandomHandler.class);
-//            MockedStatic<UrlJsonParser> urlParser = mockStatic(UrlJsonParser.class)) {
-//            when(RandomHandler.getCountWords(any(String[].class),eq(1000))).thenReturn(words);
-//            when(RandomHandler.getCountWords(any(String[].class),eq(10000))).thenReturn(words);
-//
-//            generator.fillRandomData();
-//        }
-//
-//        verify(tagRepository,atLeast(1)).count();
-//        verify(giftRepository,atLeast(1)).count();
-//        verify(userRepository,atLeast(1)).count();
-//        verify(orderRepository).count();
-//    }
     @SneakyThrows
     @Test
     void fillRandomData() {
@@ -181,10 +157,32 @@ class DataGeneratorTest {
             generator.fillRandomData();
 
             verify(userRepository,atLeast(1)).count();
+            verify(tagRepository,atLeast(1)).count();
+            verify(giftRepository,atLeast(1)).count();
         }
     }
+    @SneakyThrows
     @Test
     void fillRandomDataAnEmpty() {
+        HttpClient client = mock(HttpClient.class);
 
+        try(MockedStatic<HttpClient> clientMocked = mockStatic(HttpClient.class)) {
+            when(HttpClient.newHttpClient())
+                    .thenReturn(client);
+            when(client.send(any(HttpRequest.class),eq(HttpResponse.BodyHandlers.ofString())))
+                    .thenReturn(response);
+
+            doReturn(1000L).when(userRepository).count();
+            doReturn(1000L).when(tagRepository).count();
+            doReturn(10000L).when(giftRepository).count();
+
+            doReturn(List.of()).when(userRepository).findUsersByOrdersEmpty();
+
+            generator.fillRandomData();
+
+            verify(userRepository,atLeast(1)).count();
+            verify(tagRepository,atLeast(1)).count();
+            verify(giftRepository,atLeast(1)).count();
+        }
     }
 }

@@ -8,10 +8,12 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.hateoas.impl.UserHateoas;
 import com.epam.esm.service.LoginService;
 import com.epam.esm.service.ResponseService;
+import com.epam.esm.validator.JwtValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -93,7 +96,17 @@ class IndexControllerTest {
                 );
     }
 
+    @SneakyThrows
     @Test
-    void jwtUserGuard() { //TODO: FINISH TEST
+    void jwtUserGuard() {
+        String username = "testUser";
+        try(MockedStatic<JwtValidator> jwtValidator = mockStatic(JwtValidator.class)){
+            when(JwtValidator.isJwtUserValid(username)).thenReturn(true);
+            mockMvc.perform(get("/api/v1/jwt?username=" + username))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(content().string("true"));
+        }
     }
 }

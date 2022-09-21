@@ -178,15 +178,59 @@ class TagControllerTest {
                 .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void getTopTags() { //TODO: FINISH TEST
+    void getTopTags() {
+        int pageNumber = 0;
+        int size = 3;
+
+        when(service.findTop(pageNumber,size)).thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
+
+        mockMvc.perform(get("/api/v1/tags/top"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$.content[0].id",is(tag.getId().intValue())))
+                .andExpect(jsonPath("$.content[0].name",is(tag.getName())))
+                .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void updateTag() { //TODO: FINISH TEST
+    void updateTag() {
+        long id = 1;
+        String token = provider.createToken(user);
+        JwtUser jwtUser = JwtUserFactory.create(user);
+
+        when(userDetailsService.loadUserByUsername(provider.getUsername(token)))
+                .thenReturn(jwtUser);
+        when(service.update(tag,id)).thenReturn(page);
+        doNothing().when(hateoas).setHateoas(page);
+
+        mockMvc.perform(patch("/api/v1/tags/1").with(csrf())
+                        .header("Authorization","Bearer " + token)
+                        .contentType(halJsonUTF)
+                        .content(new ObjectMapper().writeValueAsString(tag)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$.content[0].id",is(tag.getId().intValue())))
+                .andExpect(jsonPath("$.content[0].name",is(tag.getName())))
+                .andExpect(jsonPath("$.response.code",is(200)));
     }
 
+    @SneakyThrows
     @Test
-    void getImageByID() { //TODO: FINISH TEST
+    void getImageByID() {
+        long id = 1;
+        byte[] image = new byte[]{1,1,1,1,1};
+
+        when(service.getImageByID(id)).thenReturn(image);
+
+        mockMvc.perform(get("/api/v1/tags/" + id + "/img"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG));
     }
 }
