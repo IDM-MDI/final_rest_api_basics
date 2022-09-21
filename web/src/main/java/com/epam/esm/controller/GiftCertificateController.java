@@ -20,7 +20,7 @@ import javax.validation.constraints.Min;
  * Class created for catch /gits - url
  * Have CRUD and filter api
  */
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping(value = "/api/v1/gifts")
 @Validated
